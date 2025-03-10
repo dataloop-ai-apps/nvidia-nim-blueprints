@@ -1,0 +1,196 @@
+{
+    "name": "podcast-generation",
+    "displayName": "Podcast Generation", 
+    "description": "Generate a podcast based on a given PDF.",
+    "version": "0.0.3",
+    "scope": "project",
+    "attributes": {
+        "Hub": ["Nvidia", "Dataloop"],
+        "Category": ["Pipeline", "Blueprint"],
+        "Pipeline Type": "GenAI",
+        "Provider": "NVIDIA",
+        "Developed By": "Dataloop"
+    },
+    "components": {
+      "computeConfigs": [
+        {
+          "name": "pdf2podcast-compute-config",
+          "runtime": {
+            "podType": "regular-xs",
+            "concurrency": 10,
+            "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints:0.0.2",
+            "autoscaler": {
+              "type": "rabbitmq",
+              "minReplicas": 0,
+              "maxReplicas": 2
+            }
+          }
+        }
+      ],
+      "modules": [
+        {
+          "name": "pdf2podcast-module",
+          "computeConfig": "pdf2podcast-compute-config",
+          "entryPoint": "services/main.py",
+          "className": "ServiceRunner",
+          "integrations": [
+            "dl-ngc-api-key",
+            "dl-tavily-api-key"
+          ],
+          "functions": [
+            {
+              "name": "report_planning",
+              "input": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "output": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "displayName": "Report Planning"
+            },
+            {
+                "name": "search_tavily",
+                "input": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "displayName": "Search Tavily"
+            },
+            {
+                "name": "report_sections",
+                "input": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "intro",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "body",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "conclusion",
+                        "type": "Item"
+                    }
+                ],
+                "displayName": "Report Sections"
+            },
+            {
+                "name": "research_agents",
+                "input": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "displayName": "Research Agents"
+            },
+            {
+                "name": "report_writing",
+                "input": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "intro",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "body",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "conclusion",
+                        "type": "Item"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "displayName": "Report Writing"
+            }
+          ]
+        }
+      ],
+      "pipelineNodes": [
+        {
+          "name": "podcast-generation-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "podcast-generation-compute-config.podcast-generation-module.podcast_generation"
+          },
+          "categories": ["Podcast Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "search-tavily-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.search_tavily"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "report-sections-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.report_sections"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "research-agents-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.research_agents"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "report-writing-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.report_writing"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        }
+      ]
+    }
+  }
