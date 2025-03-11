@@ -9,7 +9,7 @@ from tavily import TavilyClient, AsyncTavilyClient
 from langsmith import traceable
 import logging
 
-logger = logging.getLogger(['ReportGeneration'])
+logger = logging.getLogger('[ReportGeneration]')
 
 class Section(BaseModel):
     name: str = Field(description="Name for this section of the report.",)
