@@ -41,7 +41,7 @@
           "name": "search-tavily-node",
           "invoke": {
             "type": "function",
-            "namespace": "report-generation-compute-config.report-generation-module._search_tavily"
+            "namespace": "report-generation-compute-config.report-generation-module.search_tavily"
           },
           "categories": ["Report Generation"],
           "scope": "project"

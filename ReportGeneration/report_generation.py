@@ -555,7 +555,7 @@ class ReportGenerator(dl.BaseServiceRunner):
     def research_agents(self, item: dl.Item):
         return item
     
-    def _search_tavily(self, item: dl.Item):
+    def search_tavily(self, item: dl.Item):
         return item
     
     def report_writing(self, item: dl.Item, intro: dl.Item, body: dl.Item, conclusion: dl.Item):
