@@ -558,7 +558,7 @@ class ReportGenerator(dl.BaseServiceRunner):
     def _search_tavily(self, item: dl.Item):
         return item
     
-    def report_writing(self, item: dl.Item):
+    def report_writing(self, item: dl.Item, intro: dl.Item, body: dl.Item, conclusion: dl.Item):
         """
         Run the report generation service on a Dataloop item.
         

@@ -167,6 +167,18 @@
                     {
                         "name": "item",
                         "type": "Item"
+                    },
+                    {
+                        "name": "intro",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "body",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "conclusion",
+                        "type": "Item"
                     }
                 ],
                 "output": [
