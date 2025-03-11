@@ -123,7 +123,7 @@
                 "input": [
                     {
                         "name": "queries",
-                        "type": "List[SearchQuery]"
+                        "type": "String[]"
                     },
                     {
                         "name": "topic",
@@ -137,7 +137,7 @@
                 "output": [
                     {
                         "name": "search_results",
-                        "type": "List[Dict]"
+                        "type": "String[]"
                     }
                 ],
                 "displayName": "Search Tavily"
