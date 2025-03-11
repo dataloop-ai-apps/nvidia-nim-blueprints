@@ -3,8 +3,6 @@ import asyncio
 from typing import List, Optional
 from pydantic import BaseModel, Field
 import os
-
-# Import necessary libraries for report generation
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
 from langchain_core.messages import HumanMessage, SystemMessage
 from tavily import TavilyClient, AsyncTavilyClient
@@ -32,10 +30,10 @@ class ReportGenerator(dl.BaseServiceRunner):
     def load(self, local_path: str):
         if os.environ.get("TAVILY_API_KEY", None) is None:
             raise ValueError(f"Missing Tavily API key.")
-        if os.environ.get("NVIDIA_API_KEY", None) is None:
+        if os.environ.get("NGC_API_KEY", None) is None:
             raise ValueError(f"Missing NVIDIA API key.")
         self.tavily_api_key = os.environ.get("TAVILY_API_KEY", None)
-        self.nvidia_api_key = os.environ.get("NVIDIA_API_KEY", None)
+        self.nvidia_api_key = os.environ.get("NGC_API_KEY", None)
 
         
         # Initialize clients and models
