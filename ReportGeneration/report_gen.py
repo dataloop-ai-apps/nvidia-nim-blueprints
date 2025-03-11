@@ -35,7 +35,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         self.tavily_client = TavilyClient()
         self.tavily_async_client = AsyncTavilyClient()
 
-    def _prepare_report_query(self, topic: str, report_structure: str, number_of_queries: int) -> str:
+    def _prepare_report_query(self, item: dl.Item, topic: str, report_structure: str, number_of_queries: int) -> dl.Item:
         """Prepare prompt for generating search queries for report planning"""
         report_planner_query_writer_instructions = """You are an expert technical writer, helping to plan a report. 
 
@@ -56,13 +56,29 @@ class ReportGenerator(dl.BaseServiceRunner):
 
         Make the query specific enough to find high-quality, relevant sources while covering the breadth needed for the report structure."""
         
-        return report_planner_query_writer_instructions.format(
+        prompt_text = report_planner_query_writer_instructions.format(
             topic=topic,
             report_organization=report_structure,
             number_of_queries=number_of_queries
         )
 
-    def _prepare_section_generation(self, topic: str, report_structure: str, context: str) -> str:
+        # Create prompt item
+        prompt_item = dl.PromptItem(name='report-query-prompt')
+        
+        # Create prompt
+        prompt = dl.Prompt(key='report-query')
+        prompt.add_element(
+            mimetype=dl.PromptType.TEXT,
+            value=prompt_text
+        )
+        
+        # Add prompt to prompt item
+        prompt_item.prompts.append(prompt)
+        
+        # Save prompt item in item's .dataloop folder
+        return item.dataset.items.upload(prompt_item, remote_path=item.dir + '/.dataloop', overwrite=True)
+
+    def _prepare_section_generation(self, item: dl.Item, topic: str, report_structure: str, context: str) -> dl.Item:
         """Prepare prompt for generating report sections"""
         report_planner_instructions = """You are an expert technical writer, helping to plan a report.
 
@@ -89,13 +105,22 @@ class ReportGenerator(dl.BaseServiceRunner):
 
         Consider which sections require web research. For example, introduction and conclusion will not require research because they will distill information from other parts of the report."""
         
-        return report_planner_instructions.format(
+        prompt_text = report_planner_instructions.format(
             topic=topic,
             report_organization=report_structure,
             context=context
         )
 
-    def _prepare_section_query(self, section_description: str, number_of_queries: int) -> str:
+        prompt_item = dl.PromptItem(name='section-generation-prompt')
+        prompt = dl.Prompt(key='section-generation')
+        prompt.add_element(
+            mimetype=dl.PromptType.TEXT,
+            value=prompt_text
+        )
+        prompt_item.prompts.append(prompt)
+        return item.dataset.items.upload(prompt_item, remote_path='/.dataloop', overwrite=True)
+
+    def _prepare_section_query(self, item: dl.Item, section_description: str, number_of_queries: int) -> dl.Item:
         """Prepare prompt for generating search queries for a section"""
         query_writer_instructions = """Your goal is to generate targeted web search queries that will gather comprehensive information for writing a technical report section.
 
@@ -115,12 +140,21 @@ class ReportGenerator(dl.BaseServiceRunner):
         - Diverse enough to cover all aspects of the section plan
         - Focused on authoritative sources (documentation, technical blogs, academic papers)"""
         
-        return query_writer_instructions.format(
+        prompt_text = query_writer_instructions.format(
             section_topic=section_description,
             number_of_queries=number_of_queries
         )
 
-    def _prepare_section_writing(self, section_name: str, section_description: str, context: str) -> str:
+        prompt_item = dl.PromptItem(name='section-query-prompt')
+        prompt = dl.Prompt(key='section-query')
+        prompt.add_element(
+            mimetype=dl.PromptType.TEXT,
+            value=prompt_text
+        )
+        prompt_item.prompts.append(prompt)
+        return item.dataset.items.upload(prompt_item, remote_path='/.dataloop', overwrite=True)
+
+    def _prepare_section_writing(self, item: dl.Item, section_name: str, section_description: str, context: str) -> dl.Item:
         """Prepare prompt for writing a section"""
         section_writer_instructions = """You are an expert technical writer crafting one section of a technical report.
 
@@ -173,13 +207,22 @@ class ReportGenerator(dl.BaseServiceRunner):
         - No preamble prior to creating the section content
         - Sources cited at end"""
         
-        return section_writer_instructions.format(
+        prompt_text = section_writer_instructions.format(
             section_title=section_name,
             section_topic=section_description,
             context=context
         )
 
-    def _prepare_final_section(self, section_name: str, section_description: str, context: str) -> str:
+        prompt_item = dl.PromptItem(name='section-writing-prompt')
+        prompt = dl.Prompt(key='section-writing')
+        prompt.add_element(
+            mimetype=dl.PromptType.TEXT,
+            value=prompt_text
+        )
+        prompt_item.prompts.append(prompt)
+        return item.dataset.items.upload(prompt_item, remote_path='/.dataloop', overwrite=True)
+
+    def _prepare_final_section(self, item: dl.Item, section_name: str, section_description: str, context: str) -> dl.Item:
         """Prepare prompt for writing a final section (intro/conclusion)"""
         final_section_writer_instructions = """You are an expert technical writer crafting a section that synthesizes information from the rest of the report.
 
@@ -228,18 +271,27 @@ class ReportGenerator(dl.BaseServiceRunner):
         - Markdown format
         - Do not include word count or any preamble in your response"""
         
-        return final_section_writer_instructions.format(
+        prompt_text = final_section_writer_instructions.format(
             section_title=section_name,
             section_topic=section_description,
             context=context
         )
 
-    async def generate_report_pipeline(self, topic: str, report_structure: str, number_of_queries: int = 2,
+        prompt_item = dl.PromptItem(name='final-section-prompt')
+        prompt = dl.Prompt(key='final-section')
+        prompt.add_element(
+            mimetype=dl.PromptType.TEXT,
+            value=prompt_text
+        )
+        prompt_item.prompts.append(prompt)
+        return item.dataset.items.upload(prompt_item, remote_path='/.dataloop', overwrite=True)
+
+    async def generate_report_pipeline(self, item: dl.Item, topic: str, report_structure: str, number_of_queries: int = 2,
                                      tavily_topic: str = "general", tavily_days: Optional[int] = None) -> str:
         """Pipeline function that runs each step sequentially"""
         
         # Step 1: Generate initial queries
-        query_prompt = self._prepare_report_query(topic, report_structure, number_of_queries)
+        query_prompt = self._prepare_report_query(item, topic, report_structure, number_of_queries)
         queries = await self._get_llm_response(query_prompt, Queries)
         
         # Step 2: Search for initial context
@@ -251,14 +303,14 @@ class ReportGenerator(dl.BaseServiceRunner):
         source_str = self.deduplicate_and_format_sources(search_docs, max_tokens_per_source=1000, include_raw_content=True)
         
         # Step 3: Generate sections
-        sections_prompt = self._prepare_section_generation(topic, report_structure, source_str)
+        sections_prompt = self._prepare_section_generation(item, topic, report_structure, source_str)
         sections = await self._get_llm_response(sections_prompt, Sections)
         
         # Step 4: Process research sections
         completed_research = []
         for section in [s for s in sections.sections if s.research]:
             # Generate queries for section
-            query_prompt = self._prepare_section_query(section.description, number_of_queries)
+            query_prompt = self._prepare_section_query(item, section.description, number_of_queries)
             section_queries = await self._get_llm_response(query_prompt, Queries)
             
             # Search for section content
@@ -270,14 +322,14 @@ class ReportGenerator(dl.BaseServiceRunner):
             section_sources = self.deduplicate_and_format_sources(section_docs, max_tokens_per_source=5000, include_raw_content=True)
             
             # Generate section content
-            content_prompt = self._prepare_section_writing(section.name, section.description, section_sources)
+            content_prompt = self._prepare_section_writing(item, section.name, section.description, section_sources)
             section.content = await self._get_llm_response(content_prompt)
             completed_research.append(section)
         
         # Step 5: Process non-research sections
         completed_non_research = []
         for section in [s for s in sections.sections if not s.research]:
-            prompt = self._prepare_final_section(section.name, section.description, self.format_sections(completed_research))
+            prompt = self._prepare_final_section(item, section.name, section.description, self.format_sections(completed_research))
             section.content = await self._get_llm_response(prompt)
             completed_non_research.append(section)
         
