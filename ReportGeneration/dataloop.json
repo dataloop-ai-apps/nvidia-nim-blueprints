@@ -18,7 +18,7 @@
           "runtime": {
             "podType": "regular-xs",
             "concurrency": 10,
-            "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints:0.0.1",
+            "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints:0.0.2",
             "autoscaler": {
               "type": "rabbitmq",
               "minReplicas": 0,
