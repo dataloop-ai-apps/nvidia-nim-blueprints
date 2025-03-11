@@ -1,0 +1,207 @@
+{
+    "name": "report-generation",
+    "displayName": "Report Generation",
+    "description": "Generate a report based on a given topic and report structure.",
+    "version": "0.0.1",
+    "scope": "project",
+    "attributes": {
+        "Hub": ["NVIDIA"],
+        "Category": "Blueprints",
+        "Application Type": "Pipeline Node",
+        "Provider": "NVIDIA",
+        "Developed By": "NVIDIA"
+    },
+    "components": {
+      "computeConfigs": [
+        {
+          "name": "report-generation-compute-config",
+          "runtime": {
+            "podType": "regular-xs",
+            "concurrency": 10,
+            "runnerImage": "gcr.io/viewo-g/piper/agent/runner/cpu/nim-api:0.1.10",
+            "autoscaler": {
+              "type": "rabbitmq",
+              "minReplicas": 0,
+              "maxReplicas": 2
+            }
+          }
+        }
+      ],
+      "pipelineNodes": [
+        {
+          "name": "prepare-report-query-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.generate-report"
+          },
+          "scope": "project"
+        },
+        {
+          "name": "search-tavily-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.generate-report"
+          },
+          "scope": "project"
+        },
+        {
+          "name": "prepare-section-generation-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.generate-report"
+          },
+          "scope": "project"
+        },
+        {
+          "name": "prepare-section-query-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.generate-report"
+          },
+          "scope": "project"
+        },
+        {
+          "name": "prepare-section-writing-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.generate-report"
+          },
+          "scope": "project"
+        },
+        {
+          "name": "prepare-final-section-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.generate-report"
+          },
+          "scope": "project"
+        }
+      ],
+      "modules": [
+        {
+          "name": "report-generation-module",
+          "computeConfig": "report-generation-compute-config",
+          "entryPoint": "report-gen.py",
+          "className": "ReportGenerator",
+          "functions": [
+            {
+              "name": "_prepare_report_query",
+              "input": [
+                {
+                  "name": "PromptItem",
+                  "type": "Item"
+                }
+              ],
+              "output": [
+                {
+                  "name": "queries",
+                  "type": "list"
+                }
+              ],
+              "displayName": "Prepare Report Query"
+            },
+            {
+                "name": "_search_tavily",
+                "input": [
+                    {
+                        "name": "queries",
+                        "type": "list"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "sources",
+                        "type": "list"
+                    }
+                ],
+                "displayName": "Search Tavily"
+            },
+            {
+                "name": "_prepare_section_generation",
+                "input": [
+                    {
+                        "name": "topic",
+                        "type": "string"
+                    },      
+                    {
+                        "name": "report-structure",
+                        "type": "string"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "sections",
+                        "type": "list"
+                    }
+                ],
+                "displayName": "Prepare Section Generation"
+            },
+            {
+                "name": "_prepare_section_query",
+                "input": [
+                    {
+                        "name": "section-description",
+                        "type": "string"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "queries",
+                        "type": "list"
+                    }
+                ],
+                "displayName": "Prepare Section Query"
+            },
+            {
+                "name": "_prepare_section_writing",
+                "input": [
+                    {
+                        "name": "section-name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "section-description",
+                        "type": "string"
+                    },
+                    {
+                        "name": "context",
+                        "type": "string"
+                    }
+                ],
+                "output": [
+                    {   
+                        "name": "content",
+                        "type": "string"
+                    }
+                ],
+                "displayName": "Prepare Section Writing"
+            },
+            {
+                "name": "_prepare_final_section",
+                "input": [
+                    {
+                        "name": "section-name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "section-description",
+                        "type": "string"
+                    },
+                    {
+                        "name": "context",
+                        "type": "string"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "content",
+                        "type": "string"
+                    }
+                ],
+                "displayName": "Prepare Final Section"
+            } 
+          ]
+        }
+      ]
+    }
+  }
