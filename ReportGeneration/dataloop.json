@@ -1,6 +1,6 @@
 {
     "name": "report-generation",
-    "displayName": "Report Generation",
+    "displayName": "Report Generation", 
     "description": "Generate a report based on a given topic and report structure.",
     "version": "0.0.1",
     "scope": "project",
@@ -94,14 +94,26 @@
               "name": "_prepare_report_query",
               "input": [
                 {
-                  "name": "PromptItem",
+                  "name": "item",
                   "type": "Item"
+                },
+                {
+                  "name": "topic",
+                  "type": "String"
+                },
+                {
+                  "name": "report_structure",
+                  "type": "String"
+                },
+                {
+                  "name": "number_of_queries",
+                  "type": "Integer"
                 }
               ],
               "output": [
                 {
-                  "name": "queries",
-                  "type": "String[]"
+                  "name": "item",
+                  "type": "Item"
                 }
               ],
               "displayName": "Prepare Report Query"
@@ -111,13 +123,21 @@
                 "input": [
                     {
                         "name": "queries",
-                        "type": "String[]"
+                        "type": "List[SearchQuery]"
+                    },
+                    {
+                        "name": "topic",
+                        "type": "String"
+                    },
+                    {
+                        "name": "days",
+                        "type": "Integer"
                     }
                 ],
                 "output": [
                     {
-                        "name": "sources",
-                        "type": "String[]"
+                        "name": "search_results",
+                        "type": "List[Dict]"
                     }
                 ],
                 "displayName": "Search Tavily"
@@ -126,18 +146,26 @@
                 "name": "_prepare_section_generation",
                 "input": [
                     {
+                        "name": "item",
+                        "type": "Item"
+                    },
+                    {
                         "name": "topic",
                         "type": "String"
                     },      
                     {
-                        "name": "report-structure",
+                        "name": "report_structure",
+                        "type": "String"
+                    },
+                    {
+                        "name": "context",
                         "type": "String"
                     }
                 ],
                 "output": [
                     {
-                        "name": "sections",
-                        "type": "String[]"
+                        "name": "item",
+                        "type": "Item"
                     }
                 ],
                 "displayName": "Prepare Section Generation"
@@ -146,14 +174,22 @@
                 "name": "_prepare_section_query",
                 "input": [
                     {
-                        "name": "section-description",
+                        "name": "item",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "section_name",
+                        "type": "String"
+                    },
+                    {
+                        "name": "section_description",
                         "type": "String"
                     }
                 ],
                 "output": [
                     {
-                        "name": "queries",
-                        "type": "String[]"
+                        "name": "item",
+                        "type": "Item"
                     }
                 ],
                 "displayName": "Prepare Section Query"
@@ -162,11 +198,15 @@
                 "name": "_prepare_section_writing",
                 "input": [
                     {
-                        "name": "section-name",
+                        "name": "item",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "section_name",
                         "type": "String"
                     },
                     {
-                        "name": "section-description",
+                        "name": "section_description",
                         "type": "String"
                     },
                     {
@@ -175,9 +215,9 @@
                     }
                 ],
                 "output": [
-                    {   
-                        "name": "content",
-                        "type": "String"
+                    {
+                        "name": "item",
+                        "type": "Item"
                     }
                 ],
                 "displayName": "Prepare Section Writing"
@@ -186,11 +226,15 @@
                 "name": "_prepare_final_section",
                 "input": [
                     {
-                        "name": "section-name",
+                        "name": "item",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "section_name",
                         "type": "String"
                     },
                     {
-                        "name": "section-description",
+                        "name": "section_description",
                         "type": "String"
                     },
                     {
@@ -200,8 +244,8 @@
                 ],
                 "output": [
                     {
-                        "name": "content",
-                        "type": "String"
+                        "name": "item",
+                        "type": "Item"
                     }
                 ],
                 "displayName": "Prepare Final Section"
