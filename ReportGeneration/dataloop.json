@@ -102,16 +102,16 @@
               "displayName": "Report Planning"
             },
             {
-                "name": "_search_tavily",
+                "name": "search_tavily",
                 "input": [
                     {
-                        "name": "body",
+                        "name": "item",
                         "type": "Item"
                     }
                 ],
                 "output": [
                     {
-                        "name": "body",
+                        "name": "item",
                         "type": "Item"
                     }
                 ],
