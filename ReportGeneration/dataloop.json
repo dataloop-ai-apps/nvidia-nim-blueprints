@@ -78,7 +78,7 @@
         {
           "name": "report-generation-module",
           "computeConfig": "report-generation-compute-config",
-          "entryPoint": "report_generation.py",
+          "entryPoint": "ReportGeneration/report_generation.py",
           "className": "ReportGenerator",
           "integrations": [
             "dl-ngc-api-key",
