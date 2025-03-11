@@ -550,7 +550,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         return item
     
     def report_sections(self, item: dl.Item):
-        return item
+        return item, item, item, item
 
     def research_agents(self, item: dl.Item):
         return item
