@@ -6,7 +6,7 @@
     "scope": "project",
     "attributes": {
         "Hub": ["NVIDIA"],
-        "Category": "Blueprints",
+        "Category": ["Blueprints"],
         "Application Type": "Pipeline Node",
         "Provider": "NVIDIA",
         "Developed By": "NVIDIA"
