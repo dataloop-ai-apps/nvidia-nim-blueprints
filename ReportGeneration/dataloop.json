@@ -87,7 +87,7 @@
         {
           "name": "report-generation-module",
           "computeConfig": "report-generation-compute-config",
-          "entryPoint": "report-gen.py",
+          "entryPoint": "report_generation.py",
           "className": "ReportGenerator",
           "functions": [
             {
@@ -96,18 +96,6 @@
                 {
                   "name": "item",
                   "type": "Item"
-                },
-                {
-                  "name": "topic",
-                  "type": "String"
-                },
-                {
-                  "name": "report_structure",
-                  "type": "String"
-                },
-                {
-                  "name": "number_of_queries",
-                  "type": "Integer"
                 }
               ],
               "output": [
@@ -122,22 +110,14 @@
                 "name": "_search_tavily",
                 "input": [
                     {
-                        "name": "queries",
-                        "type": "String[]"
-                    },
-                    {
-                        "name": "topic",
-                        "type": "String"
-                    },
-                    {
-                        "name": "days",
-                        "type": "Integer"
+                        "name": "item",
+                        "type": "Item"
                     }
                 ],
                 "output": [
                     {
-                        "name": "search_results",
-                        "type": "String[]"
+                        "name": "item",
+                        "type": "Item"
                     }
                 ],
                 "displayName": "Search Tavily"
@@ -148,18 +128,6 @@
                     {
                         "name": "item",
                         "type": "Item"
-                    },
-                    {
-                        "name": "topic",
-                        "type": "String"
-                    },      
-                    {
-                        "name": "report_structure",
-                        "type": "String"
-                    },
-                    {
-                        "name": "context",
-                        "type": "String"
                     }
                 ],
                 "output": [
@@ -176,20 +144,25 @@
                     {
                         "name": "item",
                         "type": "Item"
-                    },
-                    {
-                        "name": "section_name",
-                        "type": "String"
-                    },
-                    {
-                        "name": "section_description",
-                        "type": "String"
                     }
+
                 ],
                 "output": [
                     {
                         "name": "item",
                         "type": "Item"
+                    },
+                    {
+                        "name": "intro",
+                        "type": "String"
+                    },
+                    {
+                        "name": "body",
+                        "type": "String"
+                    },
+                    {
+                        "name": "conclusion",
+                        "type": "String"
                     }
                 ],
                 "displayName": "Prepare Section Query"
@@ -202,15 +175,15 @@
                         "type": "Item"
                     },
                     {
-                        "name": "section_name",
+                        "name": "intro",
+                        "type": "String"
+                    },  
+                    {
+                        "name": "body",
                         "type": "String"
                     },
                     {
-                        "name": "section_description",
-                        "type": "String"
-                    },
-                    {
-                        "name": "context",
+                        "name": "conclusion",
                         "type": "String"
                     }
                 ],
@@ -228,18 +201,6 @@
                     {
                         "name": "item",
                         "type": "Item"
-                    },
-                    {
-                        "name": "section_name",
-                        "type": "String"
-                    },
-                    {
-                        "name": "section_description",
-                        "type": "String"
-                    },
-                    {
-                        "name": "context",
-                        "type": "String"
                     }
                 ],
                 "output": [

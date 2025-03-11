@@ -1,16 +1,17 @@
 import dtlpy as dl
 import asyncio
-from typing import List, Optional, Literal, Dict, Any
+from typing import List, Optional
 from pydantic import BaseModel, Field
 import os
-from dotenv import load_dotenv
 
 # Import necessary libraries for report generation
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
 from langchain_core.messages import HumanMessage, SystemMessage
 from tavily import TavilyClient, AsyncTavilyClient
 from langsmith import traceable
+import logging
 
+logger = logging.getLogger(['ReportGeneration'])
 
 class Section(BaseModel):
     name: str = Field(description="Name for this section of the report.",)
@@ -28,9 +29,15 @@ class Queries(BaseModel):
     queries: List[SearchQuery] = Field(description="List of search queries.",)
 
 class ReportGenerator(dl.BaseServiceRunner):
-    def __init__(self):
-        os.environ["TAVILY_API_KEY"] = ""
-        os.environ["NVIDIA_API_KEY"] = ""
+    def load(self, local_path: str):
+        if os.environ.get("TAVILY_API_KEY", None) is None:
+            raise ValueError(f"Missing Tavily API key.")
+        if os.environ.get("NVIDIA_API_KEY", None) is None:
+            raise ValueError(f"Missing NVIDIA API key.")
+        self.tavily_api_key = os.environ.get("TAVILY_API_KEY", None)
+        self.nvidia_api_key = os.environ.get("NVIDIA_API_KEY", None)
+
+        
         # Initialize clients and models
         self.llm = ChatNVIDIA(model="meta/llama-3.3-70b-instruct", temperature=0)
         self.tavily_client = TavilyClient()
@@ -237,7 +244,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         When generating {number_of_queries} search queries, ensure they:
         1. Cover different aspects of the topic (e.g., core features, real-world applications, technical architecture)
         2. Include specific technical terms related to the topic
-        3. Target recent information by including year markers where relevant (e.g., "2024")
+        3. Target recent information by including year markers where relevant (e.g., "2025")
         4. Look for comparisons or differentiators from similar technologies/approaches
         5. Search for both official documentation and practical implementation examples
 
@@ -475,8 +482,74 @@ class ReportGenerator(dl.BaseServiceRunner):
         
         return final_report
 
+    
+    def _extract_parameters_from_prompt(self, prompt_text_variable: str):
+        """Extract parameters from the prompt text"""
+        lines = prompt_text_variable.strip().split('\n')
+        
+        # Initialize parameters
+        params = {
+            'topic': '',
+            'report_structure': '',
+            'number_of_queries': 2,  # Default value
+            'tavily_topic': 'general',  # Default value
+            'tavily_days': None  # Default value
+        }
+        
+        # Extract topic (first line after "Topic:")
+        for i, line in enumerate(lines):
+            if line.strip().startswith('Topic:'):
+                params['topic'] = line.replace('Topic:', '').strip()
+                break
+        
+        # Extract structure (everything between "Structure:" and "Number of queries:")
+        structure_lines = []
+        capture_structure = False
+        for line in lines:
+            if line.strip().startswith('Structure:'):
+                capture_structure = True
+                continue
+            elif line.strip().startswith('Number of queries:'):
+                capture_structure = False
+                continue
+            
+            if capture_structure:
+                structure_lines.append(line)
+        
+        params['report_structure'] = '\n'.join(structure_lines).strip()
+        
+        # Extract number of queries
+        for line in lines:
+            if line.strip().startswith('Number of queries:'):
+                try:
+                    params['number_of_queries'] = int(line.replace('Number of queries:', '').strip())
+                except ValueError:
+                    logger.warning("Could not parse number of queries, using default value")
+                break
+        
+        # Extract Tavily topic
+        for line in lines:
+            if line.strip().startswith('Tavily Topic:'):
+                try:
+                    params['tavily_topic'] = line.replace('Tavily Topic:', '').strip()
+                except ValueError:
+                    logger.warning("Could not parse Tavily Topic, using default 'general' value")
+                break
+        
+        # Extract Tavily days
+        for line in lines:
+            if line.strip().startswith('Tavily Days:'):
+                try:
+                    days_value = line.replace('Tavily Days:', '').strip()
+                    params['tavily_days'] = int(days_value) if days_value.isdigit() else None
+                except ValueError:
+                    logger.warning("Could not parse Tavily days, using default value")
+                break
+        
+        return params
+    
     # Dataloop service method
-    def run(self, item: dl.Item, number_of_queries: int = 2, tavily_days: Optional[int] = None):
+    def _prepare_final_section(self, item: dl.Item):
         """
         Run the report generation service on a Dataloop item.
         
@@ -488,40 +561,24 @@ class ReportGenerator(dl.BaseServiceRunner):
         Returns:
             The generated report as a string
         """
-        
         prompt_item = dl.PromptItem.from_item(item)
+        prompt_text = prompt_item.to_json()['prompts']['1'][0]['value']
         
-        # Get topic from item metadata
-        topic = prompt_item.to_json()['prompts']['Topic'][0]['value']
-        report_structure = prompt_item.to_json()['prompts']['ReportStructure'][0]['value']
+        params = self._extract_parameters_from_prompt(prompt_text)
+        if params['topic'] == '' or params['report_structure'] == '':
+            raise ValueError("Topic and report structure are required. Please refer to the documentation for the correct format.")
         
         # Generate the report
-        sections, report = asyncio.run(self.generate_report(
-            topic=topic,
-            report_structure=report_structure,
-            number_of_queries=number_of_queries,
-            tavily_topic="general" if tavily_days is None else "news",
-            tavily_days=tavily_days
+        report = asyncio.run(self.generate_report(
+            topic= params['topic'] ,
+            report_structure=params['report_structure'],
+            number_of_queries=params['number_of_queries'],
+            tavily_topic=params['tavily_topic'],
+            tavily_days=params['tavily_days']
         ))
-        # Add text responses
-        prompt_item.add(
-            prompt_key='Topic',
-            message={
-                "role": "assistant",
-                "content": [{
-                    "mimetype": dl.PromptType.TEXT,
-                    "value": sections
-                }]
-            },
-            model_info={
-                'name': 'test',
-                'confidence': 1.0,
-                'model_id': 'model-123'
-            }
-        )
         
         prompt_item.add(
-            prompt_key='ReportStructure', 
+            prompt_key='1', 
             message={
                 "role": "assistant",
                 "content": [{
@@ -530,17 +587,32 @@ class ReportGenerator(dl.BaseServiceRunner):
                 }]
             },
             model_info={
-                'name': 'test',
+                'name': 'llama_3.3_70b_instruct',
                 'confidence': 1.0,
-                'model_id': 'model-123'
+                'model_id': 'llama_3.3_70b_instruct-1'
             }
         )
-        
         return report
+    
+    def _prepare_report_query(self, item: dl.Item):
+        return item
+        
+    def _prepare_report_sections(self, item: dl.Item):
+        return item
+
+    def _prepare_section_query(self, item: dl.Item, intro: str, body: str, conclusion: str):
+        return item
+    
+    def _prepare_section_writing(self, item: dl.Item, intro: str, body: str, conclusion: str):
+        return item
+    
+    def _search_tavily(self, body: str):
+        return body
     
     def test_report_generation(self):
         # Generate report
-        report = self.run(item=dl.items.get(item_id="67ceba78f89ab3cb0989e022"), number_of_queries=3)
+        self.load(local_path="")
+        report = self.final_report(item=dl.items.get(item_id="67ceba78f89ab3cb0989e022"))
         return report
     
 if __name__ == "__main__":
