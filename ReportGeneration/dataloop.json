@@ -106,13 +106,13 @@
                 "input": [
                     {
                         "name": "body",
-                        "type": "String"
+                        "type": "item"
                     }
                 ],
                 "output": [
                     {
                         "name": "body",
-                        "type": "String"
+                        "type": "item"
                     }
                 ],
                 "displayName": "Search Tavily"
