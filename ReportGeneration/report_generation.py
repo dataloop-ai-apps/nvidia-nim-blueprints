@@ -546,8 +546,19 @@ class ReportGenerator(dl.BaseServiceRunner):
         
         return params
     
-    # Dataloop service method
-    def _prepare_final_section(self, item: dl.Item):
+    def report_planning(self, item: dl.Item):
+        return item
+    
+    def report_sections(self, item: dl.Item):
+        return item
+
+    def research_agents(self, item: dl.Item):
+        return item
+    
+    def _search_tavily(self, item: dl.Item):
+        return item
+    
+    def report_writing(self, item: dl.Item):
         """
         Run the report generation service on a Dataloop item.
         
@@ -591,21 +602,6 @@ class ReportGenerator(dl.BaseServiceRunner):
             }
         )
         return report
-    
-    def _prepare_report_query(self, item: dl.Item):
-        return item
-        
-    def _prepare_report_sections(self, item: dl.Item):
-        return item
-
-    def _prepare_section_query(self, item: dl.Item, intro: str, body: str, conclusion: str):
-        return item
-    
-    def _prepare_section_writing(self, item: dl.Item, intro: str, body: str, conclusion: str):
-        return item
-    
-    def _search_tavily(self, body: str):
-        return body
     
     def test_report_generation(self):
         # Generate report

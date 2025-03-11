@@ -29,10 +29,10 @@
       ],
       "pipelineNodes": [
         {
-          "name": "prepare-report-query-node",
+          "name": "report-planning-node",
           "invoke": {
             "type": "function",
-            "namespace": "report-generation-compute-config.report-generation-module._prepare_report_query"
+            "namespace": "report-generation-compute-config.report-generation-module.report_planning"
           },
           "categories": ["Report Generation"],
           "scope": "project"
@@ -47,37 +47,28 @@
           "scope": "project"
         },
         {
-          "name": "prepare-section-generation-node",
+          "name": "report-sections-node",
           "invoke": {
             "type": "function",
-            "namespace": "report-generation-compute-config.report-generation-module._prepare_section_generation"
+            "namespace": "report-generation-compute-config.report-generation-module.report_sections"
           },
           "categories": ["Report Generation"],
           "scope": "project"
         },
         {
-          "name": "prepare-section-query-node",
+          "name": "research-agents-node",
           "invoke": {
             "type": "function",
-            "namespace": "report-generation-compute-config.report-generation-module._prepare_section_query"
+            "namespace": "report-generation-compute-config.report-generation-module.research_agents"
           },
           "categories": ["Report Generation"],
           "scope": "project"
         },
         {
-          "name": "prepare-section-writing-node",
+          "name": "report-writing-node",
           "invoke": {
             "type": "function",
-            "namespace": "report-generation-compute-config.report-generation-module._prepare_section_writing"
-          },
-          "categories": ["Report Generation"],
-          "scope": "project"
-        },
-        {
-          "name": "prepare-final-section-node",
-          "invoke": {
-            "type": "function",
-            "namespace": "report-generation-compute-config.report-generation-module._prepare_final_section"
+            "namespace": "report-generation-compute-config.report-generation-module.report_writing"
           },
           "categories": ["Report Generation"],
           "scope": "project"
@@ -95,7 +86,7 @@
           ],
           "functions": [
             {
-              "name": "_prepare_report_query",
+              "name": "report_planning",
               "input": [
                 {
                   "name": "item",
@@ -108,48 +99,31 @@
                   "type": "Item"
                 }
               ],
-              "displayName": "Prepare Report Query"
+              "displayName": "Report Planning"
             },
             {
                 "name": "_search_tavily",
                 "input": [
                     {
-                        "name": "item",
-                        "type": "Item"
+                        "name": "body",
+                        "type": "String"
                     }
                 ],
                 "output": [
                     {
-                        "name": "item",
-                        "type": "Item"
+                        "name": "body",
+                        "type": "String"
                     }
                 ],
                 "displayName": "Search Tavily"
             },
             {
-                "name": "_prepare_section_generation",
+                "name": "report_sections",
                 "input": [
                     {
                         "name": "item",
                         "type": "Item"
                     }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Prepare Section Generation"
-            },
-            {
-                "name": "_prepare_section_query",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-
                 ],
                 "output": [
                     {
@@ -158,49 +132,21 @@
                     },
                     {
                         "name": "intro",
-                        "type": "String"
-                    },
-                    {
-                        "name": "body",
-                        "type": "String"
-                    },
-                    {
-                        "name": "conclusion",
-                        "type": "String"
-                    }
-                ],
-                "displayName": "Prepare Section Query"
-            },
-            {
-                "name": "_prepare_section_writing",
-                "input": [
-                    {
-                        "name": "item",
                         "type": "Item"
                     },
                     {
-                        "name": "intro",
-                        "type": "String"
-                    },  
-                    {
                         "name": "body",
-                        "type": "String"
+                        "type": "Item"
                     },
                     {
                         "name": "conclusion",
-                        "type": "String"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
                         "type": "Item"
                     }
                 ],
-                "displayName": "Prepare Section Writing"
+                "displayName": "Report Sections"
             },
             {
-                "name": "_prepare_final_section",
+                "name": "research_agents",
                 "input": [
                     {
                         "name": "item",
@@ -213,8 +159,24 @@
                         "type": "Item"
                     }
                 ],
-                "displayName": "Prepare Final Section"
-            } 
+                "displayName": "Research Agents"
+            },
+            {
+                "name": "report_writing",
+                "input": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "displayName": "Report Writing"
+            }
           ]
         }
       ]
