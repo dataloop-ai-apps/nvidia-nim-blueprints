@@ -95,7 +95,7 @@
               "output": [
                 {
                   "name": "queries",
-                  "type": "list"
+                  "type": "String[]"
                 }
               ],
               "displayName": "Prepare Report Query"
