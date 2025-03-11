@@ -105,13 +105,13 @@
                 "input": [
                     {
                         "name": "queries",
-                        "type": "list"
+                        "type": "String[]"
                     }
                 ],
                 "output": [
                     {
                         "name": "sources",
-                        "type": "list"
+                        "type": "String[]"
                     }
                 ],
                 "displayName": "Search Tavily"
@@ -121,17 +121,17 @@
                 "input": [
                     {
                         "name": "topic",
-                        "type": "string"
+                        "type": "String"
                     },      
                     {
                         "name": "report-structure",
-                        "type": "string"
+                        "type": "String"
                     }
                 ],
                 "output": [
                     {
                         "name": "sections",
-                        "type": "list"
+                        "type": "String[]"
                     }
                 ],
                 "displayName": "Prepare Section Generation"
@@ -141,13 +141,13 @@
                 "input": [
                     {
                         "name": "section-description",
-                        "type": "string"
+                        "type": "String"
                     }
                 ],
                 "output": [
                     {
                         "name": "queries",
-                        "type": "list"
+                        "type": "String[]"
                     }
                 ],
                 "displayName": "Prepare Section Query"
@@ -157,21 +157,21 @@
                 "input": [
                     {
                         "name": "section-name",
-                        "type": "string"
+                        "type": "String"
                     },
                     {
                         "name": "section-description",
-                        "type": "string"
+                        "type": "String"
                     },
                     {
                         "name": "context",
-                        "type": "string"
+                        "type": "String"
                     }
                 ],
                 "output": [
                     {   
                         "name": "content",
-                        "type": "string"
+                        "type": "String"
                     }
                 ],
                 "displayName": "Prepare Section Writing"
@@ -181,21 +181,21 @@
                 "input": [
                     {
                         "name": "section-name",
-                        "type": "string"
+                        "type": "String"
                     },
                     {
                         "name": "section-description",
-                        "type": "string"
+                        "type": "String"
                     },
                     {
                         "name": "context",
-                        "type": "string"
+                        "type": "String"
                     }
                 ],
                 "output": [
                     {
                         "name": "content",
-                        "type": "string"
+                        "type": "String"
                     }
                 ],
                 "displayName": "Prepare Final Section"
