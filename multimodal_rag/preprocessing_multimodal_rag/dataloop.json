@@ -2,7 +2,7 @@
   "name": "preprocessing-multimodal-rag-blueprint",
   "version": "0.0.1",
   "attributes": {
-    "Category": "Pipeline",
+    "Category": ["Pipeline", "Blueprint"],
     "Pipeline Type": "GenAI",
     "Provider": "Dataloop",
     "Media Type": [
