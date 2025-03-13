@@ -8,8 +8,8 @@
         "Hub": ["Nvidia,", "Dataloop"],
         "Category": ["Pipeline", "Blueprint"],
         "Pipeline Type": "GenAI",
-        "Provider": "Dataloop",
-        "Developed By": "NVIDIA"
+        "Provider": "NVIDIA",
+        "Developed By": "Dataloop"
     },
     "components": {
       "computeConfigs": [
