@@ -601,7 +601,7 @@ class ReportGenerator(dl.BaseServiceRunner):
                 'model_id': 'llama_3.3_70b_instruct-1'
             }
         )
-        return report
+        return item
     
     def test_report_generation(self):
         # Generate report
