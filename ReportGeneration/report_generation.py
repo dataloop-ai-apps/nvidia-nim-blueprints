@@ -569,6 +569,8 @@ class ReportGenerator(dl.BaseServiceRunner):
         Returns:
             The generated report as a string
         """
+        for annotation in item.annotations.list():
+            annotation.delete()
         prompt_item = dl.PromptItem.from_item(item)
         prompt_text = prompt_item.to_json()['prompts']['1'][0]['value']
         
