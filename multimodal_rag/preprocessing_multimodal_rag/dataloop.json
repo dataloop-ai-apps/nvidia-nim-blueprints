@@ -4,7 +4,9 @@
   "attributes": {
     "Category": ["Pipeline", "Blueprint"],
     "Pipeline Type": "GenAI",
-    "Provider": "Dataloop",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop",
+    "Hub": ["Nvidia", "Dataloop"],
     "Media Type": [
       "Text",
       "Image"

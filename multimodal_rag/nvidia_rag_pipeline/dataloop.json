@@ -3,8 +3,10 @@
   "version": "0.0.2",
   "attributes": {
     "Category": ["Pipeline","Blueprint"],
+    "Hub": ["Nvidia", "Dataloop"],
     "Pipeline Type": "GenAI",
-    "Provider": "Dataloop",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop",
     "Media Type": [
       "Text"
     ]
