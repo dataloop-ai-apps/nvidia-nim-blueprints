@@ -1,0 +1,196 @@
+{
+    "name": "report-generation",
+    "displayName": "Report Generation", 
+    "description": "Generate a report based on a given topic and report structure.",
+    "version": "0.0.1",
+    "scope": "project",
+    "attributes": {
+        "Hub": ["Nvidia,", "Dataloop"],
+        "Category": ["Pipeline", "Blueprint"],
+        "Pipeline Type": "GenAI",
+        "Provider": "Dataloop",
+        "Developed By": "NVIDIA"
+    },
+    "components": {
+      "computeConfigs": [
+        {
+          "name": "report-generation-compute-config",
+          "runtime": {
+            "podType": "regular-xs",
+            "concurrency": 10,
+            "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints:0.0.2",
+            "autoscaler": {
+              "type": "rabbitmq",
+              "minReplicas": 0,
+              "maxReplicas": 2
+            }
+          }
+        }
+      ],
+      "pipelineNodes": [
+        {
+          "name": "report-planning-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.report_planning"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "search-tavily-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.search_tavily"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "report-sections-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.report_sections"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "research-agents-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.research_agents"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "report-writing-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.report_writing"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        }
+      ],
+      "modules": [
+        {
+          "name": "report-generation-module",
+          "computeConfig": "report-generation-compute-config",
+          "entryPoint": "ReportGeneration/report_generation.py",
+          "className": "ReportGenerator",
+          "integrations": [
+            "dl-ngc-api-key",
+            "dl-tavily-api-key"
+          ],
+          "functions": [
+            {
+              "name": "report_planning",
+              "input": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "output": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "displayName": "Report Planning"
+            },
+            {
+                "name": "search_tavily",
+                "input": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "displayName": "Search Tavily"
+            },
+            {
+                "name": "report_sections",
+                "input": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "intro",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "body",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "conclusion",
+                        "type": "Item"
+                    }
+                ],
+                "displayName": "Report Sections"
+            },
+            {
+                "name": "research_agents",
+                "input": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "displayName": "Research Agents"
+            },
+            {
+                "name": "report_writing",
+                "input": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "intro",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "body",
+                        "type": "Item"
+                    },
+                    {
+                        "name": "conclusion",
+                        "type": "Item"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "item",
+                        "type": "Item"
+                    }
+                ],
+                "displayName": "Report Writing"
+            }
+          ]
+        }
+      ]
+    }
+  }
