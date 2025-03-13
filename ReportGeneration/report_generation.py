@@ -35,11 +35,10 @@ class ReportGenerator(dl.BaseServiceRunner):
         self.tavily_api_key = os.environ.get("TAVILY_API_KEY", None)
         self.nvidia_api_key = os.environ.get("NGC_API_KEY", None)
 
-        
         # Initialize clients and models
-        self.llm = ChatNVIDIA(model="meta/llama-3.3-70b-instruct", temperature=0)
-        self.tavily_client = TavilyClient()
-        self.tavily_async_client = AsyncTavilyClient()
+        self.llm = ChatNVIDIA(model="meta/llama-3.3-70b-instruct", temperature=0, api_key=self.nvidia_api_key)
+        self.tavily_client = TavilyClient(api_key=self.tavily_api_key)
+        self.tavily_async_client = AsyncTavilyClient(api_key=self.tavily_api_key)
 
     # Utility functions
     def deduplicate_and_format_sources(self, search_response, max_tokens_per_source, include_raw_content=True):
@@ -605,7 +604,10 @@ class ReportGenerator(dl.BaseServiceRunner):
     
     def test_report_generation(self):
         # Generate report
-        report = self.final_report(item=dl.items.get(item_id="67d055169c69ac70ce174aa1"))
+        report = self.report_writing(item=dl.items.get(item_id="67d055169c69ac70ce174aa1"),
+                                     intro=dl.items.get(item_id="67d055169c69ac70ce174aa1"),
+                                     body=dl.items.get(item_id="67d055169c69ac70ce174aa1"),
+                                     conclusion=dl.items.get(item_id="67d055169c69ac70ce174aa1"))
         return report
     
 if __name__ == "__main__":
