@@ -27,7 +27,7 @@ class Queries(BaseModel):
     queries: List[SearchQuery] = Field(description="List of search queries.",)
 
 class ReportGenerator(dl.BaseServiceRunner):
-    def load(self, local_path: str):
+    def __init__(self):
         if os.environ.get("TAVILY_API_KEY", None) is None:
             raise ValueError(f"Missing Tavily API key.")
         if os.environ.get("NGC_API_KEY", None) is None:
@@ -605,8 +605,7 @@ class ReportGenerator(dl.BaseServiceRunner):
     
     def test_report_generation(self):
         # Generate report
-        self.load(local_path="")
-        report = self.final_report(item=dl.items.get(item_id="67ceba78f89ab3cb0989e022"))
+        report = self.final_report(item=dl.items.get(item_id="67d055169c69ac70ce174aa1"))
         return report
     
 if __name__ == "__main__":

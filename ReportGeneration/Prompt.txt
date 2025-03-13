@@ -1,4 +1,4 @@
-Topic: MyTopic
+Topic: CPU vs GPU
 
 Structure:
 This report type focuses on comparative analysis.
