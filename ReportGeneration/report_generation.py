@@ -202,7 +202,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         )
         
         # Generate queries  
-        results = structured_llm.invoke([
+        results = await structured_llm.ainvoke([
             SystemMessage(content=system_instructions_query),
             HumanMessage(content="Generate search queries that will help with planning the sections of the report.")
         ])
@@ -223,7 +223,7 @@ class ReportGenerator(dl.BaseServiceRunner):
 
         # Generate sections 
         structured_llm = self.llm.with_structured_output(Sections)
-        report_sections = structured_llm.invoke([
+        report_sections = await structured_llm.ainvoke([
             SystemMessage(content=system_instructions_sections),
             HumanMessage(content="Generate the sections of the report. Your response must include a 'sections' field containing a list of sections. Each section must have: name, description, plan, research, and content fields.")
         ])
@@ -313,7 +313,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         )
         
         # Generate queries
-        queries = structured_llm.invoke([
+        queries = await structured_llm.ainvoke([
             SystemMessage(content=system_instructions),
             HumanMessage(content="Generate search queries on the provided topic.")
         ])
@@ -333,7 +333,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         )
         
         # Generate section content
-        section_content = self.llm.invoke([
+        section_content = await self.llm.ainvoke([
             SystemMessage(content=system_instructions),
             HumanMessage(content="Generate a report section based on the provided sources.")
         ])
@@ -400,7 +400,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         )
         
         # Generate section content
-        section_content = self.llm.invoke([
+        section_content = await self.llm.ainvoke([
             SystemMessage(content=system_instructions),
             HumanMessage(content="Generate a report section based on the provided content.")
         ])
