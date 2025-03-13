@@ -82,7 +82,7 @@
           }
         ],
         "description": "NVIDIA blueprint RAG pipeline.",
-        "name": "NVIDIA blueprint RAG pipeline.",
+        "name": "NVIDIA blueprint RAG pipeline",
         "nodes":[
           {
             "id": "64e7bc35-6b01-4970-ae0c-6100ab16684c",
