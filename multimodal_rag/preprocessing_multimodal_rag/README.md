@@ -4,6 +4,8 @@
 
 The "Preprocessing Multimodal PDF RAG" is an NVIDIA blueprint designed to facilitate the preprocessing stage of a multimodal PDF Retrieval-Augmented Generation (RAG) pipeline. This pipeline is capable of handling both text and image data, making it suitable for a variety of applications that require the extraction and processing of information from PDF documents.
 
+For more details, visit the [NVIDIA blueprint page](https://build.nvidia.com/nvidia/multimodal-pdf-data-extraction-for-enterprise-rag/blueprintcard).
+
 ## Features
 
 - **PDF to Text Conversion**: Converts PDF documents into text format for further processing.
@@ -14,11 +16,12 @@ The "Preprocessing Multimodal PDF RAG" is an NVIDIA blueprint designed to facili
 
 ## Components
 
-### 1. Dataset
-- **Type**: Storage
-- **Function**: `clone_item`
-- **Service Name**: pipeline-utils
-- **Description**: Manages dataset storage and retrieval.
+### 1. NIM Models
+- ***yolox-page-elements-v1***
+- ***google-deplot***
+- ***university-at-buffalo-cached***
+- ***baidu-paddleocr***
+- ***nvidia-embedqa-e5v5***
 
 ### 2. PDF to Txt
 - **Type**: Custom
@@ -48,23 +51,13 @@ The "Preprocessing Multimodal PDF RAG" is an NVIDIA blueprint designed to facili
 
 ## Usage
 
-1. **Clone the Repository**: Clone the repository from the following URL:
-   ```
-   git clone https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git
-   ```
+1. **Install the Blueprint**: Install the pipeline from Dataloop Marketplace.
 
-2. **Set Up Environment**: Ensure you have the necessary dependencies installed. You can find them listed in the `dependencies` section of the `dataloop.json` file.
+2. **Run the Pipeline**: Choose your dataset, insert your nim api key to the models services and run the pipeline.
 
-3. **Run the Pipeline**: Follow the instructions in the repository's README to execute the preprocessing pipeline on your multimodal PDF data.
 
-## License
+## Contributions, Bugs and Issues
 
-This project is licensed under the terms of the [applicable license]. Please refer to the LICENSE file for more details.
-
-## Contributing
-
-We welcome contributions! Please see our [contributing guidelines] for more information on how to get involved.
-
-## Support
-
-For any questions or issues, please contact [support contact information]. 
+We welcome anyone to help us improve this app.  
+[Here](CONTRIBUTING.md) are detailed instructions to help you report a bug or submit a feature request.
+ 
