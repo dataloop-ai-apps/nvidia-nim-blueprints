@@ -5,10 +5,10 @@
     "version": "0.0.1",
     "scope": "project",
     "attributes": {
-        "Hub": ["Dataloop"],
-        "Category": ["Applications"],
-        "Application Type": "Pipeline Node",
-        "Provider": "NVIDIA",
+        "Hub": ["Nvidia,", "Dataloop"],
+        "Category": ["Pipeline", "Blueprint"],
+        "Pipeline Type": "GenAI",
+        "Provider": "Dataloop",
         "Developed By": "NVIDIA"
     },
     "components": {
