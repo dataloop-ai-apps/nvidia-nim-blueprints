@@ -32,7 +32,7 @@
       "name": "baidu-paddleocr"
     },
     {
-      "name": "nvidia-embedqa-e5v5"
+      "name": "nv-embedqa-e5v5"
     },
     {
       "name": "pdf_to_txt"
