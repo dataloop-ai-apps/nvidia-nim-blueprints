@@ -5,7 +5,7 @@
     "version": "0.0.1",
     "scope": "project",
     "attributes": {
-        "Hub": ["Nvidia,", "Dataloop"],
+        "Hub": ["Nvidia", "Dataloop"],
         "Category": ["Pipeline", "Blueprint"],
         "Pipeline Type": "GenAI",
         "Provider": "NVIDIA",

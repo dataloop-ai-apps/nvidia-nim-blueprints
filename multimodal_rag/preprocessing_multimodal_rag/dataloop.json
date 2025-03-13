@@ -6,7 +6,7 @@
     "Pipeline Type": "GenAI",
     "Provider": "NVIDIA",
     "Developed By": "Dataloop",
-    "Hub": ["Nvidia,", "Dataloop"],
+    "Hub": ["Nvidia", "Dataloop"],
     "Media Type": [
       "Text",
       "Image"
