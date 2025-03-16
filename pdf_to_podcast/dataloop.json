@@ -110,18 +110,6 @@
                     {
                         "name": "item",
                         "type": "Item"
-                    },
-                    {
-                        "name": "intro",
-                        "type": "Item"
-                    },
-                    {
-                        "name": "body",
-                        "type": "Item"
-                    },
-                    {
-                        "name": "conclusion",
-                        "type": "Item"
                     }
                 ],
                 "displayName": "Monologue Generate Monologue"
@@ -148,18 +136,6 @@
                     {
                         "name": "item",
                         "type": "Item"
-                    },
-                    {
-                        "name": "guide",
-                        "type": "String"
-                    },
-                    {
-                        "name": "duration",
-                        "type": "Integer"
-                    },
-                    {
-                        "name": "summary",
-                        "type": "String"
                     }
                 ],
                 "output": [
