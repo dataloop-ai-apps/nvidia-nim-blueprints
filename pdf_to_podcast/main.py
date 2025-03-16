@@ -103,6 +103,7 @@ class TTSConverter:
 
 
 class ServiceRunner(dl.BaseServiceRunner):
+    @staticmethod
     def prepare_and_summarize_pdf(
         item: dl.Item, monologue: bool, progress: dl.Progress, context: dl.Context, guide: str = None
     ):
@@ -173,8 +174,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         logger.info(f"Successfully uploaded audio file: {mp3_item.id}")
         return mp3_item
 
-
-class MonologueService(dl.BaseServiceRunner):
+    @staticmethod
     def monologue_generate_outline(item: dl.Item, progress: dl.Progress, context: dl.Context):
         """
         Generate an outline from the pdf text summary
@@ -225,6 +225,7 @@ class MonologueService(dl.BaseServiceRunner):
 
         return prompt_item
 
+    @staticmethod
     def monologue_generate_monologue(
         item: dl.Item, progress: dl.Progress, context: dl.Context, prompt_guide: str = None
     ):
@@ -280,6 +281,7 @@ class MonologueService(dl.BaseServiceRunner):
         prompt_item.prompts.append(prompt)
         return prompt_item
 
+    @staticmethod
     def monologue_create_convo_json(item: dl.Item, progress: dl.Progress, context: dl.Context):
         """
         Create a final conversation from the monologue in JSON format
@@ -314,8 +316,7 @@ class MonologueService(dl.BaseServiceRunner):
 
         return prompt_item
 
-
-class DialogueFlow(dl.BaseServiceRunner):
+    @staticmethod
     def podcast_generate_raw_outline(item: dl.Item, progress: dl.Progress, context: dl.Context):
         """
         Generate initial raw outline from summarized PDFs.
@@ -355,6 +356,7 @@ class DialogueFlow(dl.BaseServiceRunner):
 
         return prompt_item
 
+    @staticmethod
     def podcast_generate_structured_outline(
         item: dl.Item, progress: dl.Progress, context: dl.Context, prompt_guide: str = None
     ):

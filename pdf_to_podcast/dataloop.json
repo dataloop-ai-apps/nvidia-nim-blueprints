@@ -1,6 +1,6 @@
 {
-    "name": "podcast-generation",
-    "displayName": "Podcast Generation", 
+    "name": "pdf-to-podcast",
+    "displayName": "PDF to Podcast", 
     "description": "Generate a podcast based on a given PDF.",
     "version": "0.0.3",
     "scope": "project",
@@ -31,10 +31,11 @@
         {
           "name": "pdf2podcast-module",
           "computeConfig": "pdf2podcast-compute-config",
-          "entryPoint": "services/main.py",
+          "entryPoint": "pdf_to_podcast/main.py",
           "className": "ServiceRunner",
           "integrations": [
-            "dl-ngc-api-key"
+            "dl-ngc-api-key",
+            "dl-elevenlabs-api-key"
           ],
           "functions": [
             {
