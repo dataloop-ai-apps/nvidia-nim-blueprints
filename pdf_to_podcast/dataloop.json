@@ -57,7 +57,11 @@
               "output": [
                 {
                   "name": "item",
-                  "type": "Item"
+                  "type": "Item",
+                  "actions": [
+                    "monologue",
+                    "dialogue"
+                  ]  
                 }
               ],
               "displayName": "Prepare and Summarize PDF"
