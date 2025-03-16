@@ -148,7 +148,7 @@
                         "type": "Item"
                     }
                 ],
-                "displayName": "Podcast Generate Raw Outline"
+                "displayName": "Dialogue Generate Raw Outline"
             },
             {
                 "name": "podcast_generate_structured_outline",
@@ -164,7 +164,7 @@
                         "type": "Item"
                     }
                 ],
-                "displayName": "Podcast Generate Structured Outline"
+                "displayName": "Dialogue Generate Structured Outline"
             },
             {
                 "name": "podcast_process_segments",
@@ -180,7 +180,7 @@
                         "type": "Item"
                     }
                 ],
-                "displayName": "Podcast Process Segments"
+                "displayName": "Dialogue Process Segments"
             },
             {
                 "name": "podcast_generate_dialogue_segment",
@@ -196,7 +196,7 @@
                         "type": "Item"
                     }
                 ],
-                "displayName": "Podcast Generate Dialogue Segment"
+                "displayName": "Dialogue Generate Dialogue Segment"
             },
             {
                 "name": "podcast_generate_dialogue",
@@ -212,7 +212,7 @@
                         "type": "Item"
                     }
                 ],
-                "displayName": "Podcast Generate Dialogue"
+                "displayName": "Dialogue Generate Dialogue"
             },
             {
                 "name": "podcast_combine_dialogues",
@@ -228,7 +228,7 @@
                         "type": "Item"
                     }
                 ],
-                "displayName": "Podcast Combine Dialogues"
+                "displayName": "Dialogue Combine Dialogues"
             },
             {
                 "name": "podcast_create_convo_json",
@@ -244,7 +244,7 @@
                         "type": "Item"
                     }
                 ],
-                "displayName": "Podcast Create Convo JSON"
+                "displayName": "Dialogue Create Convo JSON"
             },
             {
                 "name": "podcast_create_final_conversation",
@@ -260,7 +260,7 @@
                         "type": "Item"
                     }
                 ],
-                "displayName": "Podcast Create Final Conversation"
+                "displayName": "Dialogue Create Final Conversation"
             }
           ] 
         }
