@@ -1,18 +1,19 @@
+import os
 import json
+import dotenv
 import logging
 import dtlpy as dl
-import os
-from elevenlabs.client import ElevenLabs
+
 from pydantic import BaseModel
 from typing import Dict, Any, List, Coroutine, Optional
 from concurrent.futures import ThreadPoolExecutor
-from dotenv import load_dotenv
+from elevenlabs.client import ElevenLabs
 
 from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
 from pdf_to_podcast.podcast_prompts import PodcastPrompts, PodcastOutline
 
 # Load environment variables from .env file
-load_dotenv()
+dotenv.load_dotenv()
 
 # Configure logging
 logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
@@ -21,6 +22,8 @@ logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
 DEFAULT_VOICE_1 = os.getenv("DEFAULT_VOICE_1", "EXAVITQu4vr4xnSDxMaL")
 DEFAULT_VOICE_2 = os.getenv("DEFAULT_VOICE_2", "bIHbv24MWmeRgasZH58o")
 DEFAULT_VOICE_MAPPING = {"speaker-1": DEFAULT_VOICE_1, "speaker-2": DEFAULT_VOICE_2}
+DEFAULT_SPEAKER_1_NAME = os.getenv("DEFAULT_SPEAKER_1_NAME", "Kate")
+DEFAULT_SPEAKER_2_NAME = os.getenv("DEFAULT_SPEAKER_2_NAME", "Bob")
 
 
 class DialogueEntry(BaseModel):
@@ -222,7 +225,7 @@ class ServiceRunner(dl.BaseServiceRunner):
 
         template = FinancialSummaryPrompts.get_template("monologue_multi_doc_synthesis_prompt")
         llm_prompt = template.render(
-            focus_instructions=focus if focus_instructions is not None else None, documents="\n\n".join(documents)
+            focus_instructions=focus if focus is not None else None, documents="\n\n".join(documents)
         )
 
         prompt = dl.Prompt(key="2")  # "2_summary_to_outline")
@@ -411,9 +414,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         return prompt_item
 
     @staticmethod
-    def _podcast_process_segment(
-        item: dl.Item, segment: Any, idx: int, request: TranscriptionRequest
-    ) -> tuple[str, str]:
+    def _dialogue_process_segment(item: dl.Item, segment: Any, idx: int) -> tuple[str, str]:
         """
         Process a single outline segment to generate initial content.
 
@@ -499,11 +500,9 @@ class ServiceRunner(dl.BaseServiceRunner):
         # Create tasks for processing each segment
         segment_tasks: List[Coroutine] = []
         for idx, segment in enumerate(outline.segments):
-            job_manager.update_status(
-                job_id, JobStatus.PROCESSING, f"Processing segment {idx + 1}/{len(outline.segments)}: {segment.section}"
-            )
+            logger.info(f"Processing segment {idx + 1}/{len(outline.segments)}: {segment.section}")
 
-            task = podcast_process_segment(segment, idx, request, llm_manager, prompt_tracker)
+            task = ServiceRunner._dialogue_process_segment(item, segment, idx)
             segment_tasks.append(task)
 
         # Process all segments in parallel
@@ -511,7 +510,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         with ThreadPoolExecutor() as executor:
             futures = {}
             for idx, segment in enumerate(outline.segments):
-                task = DialogueFlow._podcast_process_segment(item, segment, idx, request)
+                task = ServiceRunner._podcast_process_segment(item, segment, idx)
                 futures[idx] = executor.submit(task)
 
             for idx, future in futures.items():
@@ -622,7 +621,7 @@ class ServiceRunner(dl.BaseServiceRunner):
                 # Update status
                 logger.info(f"Converting segment {idx + 1}/{len(outline.segments)} to dialogue")
 
-                future = executor.submit(DialogueFlow.podcast_generate_dialogue_segment, segment, idx, segment_text)
+                future = executor.submit(ServiceRunner.dialogue_generate_dialogue_segment, segment, idx, segment_text)
                 futures[idx] = future
 
             # Process all dialogues in parallel and preserve order
@@ -705,7 +704,24 @@ class ServiceRunner(dl.BaseServiceRunner):
         speaker_1_name = podcast_metadata.get("speaker_1_name", DEFAULT_SPEAKER_1_NAME)
         speaker_2_name = podcast_metadata.get("speaker_2_name", DEFAULT_SPEAKER_2_NAME)
 
-        schema = Conversation.model_json_schema()
+        schema = {
+            "type": "object",
+            "properties": {
+                "scratchpad": {"type": "string"},
+                "dialogue": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "text": {"type": "string"},
+                            "speaker": {"type": "string", "enum": ["speaker-1", "speaker-2"]},
+                        },
+                        "required": ["text", "speaker"],
+                    },
+                },
+            },
+            "required": ["scratchpad", "dialogue"],
+        }
         template = PodcastPrompts.get_template("podcast_dialogue_prompt")
         llm_prompt = template.render(
             speaker_1_name=speaker_1_name,
@@ -720,6 +736,7 @@ class ServiceRunner(dl.BaseServiceRunner):
             prompt_key='1',
         )
 
+        new_name = f"{item.filename}_prompt_convo_json"
         new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
 
         return new_item
@@ -734,17 +751,16 @@ class ServiceRunner(dl.BaseServiceRunner):
         filters.add(field='metadata.system.mimetype', values='*json*')
         items = dir_item.dataset.items.list(filters=filters).all()
 
+        # TODO fix
+        conversation_json = items[0].metadata.get("user", {}).get("podcast", {}).get("conversation", None)
+
         # Ensure all strings are unescaped
         if "dialogues" in conversation_json:
             for entry in conversation_json["dialogues"]:
                 if "text" in entry:
-                    entry["text"] = unescape_unicode_string(entry["text"])
+                    entry["text"] = ServiceRunner._unescape_unicode_string(entry["text"])
 
-        prompt_tracker.track(
-            "create_final_conversation", prompt, llm_manager.model_configs["json"].name, json.dumps(conversation_json)
-        )
-
-        return podcast_create_convo_json(item, dialogue)
+        return ServiceRunner.dialogue_create_convo_json(item, dialogue)
 
     @staticmethod
     def _unescape_unicode_string(s: str) -> str:
