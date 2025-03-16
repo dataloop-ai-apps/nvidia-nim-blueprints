@@ -50,7 +50,7 @@
                   "type": "Boolean"
                 },
                 {
-                  "name": "guide",
+                  "name": "focus",
                   "type": "String"
                 }
               ],
@@ -80,7 +80,7 @@
                   "type": "Item"
                 }
               ],
-              "displayName": "Generate Audio"
+              "displayName": "ElevenLabs Generate Audio"
             },
             {
                 "name": "monologue_generate_outline",
@@ -308,73 +308,73 @@
           "scope": "project"
         },
         {
-          "name": "podcast-generate-raw-outline",
+          "name": "dialogue-generate-raw-outline",
           "invoke": {
             "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.podcast_generate_raw_outline"
+            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_raw_outline"
           },
           "categories": ["Podcast Generation"],
           "scope": "project"
         },
         {
-          "name": "podcast-generate-structured-outline",
+          "name": "dialogue-generate-structured-outline",
           "invoke": {
             "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.podcast_generate_structured_outline"
+            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_structured_outline"
           },
           "categories": ["Podcast Generation"],
           "scope": "project"
         },
         {
-          "name": "podcast-process-segments",
+          "name": "dialogue-process-segments",
           "invoke": {
             "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.podcast_process_segments"
+            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_process_segments"
           },
           "categories": ["Podcast Generation"],
           "scope": "project"
         },
         {
-          "name": "podcast-generate-dialogue-segment",
+          "name": "dialogue-generate-dialogue-segment",
           "invoke": {
             "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.podcast_generate_dialogue_segment"
+            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_dialogue_segment"
           },
           "categories": ["Podcast Generation"],
           "scope": "project"
         },
         {
-          "name": "podcast-generate-dialogue",
+          "name": "dialogue-generate-dialogue",
           "invoke": {
             "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.podcast_generate_dialogue"
+            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_dialogue"
           },
           "categories": ["Podcast Generation"],
           "scope": "project"
         },
         {
-          "name": "podcast-combine-dialogues",
+          "name": "dialogue-combine-dialogues",
           "invoke": {
             "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.podcast_combine_dialogues"
+            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_combine_dialogues"
           },
           "categories": ["Podcast Generation"],
           "scope": "project"
         },
         {
-          "name": "podcast-create-convo-json",
+          "name": "dialogue-create-convo-json",
           "invoke": {
             "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.podcast_create_convo_json"
+            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_create_convo_json"
           },
           "categories": ["Podcast Generation"],
           "scope": "project"
         },
         {
-          "name": "podcast-create-final-conversation",
+          "name": "dialogue-create-final-conversation",
           "invoke": {
             "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.podcast_create_final_conversation"
+            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_create_final_conversation"
           },
           "categories": ["Podcast Generation"],
           "scope": "project"

@@ -105,7 +105,7 @@ class TTSConverter:
 class ServiceRunner(dl.BaseServiceRunner):
     @staticmethod
     def prepare_and_summarize_pdf(
-        item: dl.Item, monologue: bool, progress: dl.Progress, context: dl.Context, guide: str = None
+        item: dl.Item, monologue: bool, progress: dl.Progress, context: dl.Context, focus: str = None
     ):
         item_metadata = item.metadata
         summary = item_metadata.get("user", {}).get("summary", None)
@@ -124,6 +124,13 @@ class ServiceRunner(dl.BaseServiceRunner):
 
         new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
         logger.info(f"Successfully created and uploaded summary prompt item for {item.filename} ID {item.id}")
+
+        actions = ['monologue', 'dialogue']
+        if monologue is True:
+            progress.update(action=actions[0])
+        else:
+            progress.update(action=actions[1])
+
         return new_item
 
     @staticmethod
@@ -201,7 +208,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         prompt_item = dl.PromptItem.from_json(item)
 
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
-        guide = podcast_metadata.get("guide", None)
+        focus = podcast_metadata.get("focus", None)
 
         messages = prompt_item.to_messages()
         last_message = messages[-1]
@@ -215,7 +222,7 @@ class ServiceRunner(dl.BaseServiceRunner):
 
         template = FinancialSummaryPrompts.get_template("monologue_multi_doc_synthesis_prompt")
         llm_prompt = template.render(
-            focus_instructions=guide if guide is not None else None, documents="\n\n".join(documents)
+            focus_instructions=focus if focus_instructions is not None else None, documents="\n\n".join(documents)
         )
 
         prompt = dl.Prompt(key="2")  # "2_summary_to_outline")
@@ -227,7 +234,7 @@ class ServiceRunner(dl.BaseServiceRunner):
 
     @staticmethod
     def monologue_generate_monologue(
-        item: dl.Item, progress: dl.Progress, context: dl.Context, prompt_guide: str = None
+        item: dl.Item, progress: dl.Progress, context: dl.Context, prompt_focus: str = None
     ):
         """
         Generate a monologue from the outline
@@ -245,7 +252,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         prompt_item = dl.PromptItem.from_json(item)
 
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
-        guide = podcast_metadata.get("guide", None)
+        focus = podcast_metadata.get("focus", None)
         speaker_1_name = podcast_metadata.get("speaker_1_name", None)
 
         # get the outline from the last prompt
@@ -270,7 +277,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         llm_prompt = template.render(
             raw_outline=outline,
             documents=documents,
-            focus=guide if guide else "key financial metrics and performance indicators",
+            focus=focus if focus else "key financial metrics and performance indicators",
             speaker_1_name=speaker_1_name,
         )
 
@@ -317,7 +324,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         return prompt_item
 
     @staticmethod
-    def podcast_generate_raw_outline(item: dl.Item, progress: dl.Progress, context: dl.Context):
+    def dialogue_generate_raw_outline(item: dl.Item, progress: dl.Progress, context: dl.Context):
         """
         Generate initial raw outline from summarized PDFs.
         """
@@ -336,7 +343,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         prompt_item = dl.PromptItem.from_json(item)
 
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
-        guide = podcast_metadata.get("guide", None)
+        focus = podcast_metadata.get("focus", None)
         duration = podcast_metadata.get("duration", 10)
         summary = podcast_metadata.get("summary", None)
 
@@ -345,7 +352,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         template = PodcastPrompts.get_template("podcast_multi_pdf_outline_prompt")
         llm_prompt = template.render(
             total_duration=duration,
-            focus_instructions=guide if guide is not None else None,
+            focus_instructions=focus if focus is not None else None,
             documents="\n\n".join(documents),
         )
 
@@ -357,9 +364,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         return prompt_item
 
     @staticmethod
-    def podcast_generate_structured_outline(
-        item: dl.Item, progress: dl.Progress, context: dl.Context, prompt_guide: str = None
-    ):
+    def dialogue_generate_structured_outline(item: dl.Item, progress: dl.Progress, context: dl.Context):
         """
         Convert raw outline text to structured PodcastOutline format.
 
@@ -367,7 +372,7 @@ class ServiceRunner(dl.BaseServiceRunner):
             item (dl.Item): Dataloop item containing the raw outline
             progress (dl.Progress): Dataloop progress object
             context (dl.Context): Dataloop context object
-            prompt_guide (str): Guide for the prompt
+            prompt_focus (str): Focus instructions guide for the prompt
 
         Returns:
             PodcastOutline: Structured outline following the PodcastOutline schema
@@ -429,7 +434,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         prompt_item = dl.PromptItem.from_json(item)
         item_metadata = item.metadata
         podcast_metadata = item_metadata.get("user", {}).get("podcast", None)
-        guide = podcast_metadata.get("guide", None)
+        focus = podcast_metadata.get("focus", None)
         duration = podcast_metadata.get("duration", 10)
         summary = podcast_metadata.get("summary", None)
 
@@ -470,7 +475,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         return prompt_item
 
     @staticmethod
-    def podcast_process_segments(
+    def dialogue_process_segments(
         item: dl.Item, outline: PodcastOutline, progress: dl.Progress, context: dl.Context
     ) -> Dict[str, str]:
         """
@@ -516,7 +521,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         return dict(results)
 
     @staticmethod
-    def podcast_generate_dialogue_segment(segment: Any, idx: int, segment_text: str) -> Dict[str, str]:
+    def dialogue_generate_dialogue_segment(segment: Any, idx: int, segment_text: str) -> Dict[str, str]:
         """
         Generate dialogue for a single segment.
 
@@ -577,7 +582,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         return new_item
 
     @staticmethod
-    def podcast_generate_dialogue(segments: Dict[str, str], outline: PodcastOutline) -> List[Dict[str, str]]:
+    def dialogue_generate_dialogue(segments: Dict[str, str], outline: PodcastOutline) -> List[Dict[str, str]]:
         """
         Generate dialogue for all segments in parallel.
 
@@ -629,7 +634,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         return dialogue_segments
 
     @staticmethod
-    def podcast_combine_dialogues(segment_dialogues: List[Dict[str, str]], outline: PodcastOutline) -> str:
+    def dialogue_combine_dialogues(segment_dialogues: List[Dict[str, str]], outline: PodcastOutline) -> str:
         """
         Iteratively combine dialogue segments into a cohesive conversation.
 
@@ -678,7 +683,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         return current_dialogue
 
     @staticmethod
-    def podcast_create_convo_json(item: dl.Item, dialogue: str) -> dl.Item:
+    def dialogue_create_convo_json(item: dl.Item, dialogue: str) -> dl.Item:
         """
         Convert the dialogue into structured Conversation format.
 
@@ -720,7 +725,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         return new_item
 
     @staticmethod
-    def podcast_create_final_conversation(dir_item: dl.Item, dialogue: str) -> dl.Item:
+    def dialogue_create_final_conversation(dir_item: dl.Item, dialogue: str) -> dl.Item:
         """
         Create a final conversation from the dialogue.
         """
