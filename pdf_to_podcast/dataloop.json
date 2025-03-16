@@ -47,11 +47,11 @@
                 },
                 {
                   "name": "monologue",
-                  "type": "boolean"
+                  "type": "Boolean"
                 },
                 {
                   "name": "guide",
-                  "type": "string"
+                  "type": "String"
                 }
               ],
               "output": [
@@ -71,7 +71,7 @@
                 },
                 {
                   "name": "voice_mapping",
-                  "type": "dict"
+                  "type": "String"
                 }
               ],
               "output": [
@@ -151,15 +151,15 @@
                     },
                     {
                         "name": "guide",
-                        "type": "string"
+                        "type": "String"
                     },
                     {
                         "name": "duration",
-                        "type": "number"
+                        "type": "Integer"
                     },
                     {
                         "name": "summary",
-                        "type": "string"
+                        "type": "String"
                     }
                 ],
                 "output": [
