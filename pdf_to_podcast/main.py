@@ -1,10 +1,105 @@
+import json
 import logging
 import dtlpy as dl
+import os
+from elevenlabs.client import ElevenLabs
+from pydantic import BaseModel
+from typing import Dict, Any, List, Coroutine, Optional
+from concurrent.futures import ThreadPoolExecutor
+from dotenv import load_dotenv
 
 from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
-from pdf_to_podcast.podcast_prompts import PodcastPrompts
+from pdf_to_podcast.podcast_prompts import PodcastPrompts, PodcastOutline
 
+# Load environment variables from .env file
+load_dotenv()
+
+# Configure logging
 logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
+
+# Default voices configuration
+DEFAULT_VOICE_1 = os.getenv("DEFAULT_VOICE_1", "EXAVITQu4vr4xnSDxMaL")
+DEFAULT_VOICE_2 = os.getenv("DEFAULT_VOICE_2", "bIHbv24MWmeRgasZH58o")
+DEFAULT_VOICE_MAPPING = {"speaker-1": DEFAULT_VOICE_1, "speaker-2": DEFAULT_VOICE_2}
+
+
+class DialogueEntry(BaseModel):
+    text: str
+    speaker: Optional[str] = "speaker-1"
+    voice_id: Optional[str] = None
+
+
+class TTSConverter:
+    def __init__(self, api_key: str = None):
+        """Initialize the TTS converter with ElevenLabs API key"""
+        self.api_key = api_key or os.getenv("ELEVENLABS_API_KEY")
+        if not self.api_key:
+            raise ValueError("ElevenLabs API key is required")
+
+        self.client = ElevenLabs(api_key=self.api_key)
+
+    def _convert_text(self, text: str, voice_id: str) -> bytes:
+        """Convert a single piece of text to speech"""
+        try:
+            audio_stream = self.client.text_to_speech.convert(
+                text=text,
+                voice_id=voice_id,
+                model_id="eleven_monolingual_v1",
+                output_format="mp3_44100_128",
+                voice_settings={"stability": 0.5, "similarity_boost": 0.75},
+            )
+            return b"".join(chunk for chunk in audio_stream)
+        except Exception as e:
+            logger.error(f"Error converting text to speech: {e}")
+            raise
+
+    def process_file(self, input_file: str, output_file: str, voice_mapping: dict = None):
+        """Process a JSON file containing dialogue or monologue"""
+        # Use default voice mapping if none provided
+        voice_mapping = voice_mapping or DEFAULT_VOICE_MAPPING
+
+        try:
+            # Read and parse the input JSON file
+            with open(os.path.join(os.path.dirname(__file__), input_file), 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            # Extract dialogue entries
+            dialogue = data.get('dialogue', [])
+            if not dialogue:
+                # If no dialogue found, treat as monologue
+                dialogue = [{"text": data.get("text", ""), "speaker": "speaker-1"}]
+
+            # Convert all entries to audio and combine
+            combined_audio = b""
+            total_entries = len(dialogue)
+
+            for i, entry in enumerate(dialogue, 1):
+                # Create DialogueEntry instance for validation
+                entry_model = DialogueEntry(**entry)
+
+                # Determine which voice to use
+                voice_id = (
+                    entry_model.voice_id
+                    if entry_model.voice_id
+                    else voice_mapping.get(entry_model.speaker, DEFAULT_VOICE_1)
+                )
+
+                logger.info(f"Processing entry {i}/{total_entries}")
+                audio_chunk = self._convert_text(entry_model.text, voice_id)
+                combined_audio += audio_chunk
+
+            # Create output directory if it doesn't exist
+            os.makedirs(os.path.dirname(output_file), exist_ok=True)
+
+            # Save the combined audio to file
+            with open(output_file, 'wb') as f:
+                f.write(combined_audio)
+
+            logger.info(f"Successfully created audio file: {output_file}")
+
+        except Exception as e:
+            logger.error(f"Error processing file: {e}")
+            raise
 
 
 class ServiceRunner(dl.BaseServiceRunner):
@@ -29,6 +124,54 @@ class ServiceRunner(dl.BaseServiceRunner):
         new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
         logger.info(f"Successfully created and uploaded summary prompt item for {item.filename} ID {item.id}")
         return new_item
+
+    @staticmethod
+    def generate_audio(item: dl.Item, voice_mapping: dict = None):
+        """
+        Generate audio from the conversation JSON file
+
+        Args:
+            item (dl.Item): Dataloop item containing the conversation JSON
+            output_file (str): Output MP3 file path (defaults to output/output.mp3)
+            voice_mapping (dict): Optional mapping of speakers to voice IDs
+
+        Returns:
+            str: Path to the generated audio file
+        """
+        if output_file is None:
+            # Create output directory if it doesn't exist
+            os.makedirs("output", exist_ok=True)
+            output_file = os.path.join("output", "output.mp3")
+
+        api_key = os.getenv("ELEVENLABS_API_KEY")
+        if not api_key:
+            raise ValueError("ELEVENLABS_API_KEY environment variable is required")
+
+        converter = TTSConverter(api_key=api_key)
+
+        # Download and process the conversation JSON
+        buffer = item.download(save_locally=True)
+        try:
+            conversation_json = json.loads(buffer.read().decode('utf-8'))
+
+            # Create a temporary JSON file for the converter
+            temp_file = os.path.join(os.path.dirname(__file__), "temp_conversation.json")
+            with open(temp_file, 'w', encoding='utf-8') as f:
+                json.dump(conversation_json, f)
+
+            # Process the file and generate audio
+            converter.process_file(temp_file, output_file, voice_mapping)
+
+            # Clean up temporary file
+            os.remove(temp_file)
+
+        except Exception as e:
+            logger.error(f"Error processing conversation JSON: {e}")
+            raise
+
+        mp3_item = item.dataset.items.upload(output_file, remote_name=output_file, remote_path=item.dir, overwrite=True)
+        logger.info(f"Successfully uploaded audio file: {mp3_item.id}")
+        return mp3_item
 
 
 class MonologueService(dl.BaseServiceRunner):
@@ -189,40 +332,40 @@ class DialogueFlow(dl.BaseServiceRunner):
         #     </summary>
         #     </document>"""
         #     documents.append(doc_str)
-
         prompt_item = dl.PromptItem.from_json(item)
 
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
         guide = podcast_metadata.get("guide", None)
-        duration = podcast_metadata.get("duration", "10 minutes")
+        duration = podcast_metadata.get("duration", 10)
+        summary = podcast_metadata.get("summary", None)
+
+        documents = [f"Document: {item.filename}\n{summary}"]
 
         template = PodcastPrompts.get_template("podcast_multi_pdf_outline_prompt")
-        prompt = template.render(
-            total_duration=podcast_duration,
-            focus_instructions=request.guide if request.guide else None,
+        llm_prompt = template.render(
+            total_duration=duration,
+            focus_instructions=guide if guide is not None else None,
             documents="\n\n".join(documents),
         )
 
-    async def podcast_generate_structured_outline(
-        raw_outline: str,
-        request: TranscriptionRequest,
-        llm_manager: LLMManager,
-        prompt_tracker: PromptTracker,
-        job_id: str,
-        job_manager: JobStatusManager,
-        logger: logging.Logger,
-    ) -> PodcastOutline:
+        prompt = dl.Prompt(key="1")  # "1_raw_outline")
+        prompt.add_element(mimetype=dl.PromptType.TEXT, value=llm_prompt)
+
+        prompt_item.prompts.append(prompt)
+
+        return prompt_item
+
+    def podcast_generate_structured_outline(
+        item: dl.Item, progress: dl.Progress, context: dl.Context, prompt_guide: str = None
+    ):
         """
         Convert raw outline text to structured PodcastOutline format.
 
         Args:
-            raw_outline (str): Raw outline text to structure
-            request (TranscriptionRequest): Original transcription request
-            llm_manager (LLMManager): Manager for LLM interactions
-            prompt_tracker (PromptTracker): Tracks prompts and responses
-            job_id (str): ID for tracking job progress
-            job_manager (JobStatusManager): Manages job status updates
-            logger (logging.Logger): Logger for tracking progress
+            item (dl.Item): Dataloop item containing the raw outline
+            progress (dl.Progress): Dataloop progress object
+            context (dl.Context): Dataloop context object
+            prompt_guide (str): Guide for the prompt
 
         Returns:
             PodcastOutline: Structured outline following the PodcastOutline schema
@@ -230,10 +373,18 @@ class DialogueFlow(dl.BaseServiceRunner):
         Uses JSON schema validation to ensure the outline follows the required structure
         and only references valid PDF filenames.
         """
-        job_manager.update_status(job_id, JobStatus.PROCESSING, "Converting raw outline to structured format")
+        logging.info("Converting raw outline to structured format")
+
+        prompt_item = dl.PromptItem.from_json(item)
+        messages = prompt_item.to_messages()
+        last_message = messages[-1]
+        raw_outline = last_message.get("content", [])[0].get("text", None)
+        if raw_outline is None:
+            raise ValueError("No raw outline found in the prompt item.")
 
         # Force the model to only reference valid filenames
-        valid_filenames = [pdf.filename for pdf in request.pdf_metadata]
+        # valid_filenames = [pdf.filename for pdf in request.pdf_metadata]
+        valid_filenames = [item.filename]
         schema = PodcastOutline.model_json_schema()
         schema["$defs"]["PodcastSegment"]["properties"]["references"]["items"] = {
             "type": "string",
@@ -242,19 +393,19 @@ class DialogueFlow(dl.BaseServiceRunner):
 
         schema = PodcastOutline.model_json_schema()
         template = PodcastPrompts.get_template("podcast_multi_pdf_structured_outline_prompt")
-        prompt = template.render(
-            outline=raw_outline,
-            schema=json.dumps(schema, indent=2),
-            valid_filenames=[pdf.filename for pdf in request.pdf_metadata],
+        llm_prompt = template.render(
+            outline=raw_outline, schema=json.dumps(schema, indent=2), valid_filenames=valid_filenames
         )
-        outline: Dict = await llm_manager.query_async(
-            "json", [{"role": "user", "content": prompt}], "outline", json_schema=schema
-        )
-        prompt_tracker.track("outline", prompt, llm_manager.model_configs["json"].name, json.dumps(outline))
-        return PodcastOutline.model_validate(outline)
 
-    async def podcast_process_segment(
-        segment: Any, idx: int, request: TranscriptionRequest, llm_manager: LLMManager, prompt_tracker: PromptTracker
+        prompt = dl.Prompt(key="2")  # "2_structured_outline")
+        prompt.add_element(mimetype=dl.PromptType.TEXT, value=llm_prompt)
+        prompt_item.prompts.append(prompt)
+
+        return prompt_item
+
+    @staticmethod
+    def _podcast_process_segment(
+        item: dl.Item, segment: Any, idx: int, request: TranscriptionRequest
     ) -> tuple[str, str]:
         """
         Process a single outline segment to generate initial content.
@@ -272,21 +423,33 @@ class DialogueFlow(dl.BaseServiceRunner):
         Generates initial content for a segment, incorporating referenced PDF content
         if available. Uses different templates based on whether references exist.
         """
-        # Get reference content if it exists
-        text_content = []
-        if segment.references:
-            for ref in segment.references:
-                # Find matching PDF metadata by filename
-                pdf = next((pdf for pdf in request.pdf_metadata if pdf.filename == ref), None)
-                if pdf:
-                    text_content.append(pdf.markdown)
+
+        prompt_item = dl.PromptItem.from_json(item)
+        item_metadata = item.metadata
+        podcast_metadata = item_metadata.get("user", {}).get("podcast", None)
+        guide = podcast_metadata.get("guide", None)
+        duration = podcast_metadata.get("duration", 10)
+        summary = podcast_metadata.get("summary", None)
+
+        pdf_text = prompt_item.prompts[0].elements[0].value
+        text_content = [f"Document: {item.filename}\n{pdf_text}"]
+
+        # TODO add support for context pdfs
+        # # Get reference content if it exists
+        # text_content = []
+        # if segment.references:
+        #     for ref in segment.references:
+        #         # Find matching PDF metadata by filename
+        #         pdf = next((pdf for pdf in request.pdf_metadata if pdf.filename == ref), None)
+        #         if pdf:
+        #             text_content.append(pdf.markdown)
 
         # Choose template based on whether we have references
         template_name = "podcast_prompt_with_references" if text_content else "podcast_prompt_no_references"
         template = PodcastPrompts.get_template(template_name)
 
         # Prepare prompt parameters
-        prompt_params = {
+        llm_prompt_params = {
             "duration": segment.duration,
             "topic": segment.section,
             "angles": "\n".join([topic.title for topic in segment.topics]),
@@ -294,28 +457,19 @@ class DialogueFlow(dl.BaseServiceRunner):
 
         # Add text content if we have references
         if text_content:
-            prompt_params["text"] = "\n\n".join(text_content)
+            llm_prompt_params["text"] = "\n\n".join(text_content)
 
-        prompt = template.render(**prompt_params)
+        llm_prompt = template.render(**llm_prompt_params)
 
-        response: AIMessage = await llm_manager.query_async(
-            "iteration", [{"role": "user", "content": prompt}], f"segment_{idx}"
-        )
+        prompt = dl.Prompt(key="3")  # "3_segment_prompt")
+        prompt.add_element(mimetype=dl.PromptType.TEXT, value=llm_prompt)
+        prompt_item.prompts.append(prompt)
 
-        prompt_tracker.track(
-            f"segment_transcript_{idx}", prompt, llm_manager.model_configs["iteration"].name, response.content
-        )
+        return prompt_item
 
-        return f"segment_transcript_{idx}", response.content
-
-    async def podcast_process_segments(
-        outline: PodcastOutline,
-        request: TranscriptionRequest,
-        llm_manager: LLMManager,
-        prompt_tracker: PromptTracker,
-        job_id: str,
-        job_manager: JobStatusManager,
-        logger: logging.Logger,
+    @staticmethod
+    def podcast_process_segments(
+        item: dl.Item, outline: PodcastOutline, progress: dl.Progress, context: dl.Context
     ) -> Dict[str, str]:
         """
         Process all outline segments in parallel to generate initial content.
@@ -346,19 +500,21 @@ class DialogueFlow(dl.BaseServiceRunner):
             segment_tasks.append(task)
 
         # Process all segments in parallel
-        results = await asyncio.gather(*segment_tasks)
+        results = []
+        with ThreadPoolExecutor() as executor:
+            futures = {}
+            for idx, segment in enumerate(outline.segments):
+                task = DialogueFlow._podcast_process_segment(item, segment, idx, request)
+                futures[idx] = executor.submit(task)
+
+            for idx, future in futures.items():
+                results.append(future.result())
 
         # Convert results to dictionary
         return dict(results)
 
-    async def podcast_generate_dialogue_segment(
-        segment: Any,
-        idx: int,
-        segment_text: str,
-        request: TranscriptionRequest,
-        llm_manager: LLMManager,
-        prompt_tracker: PromptTracker,
-    ) -> Dict[str, str]:
+    @staticmethod
+    def podcast_generate_dialogue_segment(segment: Any, idx: int, segment_text: str) -> Dict[str, str]:
         """
         Generate dialogue for a single segment.
 
@@ -377,6 +533,21 @@ class DialogueFlow(dl.BaseServiceRunner):
         format between two speakers.
         """
         # Format topics for prompt
+        item_metadata = item.metadata
+        podcast_metadata = item_metadata.get("user", {}).get("podcast", None)
+        speaker_1_name = podcast_metadata.get("speaker_1_name", "Alice")
+        speaker_2_name = podcast_metadata.get("speaker_2_name", "Will")
+
+        prompt_item = dl.PromptItem.from_json(item)
+
+        # Get the segment text from the last prompt
+        messages = prompt_item.to_messages()
+        last_message = messages[-1]
+        segment_text = last_message.get("content", [])[0].get("text", None)
+        if segment_text is None:
+            raise ValueError("No segment text found in the prompt item.")
+
+        # Format topics for prompt
         topics_text = "\n".join(
             [
                 f"- {topic.title}\n" + "\n".join([f"  * {point.description}" for point in topic.points])
@@ -386,36 +557,25 @@ class DialogueFlow(dl.BaseServiceRunner):
 
         # Generate dialogue using template
         template = PodcastPrompts.get_template("podcast_transcript_to_dialogue_prompt")
-        prompt = template.render(
+        llm_prompt = template.render(
             text=segment_text,
             duration=segment.duration,
             descriptions=topics_text,
-            speaker_1_name=request.speaker_1_name,
-            speaker_2_name=request.speaker_2_name,
+            speaker_1_name=speaker_1_name,
+            speaker_2_name=speaker_2_name,
         )
 
-        # Query LLM for dialogue
-        dialogue_response = await llm_manager.query_async(
-            "reasoning", [{"role": "user", "content": prompt}], f"segment_dialogue_{idx}"
-        )
+        prompt = dl.Prompt(key="4")  # "4_dialogue_segment")
+        prompt.add_element(mimetype=dl.PromptType.TEXT, value=llm_prompt)
+        prompt_item.prompts.append(prompt)
 
-        # Track prompt and response
-        prompt_tracker.track(
-            f"segment_dialogue_{idx}", prompt, llm_manager.model_configs["reasoning"].name, dialogue_response.content
-        )
+        new_name = f"{item.filename}_prompt4_dialogue"
+        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
+        # prompt item to produce the section name and the dialogue
+        return new_item
 
-        return {"section": segment.section, "dialogue": dialogue_response.content}
-
-    async def podcast_generate_dialogue(
-        segments: Dict[str, str],
-        outline: PodcastOutline,
-        request: TranscriptionRequest,
-        llm_manager: LLMManager,
-        prompt_tracker: PromptTracker,
-        job_id: str,
-        job_manager: JobStatusManager,
-        logger: logging.Logger,
-    ) -> List[Dict[str, str]]:
+    @staticmethod
+    def podcast_generate_dialogue(segments: Dict[str, str], outline: PodcastOutline) -> List[Dict[str, str]]:
         """
         Generate dialogue for all segments in parallel.
 
@@ -434,44 +594,40 @@ class DialogueFlow(dl.BaseServiceRunner):
 
         Creates tasks for generating dialogue for each segment and executes them in parallel.
         """
-        job_manager.update_status(job_id, JobStatus.PROCESSING, "Generating dialogue")
+        logger.info("Generating dialogue")
 
+        # TODO fix to use threadpool
         # Create tasks for generating dialogue for each segment
-        dialogue_tasks = []
-        for idx, segment in enumerate(outline.segments):
-            segment_name = f"segment_transcript_{idx}"
-            seg_response = segments.get(segment_name)
+        dialogue_segments = {}
+        with ThreadPoolExecutor() as executor:
+            futures = {}
+            for idx, segment in enumerate(outline.segments):
+                segment_name = f"segment_transcript_{idx}"
+                seg_response = segments.get(segment_name)
 
-            if not seg_response:
-                logger.warning(f"Segment {segment_name} not found in segment transcripts")
-                continue
+                if not seg_response:
+                    logger.warning(f"Segment {segment_name} not found in segment transcripts")
+                    continue
 
-            # Update prompt tracker with segment response
-            segment_text = seg_response
-            prompt_tracker.update_result(segment_name, segment_text)
+                # Update prompt tracker with segment response
+                segment_text = seg_response
 
-            # Update status
-            job_manager.update_status(
-                job_id, JobStatus.PROCESSING, f"Converting segment {idx + 1}/{len(outline.segments)} to dialogue"
-            )
+                # Update status
+                logger.info(f"Converting segment {idx + 1}/{len(outline.segments)} to dialogue")
 
-            task = podcast_generate_dialogue_segment(segment, idx, segment_text, request, llm_manager, prompt_tracker)
-            dialogue_tasks.append(task)
+                future = executor.submit(DialogueFlow.podcast_generate_dialogue_segment, segment, idx, segment_text)
+                futures[idx] = future
 
-        # Process all dialogues in parallel
-        dialogues = await asyncio.gather(*dialogue_tasks)
+            # Process all dialogues in parallel and preserve order
+            for idx, future in futures.items():
+                dialogue_segments[idx] = future.result()
+        # Convert dictionary to ordered list
+        dialogue_segments = [dialogue_segments[i] for i in sorted(dialogue_segments.keys())]
 
-        return list(dialogues)
+        return dialogue_segments
 
-    async def podcast_combine_dialogues(
-        segment_dialogues: List[Dict[str, str]],
-        outline: PodcastOutline,
-        llm_manager: LLMManager,
-        prompt_tracker: PromptTracker,
-        job_id: str,
-        job_manager: JobStatusManager,
-        logger: logging.Logger,
-    ) -> str:
+    @staticmethod
+    def podcast_combine_dialogues(segment_dialogues: List[Dict[str, str]], outline: PodcastOutline) -> str:
         """
         Iteratively combine dialogue segments into a cohesive conversation.
 
@@ -489,86 +645,87 @@ class DialogueFlow(dl.BaseServiceRunner):
 
         Iteratively combines dialogue segments, ensuring smooth transitions between sections.
         """
-        job_manager.update_status(job_id, JobStatus.PROCESSING, "Combining dialogue segments")
+        logger.info("Combining dialogue segments")
 
         # Start with the first segment's dialogue
         current_dialogue = segment_dialogues[0]["dialogue"]
-        prompt_tracker.update_result("segment_dialogue_0", current_dialogue)
 
         # Iteratively combine with subsequent segments
         for idx in range(1, len(segment_dialogues)):
-            job_manager.update_status(
-                job_id,
-                JobStatus.PROCESSING,
-                f"Combining segment {idx + 1}/{len(segment_dialogues)} with existing dialogue",
-            )
-
             next_section = segment_dialogues[idx]["dialogue"]
-            prompt_tracker.update_result(f"segment_dialogue_{idx}", next_section)
             current_section = segment_dialogues[idx]["section"]
 
             template = PodcastPrompts.get_template("podcast_combine_dialogues_prompt")
-            prompt = template.render(
+            llm_prompt = template.render(  # TODO streaming sections to the prompt
                 outline=outline.model_dump_json(),
                 dialogue_transcript=current_dialogue,
                 next_section=next_section,
                 current_section=current_section,
             )
 
-            combined: AIMessage = await llm_manager.query_async(
-                "iteration", [{"role": "user", "content": prompt}], f"combine_dialogues_{idx}"
-            )
+            # combined: AIMessage = await llm_manager.query_async(
+            #     "iteration", [{"role": "user", "content": prompt}], f"combine_dialogues_{idx}"
+            # )
 
-            prompt_tracker.track(
-                f"combine_dialogues_{idx}", prompt, llm_manager.model_configs["iteration"].name, combined.content
-            )
+            # prompt_tracker.track(
+            #     f"combine_dialogues_{idx}", prompt, llm_manager.model_configs["iteration"].name, combined.content
+            # )
 
-            current_dialogue = combined.content
+            # current_dialogue = combined.content
 
         return current_dialogue
 
-    async def podcast_create_final_conversation(
-        dialogue: str,
-        request: TranscriptionRequest,
-        llm_manager: LLMManager,
-        prompt_tracker: PromptTracker,
-        job_id: str,
-        job_manager: JobStatusManager,
-        logger: logging.Logger,
-    ) -> Conversation:
+    @staticmethod
+    def podcast_create_convo_json(item: dl.Item, dialogue: str) -> dl.Item:
         """
         Convert the dialogue into structured Conversation format.
 
         Args:
+            item (dl.Item): Dataloop item containing the dialogue
             dialogue (str): Combined dialogue text
-            request (TranscriptionRequest): Original transcription request
             llm_manager (LLMManager): Manager for LLM interactions
-            prompt_tracker (PromptTracker): Tracks prompts and responses
-            job_id (str): ID for tracking job progress
-            job_manager (JobStatusManager): Manages job status updates
-            logger (logging.Logger): Logger for tracking progress
 
         Returns:
-            Conversation: Structured conversation following the Conversation schema
+            dl.Item: Dataloop item containing the structured conversation
 
         Formats the dialogue into a structured conversation format with proper speaker
         attribution and timing information.
         """
-        job_manager.update_status(job_id, JobStatus.PROCESSING, "Formatting final conversation")
+        logging.info("Formatting final conversation")
+
+        item_metadata = item.metadata
+        podcast_metadata = item_metadata.get("user", {}).get("podcast", None)
+        speaker_1_name = podcast_metadata.get("speaker_1_name", DEFAULT_SPEAKER_1_NAME)
+        speaker_2_name = podcast_metadata.get("speaker_2_name", DEFAULT_SPEAKER_2_NAME)
 
         schema = Conversation.model_json_schema()
         template = PodcastPrompts.get_template("podcast_dialogue_prompt")
-        prompt = template.render(
-            speaker_1_name=request.speaker_1_name,
-            speaker_2_name=request.speaker_2_name,
+        llm_prompt = template.render(
+            speaker_1_name=speaker_1_name,
+            speaker_2_name=speaker_2_name,
             text=dialogue,
             schema=json.dumps(schema, indent=2),
         )
 
-        # We accumulate response as it comes in then cast
-        conversation_json: Dict = await llm_manager.stream_async(
-            "json", [{"role": "user", "content": prompt}], "create_final_conversation", json_schema=schema
+        prompt_item = dl.PromptItem(name=f"{item.filename}_prompt_json")
+        prompt_item.add(
+            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]},  # role default is user
+            prompt_key='1',
         )
+
+        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
+
+        return new_item
+
+    @staticmethod
+    def podcast_create_final_conversation(dir_item: dl.Item, dialogue: str) -> dl.Item:
+        """
+        Create a final conversation from the dialogue.
+        """
+        filters = dl.Filters()
+        filters.add(field='dir', values=dir_item.dir)
+        filters.add(field='metadata.system.mimetype', values='*json*')
+        items = dir_item.dataset.items.list(filters=filters).all()
 
         # Ensure all strings are unescaped
         if "dialogues" in conversation_json:
@@ -580,13 +737,38 @@ class DialogueFlow(dl.BaseServiceRunner):
             "create_final_conversation", prompt, llm_manager.model_configs["json"].name, json.dumps(conversation_json)
         )
 
-        return Conversation.model_validate(conversation_json)
+        return podcast_create_convo_json(item, dialogue)
+
+    @staticmethod
+    def _unescape_unicode_string(s: str) -> str:
+        """
+        Convert escaped Unicode sequences to actual Unicode characters.
+
+        Args:
+            s (str): String potentially containing escaped Unicode sequences
+
+        Returns:
+            str: String with Unicode sequences converted to actual characters
+
+        Example:
+            >>> unescape_unicode_string("Hello\\u2019s World")
+            "Hello's World"
+        """
+        # This handles both raw strings (with extra backslashes) and regular strings
+        return s.encode("utf-8").decode("unicode-escape")
 
 
 if __name__ == "__main__":
     dl.setenv("prod")
     item = dl.items.get(item_id="6758139d45821d442ba1f6e1")
-    ServiceRunner.prepare_and_summarize_pdf(item, True, None, None)
-    MonologueService.monologue_generate_outline(item, None, None)
-    MonologueService.monologue_generate_monologue(item, None, None)
-    MonologueService.monologue_create_convo_json(item, None, None)
+    progress = dl.Progress()
+    context = dl.Context()
+
+    processed_item = ServiceRunner.prepare_and_summarize_pdf(item, True, progress, context)
+
+    try:
+        output_file = ServiceRunner.generate_audio(processed_item)
+        logger.info(f"Successfully generated audio file: {output_file}")
+    except Exception as e:
+        logger.error(f"Error generating audio: {e}")
+        raise
