@@ -1,3 +1,17 @@
+.env
+.idea/*
+.venv/*
+tmp/*
+scripts/*
+*.mp3
+.dataloop/*
+*/pycache/*
+*/__pycache__/*
+*/.pytest_cache/*
+.vscode/*
+output/*
+*.iml
+
 *testing*
 .env*
 # Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,data,pycharm+all
