@@ -298,28 +298,21 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         # Create tasks for generating dialogue for each segment
         dialogue_segments = {}
-        with ThreadPoolExecutor() as executor:
-            futures = {}
-            for idx, segment in enumerate(outline.segments):
-                segment_name = f"segment_transcript_{idx}"
-                seg_response = segments.get(segment_name)
+        for idx, segment in enumerate(outline.segments):
+            segment_name = f"segment_transcript_{idx}"
+            seg_response = segments.get(segment_name)
 
-                if not seg_response:
-                    logger.warning(f"Segment {segment_name} not found in segment transcripts")
-                    continue
+            if not seg_response:
+                logger.warning(f"Segment {segment_name} not found in segment transcripts")
+                continue
 
-                # Update prompt tracker with segment response
-                segment_text = seg_response
+            # Update prompt tracker with segment response
+            segment_text = seg_response
 
-                # Update status
-                logger.info(f"Converting segment {idx + 1}/{len(outline.segments)} to dialogue")
+            # Update status
+            logger.info(f"Converting segment {idx + 1}/{len(outline.segments)} to dialogue")
 
-                future = executor.submit(DialogueServiceRunner.generate_dialogue_segment, segment, idx, segment_text)
-                futures[idx] = future
-
-            # Process all dialogues in parallel and preserve order
-            for idx, future in futures.items():
-                dialogue_segments[idx] = future.result()
+            dialogue_segments[idx] = DialogueServiceRunner.generate_dialogue_segment(segment, idx, segment_text)
         # Convert dictionary to ordered list
         dialogue_segments = [dialogue_segments[i] for i in sorted(dialogue_segments.keys())]
 

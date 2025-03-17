@@ -5,3 +5,6 @@ tmp/
 scripts/
 *.mp3
 .dataloop/
+*/pycache/*
+*/__pycache__/*
+*/.pytest_cache/*

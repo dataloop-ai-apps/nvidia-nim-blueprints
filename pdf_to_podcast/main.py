@@ -25,18 +25,18 @@ class ServiceRunner(dl.BaseServiceRunner):
         item: dl.Item, monologue: bool, progress: dl.Progress, context: dl.Context, focus: str = None, duration: int = 10
     ):
         """
-        Prepare and summarize the PDF.
+        Prepare the PDF text for the summary
 
         Args:
-            item: dl.Item,
-            monologue: bool,
-            progress: dl.Progress,
-            context: dl.Context,
-            focus: str = None,
-            duration: int = 10, duration of podcast in minutes
+            item (dl.Item): Dataloop item containing the original PDF file
+            monologue (bool): Whether to generate a monologue or a podcast
+            progress (dl.Progress): Progress object to update the user
+            context (dl.Context): Context object to access the item
+            focus (str): Focus of the summary
+            duration (int): Duration of the summary
 
         Returns:
-            dl.Item,
+            str: Prompt for the summary
         """
         return SharedServiceRunner.prepare_and_summarize_pdf(item, monologue, progress, context, focus, duration)
 

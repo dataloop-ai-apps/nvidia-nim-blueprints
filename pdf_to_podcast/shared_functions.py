@@ -4,6 +4,7 @@ import dotenv
 import logging
 import dtlpy as dl
 
+from pathlib import Path
 from pydantic import BaseModel
 from typing import Optional
 from elevenlabs.client import ElevenLabs
@@ -133,21 +134,11 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         focus: str = None,
         duration: int = 10,
     ):
-        """
-        Prepare the PDF text for the summary
-
-        Args:
-            item (dl.Item): Dataloop item containing the original PDF file
-            monologue (bool): Whether to generate a monologue or a podcast
-            progress (dl.Progress): Progress object to update the user
-            context (dl.Context): Context object to access the item
-            focus (str): Focus of the summary
-            duration (int): Duration of the summary
-
-        Returns:
-            str: Prompt for the summary
-        """
         pdf_text = SharedServiceRunner.collect_pdf_text(item)
+        # upload text to dataloop item
+        text_name = Path(item.filename).stem + "_text.txt"
+        text_item = item.dataset.items.upload(pdf_text, remote_name=text_name, remote_path=item.dir, overwrite=True)
+
 
         if monologue is True:
             template = FinancialSummaryPrompts.get_template("monologue_summary_prompt")
