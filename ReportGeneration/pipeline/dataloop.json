@@ -9,7 +9,8 @@
         "Category": ["Pipeline", "Blueprint"],
         "Pipeline Type": "GenAI",
         "Provider": "NVIDIA",
-        "Developed By": "Dataloop"
+        "Developed By": "Dataloop",
+        "Media Type": ["Text"]
     },
     "codebase": {
       "type": "git",
