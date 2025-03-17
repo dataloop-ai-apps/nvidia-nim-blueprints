@@ -1,6 +1,6 @@
 {
   "name": "nim-rag-blueprint",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "attributes": {
     "Category": ["Pipeline","Blueprint"],
     "Hub": ["Nvidia", "Dataloop"],
@@ -17,7 +17,7 @@
   "codebase": {
     "type": "git",
     "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
-    "gitTag": "0.0.7"
+    "gitTag": "0.0.8"
   },
   "dependencies": [
     {
