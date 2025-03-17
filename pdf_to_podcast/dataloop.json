@@ -3,7 +3,7 @@
     "displayName": "PDF to Podcast", 
     "description": "Generate a podcast based on a given PDF.",
     "version": "0.0.7",
-    "scope": "project",
+    "scope": "public",
     "attributes": {
         "Hub": ["Nvidia", "Dataloop"],
         "Category": ["Application", "Blueprint"],
