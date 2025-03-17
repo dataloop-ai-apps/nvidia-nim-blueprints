@@ -1,15 +1,15 @@
 .env
-.idea/
-.venv/
-tmp/
-scripts/
+.idea/*
+.venv/*
+tmp/*
+scripts/*
 *.mp3
-.dataloop/
+.dataloop/*
 */pycache/*
 */__pycache__/*
 */.pytest_cache/*
-.vscode/
-output/
+.vscode/*
+output/*
 
 *testing*
 .env*
