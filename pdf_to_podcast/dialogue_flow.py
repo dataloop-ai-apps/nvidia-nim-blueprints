@@ -191,13 +191,13 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         outline = PodcastOutline.model_validate_json(outline_dict)
 
-        # Create tasks for processing each segment
-        segment_tasks: List[Any] = []
+        # Create items for processing each segment
+        segment_items: List[Any] = []
         for idx, segment in enumerate(outline.segments):
             logger.info(f"Processing segment {idx + 1}/{len(outline.segments)}: {segment.section}")
 
             task = DialogueServiceRunner._process_segment(item, segment, idx)
-            segment_tasks.append(task)
+            segment_items.append(task)
 
         # Process all segments in parallel
         results = []
