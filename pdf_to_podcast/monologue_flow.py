@@ -21,34 +21,33 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
             item (dl.Item): the prompt item
         """
         # retrieve the summary from the last prompt message
-        prompt_item = dl.PromptItem.from_json(item)
-
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
         focus = podcast_metadata.get("focus", None)
 
         messages = prompt_item.to_messages()
         last_message = messages[-1]
         summary = last_message.get("content", [])[0].get("text", None)
-
         if summary is None:
             raise ValueError("No summary found in the prompt item.")
 
+        item.metadata.get("user", {}).update({"podcast": {"summary": summary}})
+        item.update()
+
         # generate the outline
         documents = [f"Document: {item.filename}\n{summary}"]
-
-        from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
 
         template = FinancialSummaryPrompts.get_template("monologue_multi_doc_synthesis_prompt")
         llm_prompt = template.render(
             focus_instructions=focus if focus is not None else None, documents="\n\n".join(documents)
         )
 
-        prompt = dl.Prompt(key="2")  # "2_summary_to_outline")
-        prompt.add_element(mimetype=dl.PromptType.TEXT, value=llm_prompt)
-
-        prompt_item.prompts.append(prompt)
-
-        return prompt_item
+        new_name = f"{item.filename}_prompt2_summary_to_outline"
+        prompt_item = dl.PromptItem(name=new_name)
+        prompt_item.add(
+            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
+        )
+        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
+        return new_item
 
     @staticmethod
     def generate_monologue(item: dl.Item, progress: dl.Progress, context: dl.Context):
@@ -64,26 +63,20 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
             item (dl.Item): the prompt item
         """
         # prep prompt item to get the outline
-        prompt_item = dl.PromptItem.from_json(item)
-
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
         focus = podcast_metadata.get("focus", None)
+        summary = podcast_metadata.get("summary", None)
         speaker_1_name = podcast_metadata.get("speaker_1_name", None)
+        if summary is None:
+            raise ValueError("No summary found in the prompt item. Try running the previous step again.")
 
         # get the outline from the last prompt
+        prompt_item = dl.PromptItem.from_json(item)
         messages = prompt_item.to_messages()
         last_message = messages[-1]
         outline = last_message.get("content", [])[0].get("text", None)
         if outline is None:
             raise ValueError("No outline found in the prompt item.")
-
-        # get the summary docs context, from first prompt
-        summary = messages[0].get("content", [])[0].get("text", None)
-        if summary is None:
-            try:
-                summary = podcast_metadata.get("summary")
-            except Exception as e:
-                raise ValueError("No summary found in the prompt item.")
 
         documents = [f"Document: {item.filename}\n{summary}"]
 
@@ -96,11 +89,14 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         )
 
         # add the prompt to the prompt item
-        prompt = dl.Prompt(key="3")  # "3_outline_to_monologue")
-        prompt.add_element(mimetype=dl.PromptType.TEXT, value=llm_prompt)
+        new_name = f"{item.filename}_prompt3_outline_to_monologue"
+        prompt_item = dl.PromptItem(name=new_name)
+        prompt_item.add(
+            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
+        )
 
-        prompt_item.prompts.append(prompt)
-        return prompt_item
+        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
+        return new_item
 
     @staticmethod
     def create_convo_json(item: dl.Item, progress: dl.Progress, context: dl.Context):
@@ -126,14 +122,14 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
             raise ValueError("No monologue found in the prompt item.")
 
         # create the final conversation in JSON format
-        from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
-
-        template = FinancialSummaryPrompts.get_template("monologue_convo_json_prompt")
+        template = FinancialSummaryPrompts.get_template("monologue_dialogue_prompt")
         llm_prompt = template.render(monologue=monologue)
 
-        prompt = dl.Prompt(key="4")  # "4_monologue_to_convo_json")
-        prompt.add_element(mimetype=dl.PromptType.TEXT, value=llm_prompt)
+        new_name = f"{item.filename}_prompt4_monologue_to_convo_json"
+        prompt_item = dl.PromptItem(name=new_name)
+        prompt_item.add(
+            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
+        )
 
-        prompt_item.prompts.append(prompt)
-
-        return prompt_item
+        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
+        return new_item

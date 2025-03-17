@@ -18,28 +18,48 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         """
         Generate initial raw outline from summarized PDFs.
         """
-        prompt_item = dl.PromptItem.from_json(item)
+        logger.info("Generating initial outline")
 
+        # get the podcast metadata from the item
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
         focus = podcast_metadata.get("focus", None)
         duration = podcast_metadata.get("duration", 10)
         summary = podcast_metadata.get("summary", None)
 
+        # get the summary from the last prompt annotation
+        prompt_item = dl.PromptItem.from_json(item)
+        messages = prompt_item.to_messages()
+        last_message = messages[-1]
+        summary = last_message.get("content", [])[0].get("text", None)
+        if summary is None:
+            raise ValueError("No summary found in the prompt item.")
+
         documents = [f"Document: {item.filename}\n{summary}"]
+        # TODO support multiple pdfs as context
+        # for pdf in summarized_pdfs:
+        #     doc_str = f"""
+        #     <document>
+        #     <type>{"Target Document" if pdf.type == "target" else "Context Document"}</type>
+        #     <path>{pdf.filename}</path>
+        #     <summary>
+        #     {pdf.summary}
+        #     </summary>
+        #     </document>"""
+        #     documents.append(doc_str)
 
         template = PodcastPrompts.get_template("podcast_multi_pdf_outline_prompt")
         llm_prompt = template.render(
-            total_duration=duration,
-            focus_instructions=focus if focus is not None else None,
-            documents="\n\n".join(documents),
+            total_duration=duration, focus_instructions=focus, documents="\n\n".join(documents)
         )
 
-        prompt = dl.Prompt(key="1")  # "1_raw_outline")
-        prompt.add_element(mimetype=dl.PromptType.TEXT, value=llm_prompt)
-
-        prompt_item.prompts.append(prompt)
-
-        return prompt_item
+        # create new prompt item for the raw outline
+        new_name = f"{item.filename}_prompt1_raw_outline"
+        prompt_item = dl.PromptItem(name=new_name)
+        prompt_item.add(
+            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
+        )
+        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
+        return new_item
 
     @staticmethod
     def generate_structured_outline(item: dl.Item, progress: dl.Progress, context: dl.Context):
@@ -81,11 +101,14 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             outline=raw_outline, schema=json.dumps(schema, indent=2), valid_filenames=valid_filenames
         )
 
-        prompt = dl.Prompt(key="2")  # "2_structured_outline")
-        prompt.add_element(mimetype=dl.PromptType.TEXT, value=llm_prompt)
-        prompt_item.prompts.append(prompt)
-
-        return prompt_item
+        # create new prompt item for the structured outline
+        new_name = f"{item.filename}_prompt2_structured_outline"
+        prompt_item = dl.PromptItem(name=new_name)
+        prompt_item.add(
+            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
+        )
+        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
+        return new_item
 
     @staticmethod
     def _process_segment(item: dl.Item, segment: Any, idx: int) -> tuple[str, str]:
@@ -139,9 +162,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         return prompt_item
 
     @staticmethod
-    def process_segments(
-        item: dl.Item, outline: PodcastOutline, progress: dl.Progress, context: dl.Context
-    ) -> Dict[str, str]:
+    def process_segments(item: dl.Item, progress: dl.Progress, context: dl.Context) -> Dict[str, str]:
         """
         Process all outline segments in parallel to generate initial content.
 
@@ -160,6 +181,16 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         Creates tasks for processing each segment and executes them in parallel using
         asyncio.gather.
         """
+        # create the outline item
+        prompt_item = dl.PromptItem.from_json(item)
+        messages = prompt_item.to_messages()
+        last_message = messages[-1]
+        outline_dict = last_message.get("content", [])[0].get("text", None)
+        if outline_dict is None:
+            raise ValueError("No outline found in the prompt item.")
+
+        outline = PodcastOutline.model_validate_json(outline_dict)
+
         # Create tasks for processing each segment
         segment_tasks: List[Any] = []
         for idx, segment in enumerate(outline.segments):
@@ -183,7 +214,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         return dict(results)
 
     @staticmethod
-    def generate_dialogue_segment(item: dl.Item, segment: Any, idx: int) -> Dict[str, str]:
+    def _generate_dialogue_segment(item: dl.Item, segment: Any, idx: int) -> Dict[str, str]:
         """
         Generate dialogue for a single segment.
 

@@ -8,6 +8,9 @@ from pydantic import BaseModel
 from typing import Optional
 from elevenlabs.client import ElevenLabs
 
+from monologue_prompts import FinancialSummaryPrompts
+from podcast_prompts import PodcastPrompts
+
 # Load environment variables from .env file
 dotenv.load_dotenv('.env')
 
@@ -111,16 +114,15 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         focus: str = None,
         duration: int = 10,
     ):
-        if monologue is True:
-            from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
+        buffer = item.download(save_locally=False)
+        pdf_text = buffer.read().decode('utf-8')
 
+        if monologue is True:
             template = FinancialSummaryPrompts.get_template("monologue_summary_prompt")
         else:
-            from pdf_to_podcast.podcast_prompts import PodcastPrompts
-
             template = PodcastPrompts.get_template("podcast_summary_prompt")
-        llm_prompt = template.render(text=llm_prompt)
-        item = dl.items.get(item_id="")
+        llm_prompt = template.render(text=pdf_text)
+
         new_name = f"{item.filename}_prompt"
         prompt_item = dl.PromptItem(name=new_name)
         prompt_item.add(
@@ -129,7 +131,16 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         )
 
         new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
-        new_item.metadata.get("user", {}).update({"focus": focus, "monologue": monologue, "duration": duration})
+        new_item.metadata.get("user", {}).update(
+            {
+                "podcast": {
+                    "pdf_id": item.metadata.user["original_item_id"],
+                    "focus": focus,
+                    "monologue": monologue,
+                    "duration": duration,
+                }
+            }
+        )
         new_item.update()
 
         logger.info(f"Successfully created prompt item for {item.filename} ID {item.id}")
