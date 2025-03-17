@@ -2,7 +2,7 @@
     "name": "pdf-to-podcast-CE-825-pdf-to-podcast",
     "displayName": "PDF to Podcast CE-825-pdf-to-podcast", 
     "description": "Generate a podcast based on a given PDF.",
-    "version": "0.0.13",
+    "version": "0.0.15",
     "scope": "project",
     "attributes": {
         "Hub": ["Nvidia", "Dataloop"],
