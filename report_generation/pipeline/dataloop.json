@@ -581,7 +581,6 @@
               "moduleName": "nim-api-module",
               "packageName": "nim-api-llama3-3-70b-instruct-meta"
             },
-            "projectId": "0ed621e3-7e6d-456e-a8c2-ddcc3017dfed",
             "appName": "llama-3.3-70b-instruct",
             "dpkName": "nim-api-llama3-3-70b-instruct-meta",
             "metadata": {
