@@ -3,9 +3,9 @@ import logging
 import dtlpy as dl
 
 from typing import Dict, Any, List
-from concurrent.futures import ThreadPoolExecutor
 from pdf_to_podcast.shared_functions import SharedServiceRunner
-from pdf_to_podcast.podcast_prompts import PodcastPrompts, PodcastOutline
+from pdf_to_podcast.podcast_prompts import PodcastPrompts
+from pdf_to_podcast.podcast_types import PodcastOutline
 
 # Configure logging
 logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
