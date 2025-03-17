@@ -305,14 +305,16 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             raise ValueError("No segment text found in the prompt item.")
 
         # Update status
-        logger.info(f"Converting segment {podcast_metadata.get('segment_idx', 0) + 1}/{len(podcast_metadata.get('total_segments', 0)} to dialogue")
+        logger.info(f"Converting segment {podcast_metadata.get('segment_idx', 0) + 1}/{podcast_metadata.get('total_segments', 0)} to dialogue")
 
-        dialogue_segments[idx] = DialogueServiceRunner._generate_dialogue_segment(segment, idx, segment_text)
+        # dialogue_segments[idx] = DialogueServiceRunner._generate_dialogue_segment(segment, idx, segment_text)
+        # return dialogue_segments
 
-        return dialogue_segments
+        return item
+    
 
     @staticmethod
-    def combine_dialogues(segment_dialogues: List[Dict[str, str]], outline: PodcastOutline) -> str:
+    def combine_dialogues(item: dl.Item) -> str:
         """
         Iteratively combine dialogue segments into a cohesive conversation.
 
@@ -330,13 +332,25 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         Iteratively combines dialogue segments, ensuring smooth transitions between sections.
         """
+
+        # TODO collect all the segment dialogues and combine them properly
+
         logger.info("Combining dialogue segments")
 
-        dialogue_segments = {}
+        prompt_item = dl.PromptItem.from_json(item)
+        messages = prompt_item.to_messages()
+        last_message = messages[-1]
+        segment_text = last_message.get("content", [])[0].get("text", None)
+        if segment_text is None:
+            raise ValueError("No segment text found in the prompt item.")
+
+        outline = PodcastOutline.model_validate_json(segment_text)
+
         for idx, segment in enumerate(outline.segments):
             # get each segment's dialogue
             segment_name = f"segment_transcript_{idx}"
-            seg_response = segments.get(segment_name)
+            # seg_response = segment_dialogues.get(segment_name)
+            seg_response = item.dataset.items.get(segment_name)
 
             if not seg_response:
                 logger.warning(f"Segment {segment_name} not found in segment transcripts")
@@ -344,28 +358,27 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
             segment_text = seg_response
 
-        # Convert dictionary to ordered list
-        dialogue_segments = [dialogue_segments[i] for i in sorted(dialogue_segments.keys())]
+        # # Convert dictionary to ordered list
+        # dialogue_segments = [dialogue_segments[i] for i in sorted(dialogue_segments.keys())]
+        
+        # # Start with the first segment's dialogue
+        # current_dialogue = segment_dialogues[0]["dialogue"]
 
+        # # Iteratively combine with subsequent segments
+        # for idx in range(1, len(segment_dialogues)):
+        #     next_section = segment_dialogues[idx]["dialogue"]
+        #     current_section = segment_dialogues[idx]["section"]
 
+        #     template = PodcastPrompts.get_template("podcast_combine_dialogues_prompt")
+        #     llm_prompt = template.render(  # TODO streaming sections to the prompt
+        #         outline=outline.model_dump_json(),
+        #         dialogue_transcript=current_dialogue,
+        #         next_section=next_section,
+        #         current_section=current_section,
+        #     )
 
-        # Start with the first segment's dialogue
-        current_dialogue = segment_dialogues[0]["dialogue"]
-
-        # Iteratively combine with subsequent segments
-        for idx in range(1, len(segment_dialogues)):
-            next_section = segment_dialogues[idx]["dialogue"]
-            current_section = segment_dialogues[idx]["section"]
-
-            template = PodcastPrompts.get_template("podcast_combine_dialogues_prompt")
-            llm_prompt = template.render(  # TODO streaming sections to the prompt
-                outline=outline.model_dump_json(),
-                dialogue_transcript=current_dialogue,
-                next_section=next_section,
-                current_section=current_section,
-            )
-
-        return current_dialogue
+        # return current_dialogue
+        return item
 
     @staticmethod
     def create_convo_json(item: dl.Item, dialogue: str) -> dl.Item:
@@ -428,14 +441,14 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         return new_item
 
     @staticmethod
-    def create_final_conversation(dir_item: dl.Item, dialogue: str) -> dl.Item:
+    def create_final_conversation(item: dl.Item, dialogue: str) -> dl.Item:
         """
         Create a final conversation from the dialogue.
         """
         filters = dl.Filters()
-        filters.add(field='dir', values=dir_item.dir)
+        filters.add(field='dir', values=item.dir)
         filters.add(field='metadata.system.mimetype', values='*json*')
-        items = dir_item.dataset.items.list(filters=filters).all()
+        items = item.dataset.items.list(filters=filters).all()
 
         # TODO fix
         conversation_json = items[0].metadata.get("user", {}).get("podcast", {}).get("conversation", None)
@@ -446,4 +459,5 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
                 if "text" in entry:
                     entry["text"] = SharedServiceRunner._unescape_unicode_string(entry["text"])
 
-        return DialogueServiceRunner.create_convo_json(dir_item, dialogue)
+        # return DialogueServiceRunner.create_convo_json(dir_item, dialogue)
+        return item
