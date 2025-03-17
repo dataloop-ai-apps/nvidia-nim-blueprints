@@ -27,8 +27,6 @@
     "components": {
         "pipelineTemplates": [
           {
-            "projectId": "0ed621e3-7e6d-456e-a8c2-ddcc3017dfed",
-            "orgId": "d25cecad-34f7-4e38-9750-bd9a1d387bfd",
             "connections": [
               {
                 "src": {
@@ -183,7 +181,6 @@
             ],
             "description": "",
             "name": "Blueprint - ReportGeneration",
-            "templateKind": "org",
             "nodes": [
               {
                 "id": "87328089-5d9a-4a0e-afaa-ff1390976c04",
@@ -800,10 +797,7 @@
                   "pipelineNodeName": "report-writing-node"
                 }
               }
-            ],
-            "preview": "67d7de75c2b6f156c53003ff",
-            "variables": null,
-            "_id": "67d7e79fc2b6f1a8d2300e03"
+            ]
           }
         ]
       }
