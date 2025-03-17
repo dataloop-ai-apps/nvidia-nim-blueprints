@@ -25,7 +25,7 @@
       "name": "pdf_to_txt"
     },
     {
-      "name": "wait_node"
+      "name": "wait-node"
     },
     {
       "name": "nim-api-llama3-1-405b-instruct-meta"
