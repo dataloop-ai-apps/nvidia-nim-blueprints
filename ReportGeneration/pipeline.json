@@ -19,6 +19,9 @@
     "dependencies": [
       {
         "name": "report-generation"
+      },
+      {
+        "name": "nim-api-llama3-3-70b-instruct-meta"
       }
     ],
     "components": {

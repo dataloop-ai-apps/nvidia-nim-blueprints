@@ -19,6 +19,9 @@
     "dependencies": [
       {
         "name": "report-generation-CE-822"
+      },
+      {
+        "name": "nim-api-llama3-3-70b-instruct-meta-CE-822"
       }
     ],
     "components": {
