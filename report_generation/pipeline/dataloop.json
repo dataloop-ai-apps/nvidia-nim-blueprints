@@ -12,11 +12,6 @@
       "Developed By": "Dataloop",
       "Media Type": ["Text"]
   },
-  "codebase": {
-    "type": "git",
-    "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
-    "gitTag": "0.0.3"
-  },
   "dependencies": [
     {
       "name": "report-generation"
