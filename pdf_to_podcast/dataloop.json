@@ -17,6 +17,18 @@
         "gitTag": "0.0.3"
     },
     "components": {
+      "integrations": [
+        {
+        "dl-elevenlabs-api-key": {
+        "to": "ElevenLabs",
+        "env": "ELEVENLABS_API_KEY",
+            "type": "elevenlabs",
+            "description": "ElevenLabs Integration",
+            "displayName": "ElevenLabs Integration",
+            "optional": false
+          }
+        }
+      ],
       "computeConfigs": [
         {
           "name": "pdf2podcast-compute-config",
