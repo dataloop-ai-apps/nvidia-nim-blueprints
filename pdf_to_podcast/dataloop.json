@@ -2,7 +2,7 @@
     "name": "pdf-to-podcast",
     "displayName": "PDF to Podcast", 
     "description": "Generate a podcast based on a given PDF.",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "scope": "project",
     "attributes": {
         "Hub": ["Nvidia", "Dataloop"],
