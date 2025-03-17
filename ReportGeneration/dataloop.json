@@ -6,7 +6,7 @@
     "scope": "public",
     "attributes": {
         "Hub": ["Nvidia", "Dataloop"],
-        "Category": ["Pipeline", "Blueprint"],
+        "Category": ["Application"],
         "Pipeline Type": "GenAI",
         "Provider": "NVIDIA",
         "Developed By": "Dataloop"
