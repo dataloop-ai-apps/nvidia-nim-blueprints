@@ -1,4 +1,3 @@
-import os
 import json
 import logging
 import dtlpy as dl
@@ -111,7 +110,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         return new_item
 
     @staticmethod
-    def _process_segment(item: dl.Item, segment: Any, idx: int) -> tuple[str, str]:
+    def _process_segment(item: dl.Item, segment: Any, idx: int, total_segments: int, focus: str, duration: int, summary: str) -> dl.Item:
         """
         Process a single outline segment to generate initial content.
 
@@ -123,17 +122,12 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             prompt_tracker (PromptTracker): Tracks prompts and responses
 
         Returns:
-            tuple[str, str]: Tuple of (segment_id, generated_content)
+            dl.Item: Dataloop item containing the generated content
 
         Generates initial content for a segment, incorporating referenced PDF content
         if available. Uses different templates based on whether references exist.
         """
         prompt_item = dl.PromptItem.from_json(item)
-        item_metadata = item.metadata
-        podcast_metadata = item_metadata.get("user", {}).get("podcast", None)
-        focus = podcast_metadata.get("focus", None)
-        duration = podcast_metadata.get("duration", 10)
-        summary = podcast_metadata.get("summary", None)
 
         pdf_text = prompt_item.prompts[0].elements[0].value
         text_content = [f"Document: {item.filename}\n{pdf_text}"]
@@ -159,35 +153,57 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         prompt.add_element(mimetype=dl.PromptType.TEXT, value=llm_prompt)
         prompt_item.prompts.append(prompt)
 
-        return prompt_item
+        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
+        podcast_metadata.update(
+            {
+                "focus": focus,
+                "duration": duration,
+                "summary": summary,
+                "segment": segment.section,
+                "segment_idx": idx,
+                "total_segments": total_segments,
+                "topics": [topic.title for topic in segment.topics],
+                "references": [reference.filename for reference in segment.references],
+            }
+        )
+        new_name = f"{item.filename}_prompt3_segment_{idx}"
+        new_item = item.dataset.items.upload(
+            prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=podcast_metadata
+        )
+        return new_item
 
     @staticmethod
-    def process_segments(item: dl.Item, progress: dl.Progress, context: dl.Context) -> Dict[str, str]:
+    def process_segments(item: dl.Item, progress: dl.Progress, context: dl.Context) -> List[dl.Item]:
         """
         Process all outline segments in parallel to generate initial content.
 
         Args:
-            outline (PodcastOutline): Structured outline to process
-            request (TranscriptionRequest): Original transcription request
-            llm_manager (LLMManager): Manager for LLM interactions
-            prompt_tracker (PromptTracker): Tracks prompts and responses
-            job_id (str): ID for tracking job progress
-            job_manager (JobStatusManager): Manages job status updates
-            logger (logging.Logger): Logger for tracking progress
+            item (dl.Item): Dataloop item containing the outline
+            progress (dl.Progress): Dataloop progress object
+            context (dl.Context): Dataloop context object
 
         Returns:
-            Dict[str, str]: Dictionary mapping segment IDs to their generated content
+            List[dl.Item]: List of Dataloop items containing the prompt items for each segment
 
         Creates tasks for processing each segment and executes them in parallel using
         asyncio.gather.
         """
+        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
+        focus = podcast_metadata.get("focus", None)
+        duration = podcast_metadata.get("duration", 10)
+        summary = podcast_metadata.get("summary", None)
+
+
         # create the outline item
         prompt_item = dl.PromptItem.from_json(item)
         messages = prompt_item.to_messages()
         last_message = messages[-1]
         outline_dict = last_message.get("content", [])[0].get("text", None)
+
         if outline_dict is None:
             raise ValueError("No outline found in the prompt item.")
+        if isinstance(outline_dict, str):
+            outline_dict = json.loads(outline_dict)
 
         outline = PodcastOutline.model_validate_json(outline_dict)
 
@@ -196,22 +212,10 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         for idx, segment in enumerate(outline.segments):
             logger.info(f"Processing segment {idx + 1}/{len(outline.segments)}: {segment.section}")
 
-            task = DialogueServiceRunner._process_segment(item, segment, idx)
-            segment_items.append(task)
+            segment_item = DialogueServiceRunner._process_segment(item, segment, idx, len(outline.segments), focus, duration, summary)
+            segment_items.append(segment_item)
 
-        # Process all segments in parallel
-        results = []
-        with ThreadPoolExecutor() as executor:
-            futures = {}
-            for idx, segment in enumerate(outline.segments):
-                task = DialogueServiceRunner._process_segment(item, segment, idx)
-                futures[idx] = executor.submit(task)
-
-            for idx, future in futures.items():
-                results.append(future.result())
-
-        # Convert results to dictionary
-        return dict(results)
+        return segment_items
 
     @staticmethod
     def _generate_dialogue_segment(item: dl.Item, segment: Any, idx: int) -> Dict[str, str]:
@@ -265,29 +269,25 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             speaker_2_name=speaker_2_name,
         )
 
-        prompt = dl.Prompt(key="4")  # "4_dialogue_segment")
-        prompt.add_element(mimetype=dl.PromptType.TEXT, value=llm_prompt)
-        prompt_item.prompts.append(prompt)
-
         new_name = f"{item.filename}_prompt4_dialogue"
-        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
-        # prompt item to produce the section name and the dialogue
+        prompt_item = dl.PromptItem(name=new_name)
+        prompt_item.add(
+            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
+        )
+
+        new_item = item.dataset.items.upload(
+            prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=item.metadata
+        )
         return new_item
 
     @staticmethod
-    def generate_dialogue(segments: Dict[str, str], outline: PodcastOutline) -> List[Dict[str, str]]:
+    def generate_dialogue(item: dl.Item) -> List[Dict[str, str]]:
         """
-        Generate dialogue for all segments in parallel.
+        Generate dialogue for each segment.
 
         Args:
-            segments (Dict[str, str]): Dictionary of segment IDs and their content
+            item (dl.Item): Dataloop item containing the outline
             outline (PodcastOutline): Structured outline
-            request (TranscriptionRequest): Original transcription request
-            llm_manager (LLMManager): Manager for LLM interactions
-            prompt_tracker (PromptTracker): Tracks prompts and responses
-            job_id (str): ID for tracking job progress
-            job_manager (JobStatusManager): Manages job status updates
-            logger (logging.Logger): Logger for tracking progress
 
         Returns:
             List[Dict[str, str]]: List of dictionaries containing section names and dialogues
@@ -295,26 +295,19 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         Creates tasks for generating dialogue for each segment and executes them in parallel.
         """
         logger.info("Generating dialogue")
+        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
 
-        # Create tasks for generating dialogue for each segment
-        dialogue_segments = {}
-        for idx, segment in enumerate(outline.segments):
-            segment_name = f"segment_transcript_{idx}"
-            seg_response = segments.get(segment_name)
+        prompt_item = dl.PromptItem.from_json(item)
+        messages = prompt_item.to_messages()
+        last_message = messages[-1]
+        segment_text = last_message.get("content", [])[0].get("text", None)
+        if segment_text is None:
+            raise ValueError("No segment text found in the prompt item.")
 
-            if not seg_response:
-                logger.warning(f"Segment {segment_name} not found in segment transcripts")
-                continue
+        # Update status
+        logger.info(f"Converting segment {podcast_metadata.get('segment_idx', 0) + 1}/{len(podcast_metadata.get('total_segments', 0)} to dialogue")
 
-            # Update prompt tracker with segment response
-            segment_text = seg_response
-
-            # Update status
-            logger.info(f"Converting segment {idx + 1}/{len(outline.segments)} to dialogue")
-
-            dialogue_segments[idx] = DialogueServiceRunner.generate_dialogue_segment(segment, idx, segment_text)
-        # Convert dictionary to ordered list
-        dialogue_segments = [dialogue_segments[i] for i in sorted(dialogue_segments.keys())]
+        dialogue_segments[idx] = DialogueServiceRunner._generate_dialogue_segment(segment, idx, segment_text)
 
         return dialogue_segments
 
@@ -338,6 +331,23 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         Iteratively combines dialogue segments, ensuring smooth transitions between sections.
         """
         logger.info("Combining dialogue segments")
+
+        dialogue_segments = {}
+        for idx, segment in enumerate(outline.segments):
+            # get each segment's dialogue
+            segment_name = f"segment_transcript_{idx}"
+            seg_response = segments.get(segment_name)
+
+            if not seg_response:
+                logger.warning(f"Segment {segment_name} not found in segment transcripts")
+                continue
+
+            segment_text = seg_response
+
+        # Convert dictionary to ordered list
+        dialogue_segments = [dialogue_segments[i] for i in sorted(dialogue_segments.keys())]
+
+
 
         # Start with the first segment's dialogue
         current_dialogue = segment_dialogues[0]["dialogue"]

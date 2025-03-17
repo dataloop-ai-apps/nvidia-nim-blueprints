@@ -9,8 +9,8 @@ from pydantic import BaseModel
 from typing import Optional
 from elevenlabs.client import ElevenLabs
 
-from monologue_prompts import FinancialSummaryPrompts
-from podcast_prompts import PodcastPrompts
+from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
+from pdf_to_podcast.podcast_prompts import PodcastPrompts
 
 # Load environment variables from .env file
 dotenv.load_dotenv('.env')

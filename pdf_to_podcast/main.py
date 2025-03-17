@@ -1,5 +1,3 @@
-import os
-import json
 import dotenv
 import logging
 import dtlpy as dl
