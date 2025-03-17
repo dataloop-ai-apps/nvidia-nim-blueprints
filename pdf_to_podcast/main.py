@@ -22,9 +22,23 @@ logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
 class ServiceRunner(dl.BaseServiceRunner):
     @staticmethod
     def prepare_and_summarize_pdf(
-        item: dl.Item, monologue: bool, progress: dl.Progress, context: dl.Context, focus: str = None
+        item: dl.Item, monologue: bool, progress: dl.Progress, context: dl.Context, focus: str = None, duration: int = 10
     ):
-        return SharedServiceRunner.prepare_and_summarize_pdf(item, monologue, progress, context, focus)
+        """
+        Prepare and summarize the PDF.
+
+        Args:
+            item: dl.Item,
+            monologue: bool,
+            progress: dl.Progress,
+            context: dl.Context,
+            focus: str = None,
+            duration: int = 10, duration of podcast in minutes
+
+        Returns:
+            dl.Item,
+        """
+        return SharedServiceRunner.prepare_and_summarize_pdf(item, monologue, progress, context, focus, duration)
 
     @staticmethod
     def generate_audio(item: dl.Item, voice_mapping: dict = None, output_file: str = None):
