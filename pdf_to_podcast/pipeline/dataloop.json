@@ -1,1882 +1,1887 @@
 {
-    "name": "pdf-to-podcast-blueprint",
-    "version": "0.0.5",
-    "attributes": {
-      "Category": ["Pipeline","Blueprint"],
-      "Hub": ["Nvidia", "Dataloop"],
-      "Pipeline Type": "GenAI",
-      "Provider": "NVIDIA",
-      "Developed By": "Dataloop",
-      "Media Type": [
-        "Text"
-      ]
+  "name": "pdf-to-podcast-blueprint",
+  "version": "0.0.5",
+  "attributes": {
+    "Category": [
+      "Pipeline",
+      "Blueprint"
+    ],
+    "Hub": [
+      "Nvidia",
+      "Dataloop"
+    ],
+    "Pipeline Type": "GenAI",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop",
+    "Media Type": [
+      "Text"
+    ]
+  },
+  "displayName": "NVIDIA PDF to Podcast Pipeline",
+  "description": "The NVIDIA blueprint for the PDF to Podcast pipeline uses the ElevenLabs API to generate audio for original podcast content on provided PDFs.",
+  "scope": "project",
+  "codebase": {
+    "type": "git",
+    "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
+    "gitTag": "0.0.5"
+  },
+  "dependencies": [
+    {
+      "name": "pdf-to-podcast"
     },
-    "displayName": "NVIDIA PDF to Podcast Pipeline",
-    "description":  "The NVIDIA blueprint for the PDF to Podcast pipeline uses the ElevenLabs API to generate audio for original podcast content on provided PDFs.",
-    "scope": "project",
-    "codebase": {
-      "type": "git",
-      "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
-      "gitTag": "0.0.5"
+    {
+      "name": "nim-api-llama3-1-405b-instruct-meta"
     },
-    "dependencies": [
+    {
+      "name": "nim-api-llama3-1-70b-instruct-meta"
+    },
+    {
+      "name": "nim-api-llama3-1-8b-instruct-meta"
+    },
+    {
+      "name": "pdf_to_txt"
+    },
+    {
+      "name": "wait_node"
+    }
+  ],
+  "components": {
+    "pipelineTemplates": [
       {
-        "name": "pdf-to-podcast"
-      },
-      {
-        "name": "nim-api-llama3-1-405b-instruct-meta"
-      },
-      {
-        "name": "nim-api-llama3-1-70b-instruct-meta"
-      },
-      {
-        "name": "nim-api-llama3-1-8b-instruct-meta"
-      },
-      {
-        "name": "pdf_to_txt"
-      },
-      {
-        "name": "wait_node"
+        "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+        "connections": [
+          {
+            "src": {
+              "nodeId": "f9e061ae-9e74-40d5-84de-b2c82d850cd6",
+              "portId": "1a90ca4d-7941-48c3-811d-414225053f13"
+            },
+            "tgt": {
+              "nodeId": "1f722666-1041-4cb7-bab3-645c566552d2",
+              "portId": "d10adc4b-6258-49a2-95b4-05205a73f621"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "4b865dd5-6d35-4b27-9952-4949f0027bde",
+              "portId": "0c384797-58bb-4d71-b754-f9cbbe485361"
+            },
+            "tgt": {
+              "nodeId": "a1b87e96-a002-452a-a3ef-a6dee1c0088f",
+              "portId": "0d1ae730-8ef3-40a3-ac9e-b656fbeda8c9"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "f183544e-2245-436d-ba7d-8a93763f7739",
+              "portId": "64f7cc5f-9407-4154-87c5-d01677e401a6"
+            },
+            "tgt": {
+              "nodeId": "e976430b-0650-48a4-a133-c120502a9edb",
+              "portId": "cbcaa451-f181-4eb4-99f5-2fae76188fe7"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "e976430b-0650-48a4-a133-c120502a9edb",
+              "portId": "87c7a9c4-7516-4a54-87d6-f359a85b7e64"
+            },
+            "tgt": {
+              "nodeId": "35dc14e6-4fde-4420-b8fe-3bd97887f574",
+              "portId": "e0ecf434-dc4e-4f24-b12a-18f1f809a40f"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "35dc14e6-4fde-4420-b8fe-3bd97887f574",
+              "portId": "d804f05d-645c-480a-8ba4-c7848dccc315"
+            },
+            "tgt": {
+              "nodeId": "22fd620f-6fb2-4f5d-8371-c829d9f1fb86",
+              "portId": "e9f8d25b-b7f6-4b1b-ac05-3d1d0c3e28ba"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "22fd620f-6fb2-4f5d-8371-c829d9f1fb86",
+              "portId": "2a56b05c-7aab-4c00-ae83-4104b7816d11"
+            },
+            "tgt": {
+              "nodeId": "4b865dd5-6d35-4b27-9952-4949f0027bde",
+              "portId": "734de896-efba-4f87-a4cf-af0a310fa66e"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "a1b87e96-a002-452a-a3ef-a6dee1c0088f",
+              "portId": "d0b90aa0-4da3-4dc4-aef0-b638ce7514be"
+            },
+            "tgt": {
+              "nodeId": "5c38d415-dd6a-4e6c-8065-3486acd1b033",
+              "portId": "548885be-0908-49b6-a42d-27e0081bf645"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "8545b530-cda4-438b-bc45-7b0902d38754",
+              "portId": "afbcfc99-7442-43f7-b47f-2d8ca6c87fb2"
+            },
+            "tgt": {
+              "nodeId": "2a1ce2d3-87f2-4a00-b3a4-53e35617c469",
+              "portId": "65ebf40e-1ad0-40f2-b067-23fc642ab218"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "2a1ce2d3-87f2-4a00-b3a4-53e35617c469",
+              "portId": "b8774a2e-c66f-4a95-a1aa-74929f6a08f3"
+            },
+            "tgt": {
+              "nodeId": "b3320e85-b4fd-4d0b-aef3-b89527bae10c",
+              "portId": "f30af2da-335b-4178-a732-9bcc92caf70c"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "bba074b3-690c-43fe-bec3-c00acbc9685e",
+              "portId": "a095e899-2828-4d7c-83bf-320c70f29ad9"
+            },
+            "tgt": {
+              "nodeId": "a9c330de-067f-4ab9-8cfb-ba90d790069d",
+              "portId": "96c0ace6-e4d9-4bb1-a9dd-e46060bca977"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "a9c330de-067f-4ab9-8cfb-ba90d790069d",
+              "portId": "aed6b501-cff8-4278-a74f-e1a9ade38632"
+            },
+            "tgt": {
+              "nodeId": "f183544e-2245-436d-ba7d-8a93763f7739",
+              "portId": "a7d0d5a5-ba98-4236-b5a3-14a34aec8678"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "0c09ca8b-8d20-42b0-a4ac-07d769708792",
+              "portId": "6e4cfe5a-39fc-4f4f-a0c8-753b725ff486"
+            },
+            "tgt": {
+              "nodeId": "bba074b3-690c-43fe-bec3-c00acbc9685e",
+              "portId": "ab9a3fb7-2f88-4840-9a90-7780ff6f9065"
+            },
+            "condition": "{}",
+            "action": "monologue"
+          },
+          {
+            "src": {
+              "nodeId": "0c09ca8b-8d20-42b0-a4ac-07d769708792",
+              "portId": "6e4cfe5a-39fc-4f4f-a0c8-753b725ff486"
+            },
+            "tgt": {
+              "nodeId": "8545b530-cda4-438b-bc45-7b0902d38754",
+              "portId": "a0857d40-e8e3-4f87-baa1-dc603288e173"
+            },
+            "condition": "{}",
+            "action": "dialogue"
+          },
+          {
+            "src": {
+              "nodeId": "b3320e85-b4fd-4d0b-aef3-b89527bae10c",
+              "portId": "5e447986-c586-4c48-875e-17507af85f9e"
+            },
+            "tgt": {
+              "nodeId": "080309cf-5f9b-4adc-a7d0-9c8d396feb62",
+              "portId": "80c27731-b732-4d86-a3d8-3bab4f00b6d6"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "080309cf-5f9b-4adc-a7d0-9c8d396feb62",
+              "portId": "8328bd53-06d3-49b1-b059-70aa432b9b40"
+            },
+            "tgt": {
+              "nodeId": "05d343a1-32e2-4d2f-a234-4caf82b07a3a",
+              "portId": "80cf7e16-e8ab-4a61-8dab-f3c73000aed4"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "05d343a1-32e2-4d2f-a234-4caf82b07a3a",
+              "portId": "c3e9dc51-8d75-4a67-b654-f930a0930215"
+            },
+            "tgt": {
+              "nodeId": "29015027-12bc-4edd-a680-4791be16d2ed",
+              "portId": "865ed661-e0e3-48bd-ae25-5875ecdbad86"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "29015027-12bc-4edd-a680-4791be16d2ed",
+              "portId": "5d5e517b-9440-41b3-840f-f8c32233e4b7"
+            },
+            "tgt": {
+              "nodeId": "8c45b185-f56a-4127-99d0-78f03f19cfd5",
+              "portId": "046b499a-91f2-4d8c-9259-57c4782aa6d6"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "8c45b185-f56a-4127-99d0-78f03f19cfd5",
+              "portId": "c5adb698-d909-4fd2-b02d-04996bd49c78"
+            },
+            "tgt": {
+              "nodeId": "bcfecca5-8b0f-48ad-a469-b8ecc9b03838",
+              "portId": "b7146a80-4bcf-469e-9303-0faa23e1ca2b"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "bcfecca5-8b0f-48ad-a469-b8ecc9b03838",
+              "portId": "dbfeade9-ffee-447d-ac09-100549ab109c"
+            },
+            "tgt": {
+              "nodeId": "5ce55d8d-616a-4c2e-98d2-59b0df3b46f8",
+              "portId": "2d2cece2-4a9b-416f-9522-77866e42fbf2"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "e6fff28e-96b9-414b-bab9-f48e6cd91200",
+              "portId": "a9891f44-4047-45b1-b23a-762330f907c2"
+            },
+            "tgt": {
+              "nodeId": "f3b50cd7-717d-4c95-aa92-a87c827d4023",
+              "portId": "95f94b04-702e-4407-ac53-6fc5264149ec"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "1f722666-1041-4cb7-bab3-645c566552d2",
+              "portId": "315979f0-a84e-491e-bf46-3146942482c0"
+            },
+            "tgt": {
+              "nodeId": "5dc9fdee-fee2-4d91-937e-9e502d79c3ee",
+              "portId": "23010be6-1b42-4e4c-aa74-42a600ac08a2"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "5dc9fdee-fee2-4d91-937e-9e502d79c3ee",
+              "portId": "f91cb0b9-93d4-447d-a692-97f9316f46ae"
+            },
+            "tgt": {
+              "nodeId": "0c09ca8b-8d20-42b0-a4ac-07d769708792",
+              "portId": "f7a8f3fd-8948-4c5d-baa4-b81abea427ff"
+            },
+            "condition": "{}",
+            "action": "continue"
+          },
+          {
+            "src": {
+              "nodeId": "674ec647-bece-4070-92e4-64e9aae20a2f",
+              "portId": "c3b81c24-343e-45e1-98a9-67d44a3ff3c9"
+            },
+            "tgt": {
+              "nodeId": "1ed36d30-3a3d-4a42-8ff6-c9e4cc8dfff8",
+              "portId": "be24b367-4393-4d67-b47e-4c256f146f1f"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "1ed36d30-3a3d-4a42-8ff6-c9e4cc8dfff8",
+              "portId": "876f6ec3-63ed-4090-834f-03de60d3fb05"
+            },
+            "tgt": {
+              "nodeId": "edd8a662-debe-494c-bb69-de9856c650d7",
+              "portId": "9b4550bc-de54-437f-be89-a05d1d22381a"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "edd8a662-debe-494c-bb69-de9856c650d7",
+              "portId": "66e65f1f-ba83-47a7-b190-5effc010b070"
+            },
+            "tgt": {
+              "nodeId": "a1b87e96-a002-452a-a3ef-a6dee1c0088f",
+              "portId": "0d1ae730-8ef3-40a3-ac9e-b656fbeda8c9"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "f3b50cd7-717d-4c95-aa92-a87c827d4023",
+              "portId": "607dcdcb-e71f-4075-b40b-eea95d1af630"
+            },
+            "tgt": {
+              "nodeId": "f3feb9da-3b64-4ecf-bd04-3f9c69f8239d",
+              "portId": "890218a6-5b5f-4940-932f-9de85e2deb97"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "5ce55d8d-616a-4c2e-98d2-59b0df3b46f8",
+              "portId": "812b95f2-1e37-4b6b-a0b2-d86eba3179c4"
+            },
+            "tgt": {
+              "nodeId": "e6fff28e-96b9-414b-bab9-f48e6cd91200",
+              "portId": "b8d296c9-ce71-434d-b8fe-608c4c10c5ed"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "f3feb9da-3b64-4ecf-bd04-3f9c69f8239d",
+              "portId": "1730c461-0110-4afe-b1c4-06a7577097d6"
+            },
+            "tgt": {
+              "nodeId": "674ec647-bece-4070-92e4-64e9aae20a2f",
+              "portId": "e16b8fd8-26d1-4c0c-bb33-c8ad7647621a"
+            },
+            "condition": "{}",
+            "action": "continue"
+          }
+        ],
+        "startNodes": [
+          {
+            "nodeId": "f9e061ae-9e74-40d5-84de-b2c82d850cd6",
+            "type": "root",
+            "id": "576bb518-9994-4545-b68a-18f28e922136"
+          }
+        ],
+        "variables": [
+          {
+            "id": "67d0378403957454641d5ff0",
+            "name": "reasoning LLM",
+            "reference": "67cef1001633e257cbf19b63",
+            "creator": "yaya.t@dataloop.ai",
+            "type": "Model",
+            "description": null,
+            "createdAt": "2025-03-11T13:15:48.874Z",
+            "updatedAt": "2025-03-11T13:59:23.503Z",
+            "value": "$var(reasoning LLM__model)",
+            "_id": "67d0378403957454641d5ff0"
+          },
+          {
+            "id": "67d0378403957449db1d5ff1",
+            "name": "iteration LLM",
+            "reference": "67cef1001633e257cbf19b63",
+            "creator": "yaya.t@dataloop.ai",
+            "type": "Model",
+            "description": null,
+            "createdAt": "2025-03-11T13:15:48.874Z",
+            "updatedAt": "2025-03-11T14:53:24.930Z",
+            "value": "$var(iteration LLM__model)",
+            "_id": "67d0378403957449db1d5ff1"
+          },
+          {
+            "id": "67d037840395744e8a1d5ff2",
+            "name": "json LLM",
+            "reference": "67cef1001633e257cbf19b63",
+            "creator": "yaya.t@dataloop.ai",
+            "type": "Model",
+            "description": null,
+            "createdAt": "2025-03-11T13:15:48.874Z",
+            "updatedAt": "2025-03-11T14:22:25.345Z",
+            "value": "$var(json LLM__model)",
+            "_id": "67d037840395744e8a1d5ff2"
+          },
+          {
+            "id": "67d041bb6e377c44fd67b9b6",
+            "name": "pdf dataset",
+            "reference": "67cef1001633e257cbf19b63",
+            "creator": "yaya.t@dataloop.ai",
+            "type": "Dataset",
+            "description": null,
+            "createdAt": "2025-03-11T13:59:23.504Z",
+            "updatedAt": "2025-03-11T15:53:07.787Z",
+            "value": "$var(pdf dataset__dataset)",
+            "_id": "67d041bb6e377c44fd67b9b6"
+          }
+        ],
+        "description": "NVIDIA Blueprint Template for Pdf to Podcast Pipeline",
+        "name": "PDF to Podcast Blueprint Template",
+        "templateKind": "org",
+        "nodes": [
+          {
+            "id": "f9e061ae-9e74-40d5-84de-b2c82d850cd6",
+            "inputs": [
+              {
+                "portId": "1b75970b-3165-40f0-a0ad-c2df254ffb0c",
+                "nodeId": "1b75970b-3165-40f0-a0ad-c2df254ffb0c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "1a90ca4d-7941-48c3-811d-414225053f13",
+                "nodeId": "1a90ca4d-7941-48c3-811d-414225053f13",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "pdf dataset",
+            "type": "storage",
+            "namespace": {
+              "functionName": "clone_item",
+              "projectName": "DataloopTasks",
+              "serviceName": "pipeline-utils",
+              "moduleName": "default_module",
+              "packageName": "pipeline-utils"
+            },
+            "projectId": "4eff4f18-5285-42bb-b43d-f74cea633916",
+            "metadata": {
+              "position": {
+                "x": 10298.910934448242,
+                "y": 9615.083587646484,
+                "z": 0
+              },
+              "repeatable": true,
+              "variableDataset": "pdf dataset"
+            }
+          },
+          {
+            "id": "1f722666-1041-4cb7-bab3-645c566552d2",
+            "inputs": [
+              {
+                "portId": "d10adc4b-6258-49a2-95b4-05205a73f621",
+                "nodeId": "d10adc4b-6258-49a2-95b4-05205a73f621",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "315979f0-a84e-491e-bf46-3146942482c0",
+                "nodeId": "315979f0-a84e-491e-bf46-3146942482c0",
+                "type": "Item[]",
+                "name": "items",
+                "displayName": "items",
+                "io": "output"
+              }
+            ],
+            "name": "PDF to Txt",
+            "type": "custom",
+            "namespace": {
+              "functionName": "pdf_extraction",
+              "projectName": null,
+              "serviceName": "pdf-to-txt-v2",
+              "moduleName": "pdf_to_txt_v2",
+              "packageName": "pdf_to_txt"
+            },
+            "appName": "PDF to Txt",
+            "dpkName": "pdf_to_txt",
+            "metadata": {
+              "position": {
+                "x": 10641.120880126953,
+                "y": 9614.585536956787,
+                "z": 0
+              },
+              "componentGroupName": "text-utils",
+              "customNodeConfig": {
+                "name": "PDF-to-Txt",
+                "remote_path_for_extractions": "/extracted_from_pdfs",
+                "extract_images": true,
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "pdf_to_txt"
+            },
+            "projectId": null
+          },
+          {
+            "id": "f183544e-2245-436d-ba7d-8a93763f7739",
+            "inputs": [
+              {
+                "portId": "a7d0d5a5-ba98-4236-b5a3-14a34aec8678",
+                "nodeId": "a7d0d5a5-ba98-4236-b5a3-14a34aec8678",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "64f7cc5f-9407-4154-87c5-d01677e401a6",
+                "nodeId": "64f7cc5f-9407-4154-87c5-d01677e401a6",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "6d08241b-d7ff-48eb-808d-f93ba96c3ade",
+                "nodeId": "6d08241b-d7ff-48eb-808d-f93ba96c3ade",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3-1-405b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "projectName": "Model mgmt demo",
+              "serviceName": "predict-67cfe042c51e4440024a25-tixj",
+              "moduleName": "nim-api-module",
+              "packageName": "nim-api-llama3-1-405b-instruct-meta"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "llama-3.1-405b-instruct",
+            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 12392.976048361785,
+                "y": 9495.17651495705,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.1-405b-instruct",
+                "system_prompt": "You are a helpful and a bit cynical assistant. Give relevant and short answers, if you dont know the answer just say it, dont make up an answer",
+                "max_tokens": 1024,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "seed": 0,
+                "stream": true
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "bba074b3-690c-43fe-bec3-c00acbc9685e",
+            "inputs": [
+              {
+                "portId": "ab9a3fb7-2f88-4840-9a90-7780ff6f9065",
+                "nodeId": "ab9a3fb7-2f88-4840-9a90-7780ff6f9065",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "a095e899-2828-4d7c-83bf-320c70f29ad9",
+                "nodeId": "a095e899-2828-4d7c-83bf-320c70f29ad9",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "531b904c-3933-4d3b-a57b-ed549c4fcc27",
+                "nodeId": "531b904c-3933-4d3b-a57b-ed549c4fcc27",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3-1-405b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "projectName": "Model mgmt demo",
+              "serviceName": "predict-67cfe042c51e4440024a25-tixj",
+              "moduleName": "nim-api-module",
+              "packageName": "nim-api-llama3-1-405b-instruct-meta"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "llama-3.1-405b-instruct",
+            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 11754.41256124525,
+                "y": 9503.074223790236,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.1-405b-instruct",
+                "system_prompt": "You are a helpful and a bit cynical assistant. Give relevant and short answers, if you dont know the answer just say it, dont make up an answer",
+                "max_tokens": 1024,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "seed": 0,
+                "stream": true
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "35dc14e6-4fde-4420-b8fe-3bd97887f574",
+            "inputs": [
+              {
+                "portId": "e0ecf434-dc4e-4f24-b12a-18f1f809a40f",
+                "nodeId": "e0ecf434-dc4e-4f24-b12a-18f1f809a40f",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "d804f05d-645c-480a-8ba4-c7848dccc315",
+                "nodeId": "d804f05d-645c-480a-8ba4-c7848dccc315",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "046f57ed-8f35-452d-b983-b5cf4cce053d",
+                "nodeId": "046f57ed-8f35-452d-b983-b5cf4cce053d",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3.1-405b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "projectName": "Model mgmt demo",
+              "serviceName": "predict-67cfe042c51e4440024a25-tixj",
+              "moduleName": "",
+              "packageName": "nim-api-llama3-1-405b-instruct-meta"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "llama-3.1-405b-instruct",
+            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 13031.028018267867,
+                "y": 9489.26700285674,
+                "z": 0
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "variableModel": "reasoning LLM",
+              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "4b865dd5-6d35-4b27-9952-4949f0027bde",
+            "inputs": [
+              {
+                "portId": "734de896-efba-4f87-a4cf-af0a310fa66e",
+                "nodeId": "734de896-efba-4f87-a4cf-af0a310fa66e",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "0c384797-58bb-4d71-b754-f9cbbe485361",
+                "nodeId": "0c384797-58bb-4d71-b754-f9cbbe485361",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "af78e4d3-f73e-4d38-bdcd-d3783b52b110",
+                "nodeId": "af78e4d3-f73e-4d38-bdcd-d3783b52b110",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3.1-8b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "projectName": "Model mgmt demo",
+              "serviceName": "predict-67d03bfb2a503ba51a53b5-4pll",
+              "moduleName": "",
+              "packageName": "nim-api-llama3-1-8b-instruct-meta"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "llama-3.1-8b-instruct",
+            "dpkName": "nim-api-llama3-1-8b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 13655.724286653107,
+                "y": 9480.963049107264,
+                "z": 0
+              },
+              "modelConfig": {},
+              "componentGroupName": "models",
+              "repeatable": true,
+              "variableModel": "json LLM",
+              "pipelineNodeName": "nim-api-llama3-1-8b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "8545b530-cda4-438b-bc45-7b0902d38754",
+            "inputs": [
+              {
+                "portId": "a0857d40-e8e3-4f87-baa1-dc603288e173",
+                "nodeId": "a0857d40-e8e3-4f87-baa1-dc603288e173",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "afbcfc99-7442-43f7-b47f-2d8ca6c87fb2",
+                "nodeId": "afbcfc99-7442-43f7-b47f-2d8ca6c87fb2",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "7c7d8b72-7c75-4ee8-86a3-caaa29012952",
+                "nodeId": "7c7d8b72-7c75-4ee8-86a3-caaa29012952",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3.1-405b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "projectName": "Model mgmt demo",
+              "serviceName": "predict-67cfe042c51e4440024a25-tixj",
+              "moduleName": "",
+              "packageName": "nim-api-llama3-1-405b-instruct-meta"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "llama-3.1-405b-instruct",
+            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 11746.652253892687,
+                "y": 9747.938396141488,
+                "z": 0
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "variableModel": "reasoning LLM",
+              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "b3320e85-b4fd-4d0b-aef3-b89527bae10c",
+            "inputs": [
+              {
+                "portId": "f30af2da-335b-4178-a732-9bcc92caf70c",
+                "nodeId": "f30af2da-335b-4178-a732-9bcc92caf70c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "5e447986-c586-4c48-875e-17507af85f9e",
+                "nodeId": "5e447986-c586-4c48-875e-17507af85f9e",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "e63888bf-dd11-4bd0-aead-784d998ac0e4",
+                "nodeId": "e63888bf-dd11-4bd0-aead-784d998ac0e4",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3.1-405b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "projectName": "Model mgmt demo",
+              "serviceName": "predict-67cfe042c51e4440024a25-tixj",
+              "moduleName": "",
+              "packageName": "nim-api-llama3-1-405b-instruct-meta"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "llama-3.1-405b-instruct",
+            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 12361.799451643725,
+                "y": 9753.40621235519,
+                "z": 0
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "variableModel": "reasoning LLM",
+              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "05d343a1-32e2-4d2f-a234-4caf82b07a3a",
+            "inputs": [
+              {
+                "portId": "80cf7e16-e8ab-4a61-8dab-f3c73000aed4",
+                "nodeId": "80cf7e16-e8ab-4a61-8dab-f3c73000aed4",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "c3e9dc51-8d75-4a67-b654-f930a0930215",
+                "nodeId": "c3e9dc51-8d75-4a67-b654-f930a0930215",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "09326256-bf31-42c3-b084-eacc3fdc63ef",
+                "nodeId": "09326256-bf31-42c3-b084-eacc3fdc63ef",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3.1-8b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "projectName": "Model mgmt demo",
+              "serviceName": "predict-67d03bfb2a503ba51a53b5-4pll",
+              "moduleName": "",
+              "packageName": "nim-api-llama3-1-8b-instruct-meta"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "llama-3.1-8b-instruct",
+            "dpkName": "nim-api-llama3-1-8b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 12990.316047951435,
+                "y": 9757.737334173298,
+                "z": 0
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "variableModel": "json LLM",
+              "pipelineNodeName": "nim-api-llama3-1-8b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "8c45b185-f56a-4127-99d0-78f03f19cfd5",
+            "inputs": [
+              {
+                "portId": "046b499a-91f2-4d8c-9259-57c4782aa6d6",
+                "nodeId": "046b499a-91f2-4d8c-9259-57c4782aa6d6",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "c5adb698-d909-4fd2-b02d-04996bd49c78",
+                "nodeId": "c5adb698-d909-4fd2-b02d-04996bd49c78",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "d734b626-595a-499f-a6fa-d003e614ed31",
+                "nodeId": "d734b626-595a-499f-a6fa-d003e614ed31",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3.1-70b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "projectName": "Model mgmt demo",
+              "serviceName": "predict-67d03d65c51e44309e4a25-h4x8",
+              "moduleName": "",
+              "packageName": "nim-api-llama3-1-70b-instruct-meta"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "llama-3.1-70b-instruct",
+            "dpkName": "nim-api-llama3-1-70b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 13591.837749340324,
+                "y": 9759.078262992743,
+                "z": 0
+              },
+              "modelConfig": {},
+              "componentGroupName": "models",
+              "repeatable": true,
+              "variableModel": "iteration LLM",
+              "pipelineNodeName": "nim-api-llama3-1-70b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "5ce55d8d-616a-4c2e-98d2-59b0df3b46f8",
+            "inputs": [
+              {
+                "portId": "2d2cece2-4a9b-416f-9522-77866e42fbf2",
+                "nodeId": "2d2cece2-4a9b-416f-9522-77866e42fbf2",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "812b95f2-1e37-4b6b-a0b2-d86eba3179c4",
+                "nodeId": "812b95f2-1e37-4b6b-a0b2-d86eba3179c4",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "dd3fac77-577a-486e-a2f1-00a6390d4f28",
+                "nodeId": "dd3fac77-577a-486e-a2f1-00a6390d4f28",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3.1-405b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "projectName": "Model mgmt demo",
+              "serviceName": "predict-67cfe042c51e4440024a25-tixj",
+              "moduleName": "",
+              "packageName": "nim-api-llama3-1-405b-instruct-meta"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "llama-3.1-405b-instruct",
+            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 14190.481846562547,
+                "y": 9755.744821152466,
+                "z": 0
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "variableModel": "reasoning LLM",
+              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "f3b50cd7-717d-4c95-aa92-a87c827d4023",
+            "inputs": [
+              {
+                "portId": "95f94b04-702e-4407-ac53-6fc5264149ec",
+                "nodeId": "95f94b04-702e-4407-ac53-6fc5264149ec",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "607dcdcb-e71f-4075-b40b-eea95d1af630",
+                "nodeId": "607dcdcb-e71f-4075-b40b-eea95d1af630",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "f1ee7543-a4d6-4888-889a-3d6696f60ade",
+                "nodeId": "f1ee7543-a4d6-4888-889a-3d6696f60ade",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3.1-70b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "projectName": "Model mgmt demo",
+              "serviceName": "predict-67d03d65c51e44309e4a25-h4x8",
+              "moduleName": "",
+              "packageName": "nim-api-llama3-1-70b-instruct-meta"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "llama-3.1-70b-instruct",
+            "dpkName": "nim-api-llama3-1-70b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 14835.039246736158,
+                "y": 9745.570558999689,
+                "z": 0
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "variableModel": "iteration LLM",
+              "pipelineNodeName": "nim-api-llama3-1-70b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "1ed36d30-3a3d-4a42-8ff6-c9e4cc8dfff8",
+            "inputs": [
+              {
+                "portId": "be24b367-4393-4d67-b47e-4c256f146f1f",
+                "nodeId": "be24b367-4393-4d67-b47e-4c256f146f1f",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "876f6ec3-63ed-4090-834f-03de60d3fb05",
+                "nodeId": "876f6ec3-63ed-4090-834f-03de60d3fb05",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "242c21d1-4e82-47ab-8d52-508e5befd4d0",
+                "nodeId": "242c21d1-4e82-47ab-8d52-508e5befd4d0",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3.1-8b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "projectName": "Model mgmt demo",
+              "serviceName": "predict-67d03bfb2a503ba51a53b5-4pll",
+              "moduleName": "",
+              "packageName": "nim-api-llama3-1-8b-instruct-meta"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "llama-3.1-8b-instruct",
+            "dpkName": "nim-api-llama3-1-8b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 15761.104893437545,
+                "y": 9726.156713513577,
+                "z": 0
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "variableModel": "json LLM",
+              "pipelineNodeName": "nim-api-llama3-1-8b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "a1b87e96-a002-452a-a3ef-a6dee1c0088f",
+            "inputs": [
+              {
+                "portId": "0d1ae730-8ef3-40a3-ac9e-b656fbeda8c9",
+                "nodeId": "0d1ae730-8ef3-40a3-ac9e-b656fbeda8c9",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "d0b90aa0-4da3-4dc4-aef0-b638ce7514be",
+                "nodeId": "d0b90aa0-4da3-4dc4-aef0-b638ce7514be",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "pdf dataset",
+            "type": "storage",
+            "namespace": {
+              "functionName": "clone_item",
+              "projectName": "DataloopTasks",
+              "serviceName": "pipeline-utils",
+              "moduleName": "default_module",
+              "packageName": "pipeline-utils"
+            },
+            "projectId": "4eff4f18-5285-42bb-b43d-f74cea633916",
+            "metadata": {
+              "position": {
+                "x": 16379.135341578236,
+                "y": 9522.829198472033,
+                "z": 0
+              },
+              "componentGroupName": "data",
+              "repeatable": true,
+              "variableDataset": "pdf dataset"
+            }
+          },
+          {
+            "id": "a9c330de-067f-4ab9-8cfb-ba90d790069d",
+            "inputs": [
+              {
+                "portId": "96c0ace6-e4d9-4bb1-a9dd-e46060bca977",
+                "nodeId": "96c0ace6-e4d9-4bb1-a9dd-e46060bca977",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "aed6b501-cff8-4278-a74f-e1a9ade38632",
+                "nodeId": "aed6b501-cff8-4278-a74f-e1a9ade38632",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Monologue Generate Outline",
+            "type": "custom",
+            "namespace": {
+              "functionName": "monologue_generate_outline",
+              "projectName": "Model mgmt demo",
+              "serviceName": "pdf2podcast-compute-config",
+              "moduleName": "pdf2podcast-module",
+              "packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "PDF to Podcast-CE-825-pdf-to-podcast",
+            "dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
+            "metadata": {
+              "position": {
+                "x": 12069.590197340312,
+                "y": 9505.178191759993,
+                "z": 0
+              },
+              "componentGroupName": "Podcast Generation",
+              "repeatable": true,
+              "pipelineNodeName": "monologue-generate-outline"
+            }
+          },
+          {
+            "id": "e976430b-0650-48a4-a133-c120502a9edb",
+            "inputs": [
+              {
+                "portId": "cbcaa451-f181-4eb4-99f5-2fae76188fe7",
+                "nodeId": "cbcaa451-f181-4eb4-99f5-2fae76188fe7",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "87c7a9c4-7516-4a54-87d6-f359a85b7e64",
+                "nodeId": "87c7a9c4-7516-4a54-87d6-f359a85b7e64",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Monologue Generate Monologue",
+            "type": "custom",
+            "namespace": {
+              "functionName": "monologue_generate_monologue",
+              "projectName": "Model mgmt demo",
+              "serviceName": "pdf2podcast-compute-config",
+              "moduleName": "pdf2podcast-module",
+              "packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "PDF to Podcast-CE-825-pdf-to-podcast",
+            "dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
+            "metadata": {
+              "position": {
+                "x": 12724.712963957629,
+                "y": 9487.319660091925,
+                "z": 0
+              },
+              "componentGroupName": "Podcast Generation",
+              "repeatable": true,
+              "pipelineNodeName": "monologue-generate-monologue"
+            }
+          },
+          {
+            "id": "22fd620f-6fb2-4f5d-8371-c829d9f1fb86",
+            "inputs": [
+              {
+                "portId": "e9f8d25b-b7f6-4b1b-ac05-3d1d0c3e28ba",
+                "nodeId": "e9f8d25b-b7f6-4b1b-ac05-3d1d0c3e28ba",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "2a56b05c-7aab-4c00-ae83-4104b7816d11",
+                "nodeId": "2a56b05c-7aab-4c00-ae83-4104b7816d11",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Monologue Create Convo JSON",
+            "type": "custom",
+            "namespace": {
+              "functionName": "monologue_create_convo_json",
+              "projectName": "Model mgmt demo",
+              "serviceName": "pdf2podcast-compute-config",
+              "moduleName": "pdf2podcast-module",
+              "packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "PDF to Podcast-CE-825-pdf-to-podcast",
+            "dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
+            "metadata": {
+              "position": {
+                "x": 13336.811505140333,
+                "y": 9490.005440005003,
+                "z": 0
+              },
+              "componentGroupName": "Podcast Generation",
+              "repeatable": true,
+              "pipelineNodeName": "monologue-create-convo-json"
+            }
+          },
+          {
+            "id": "5c38d415-dd6a-4e6c-8065-3486acd1b033",
+            "inputs": [
+              {
+                "portId": "548885be-0908-49b6-a42d-27e0081bf645",
+                "nodeId": "548885be-0908-49b6-a42d-27e0081bf645",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              },
+              {
+                "portId": "7b220a50-90f8-42f1-b450-038411699654",
+                "nodeId": "7b220a50-90f8-42f1-b450-038411699654",
+                "type": "String",
+                "name": "voice_mapping",
+                "displayName": "voice_mapping",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "0351babf-5b89-4394-8739-3594fccbec49",
+                "nodeId": "0351babf-5b89-4394-8739-3594fccbec49",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "ElevenLabs Generate Audio",
+            "type": "custom",
+            "namespace": {
+              "functionName": "generate_audio",
+              "projectName": "Model mgmt demo",
+              "serviceName": "pdf2podcast-compute-config",
+              "moduleName": "pdf2podcast-module",
+              "packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "PDF to Podcast-CE-825-pdf-to-podcast",
+            "dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
+            "metadata": {
+              "position": {
+                "x": 16682.108621105588,
+                "y": 9521.669561173409,
+                "z": 0
+              },
+              "componentGroupName": "Podcast Generation",
+              "repeatable": true,
+              "pipelineNodeName": "generate-audio"
+            }
+          },
+          {
+            "id": "2a1ce2d3-87f2-4a00-b3a4-53e35617c469",
+            "inputs": [
+              {
+                "portId": "65ebf40e-1ad0-40f2-b067-23fc642ab218",
+                "nodeId": "65ebf40e-1ad0-40f2-b067-23fc642ab218",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b8774a2e-c66f-4a95-a1aa-74929f6a08f3",
+                "nodeId": "b8774a2e-c66f-4a95-a1aa-74929f6a08f3",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Dialogue Generate Raw Outline",
+            "type": "custom",
+            "namespace": {
+              "functionName": "dialogue_generate_raw_outline",
+              "projectName": "Model mgmt demo",
+              "serviceName": "pdf2podcast-compute-config",
+              "moduleName": "pdf2podcast-module",
+              "packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "PDF to Podcast-CE-825-pdf-to-podcast",
+            "dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
+            "metadata": {
+              "position": {
+                "x": 12064.961309567308,
+                "y": 9746.754349156794,
+                "z": 0
+              },
+              "componentGroupName": "Podcast Generation",
+              "repeatable": true,
+              "pipelineNodeName": "dialogue-generate-raw-outline"
+            }
+          },
+          {
+            "id": "0c09ca8b-8d20-42b0-a4ac-07d769708792",
+            "inputs": [
+              {
+                "portId": "f7a8f3fd-8948-4c5d-baa4-b81abea427ff",
+                "nodeId": "f7a8f3fd-8948-4c5d-baa4-b81abea427ff",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              },
+              {
+                "portId": "f5cc5625-9f3f-439d-9403-f0772653291e",
+                "nodeId": "f5cc5625-9f3f-439d-9403-f0772653291e",
+                "type": "Boolean",
+                "name": "monologue",
+                "displayName": "monologue",
+                "defaultValue": true,
+                "io": "input"
+              },
+              {
+                "portId": "265332ff-c27e-45cb-9f1a-1fd2c4abda81",
+                "nodeId": "265332ff-c27e-45cb-9f1a-1fd2c4abda81",
+                "type": "String",
+                "name": "focus",
+                "displayName": "focus",
+                "io": "input"
+              },
+              {
+                "portId": "d4eee6ac-b843-4595-ac2d-c143af48dd9c",
+                "nodeId": "d4eee6ac-b843-4595-ac2d-c143af48dd9c",
+                "type": "Integer",
+                "name": "duration",
+                "displayName": "duration",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "6e4cfe5a-39fc-4f4f-a0c8-753b725ff486",
+                "nodeId": "6e4cfe5a-39fc-4f4f-a0c8-753b725ff486",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": [
+                  "monologue",
+                  "dialogue"
+                ],
+                "io": "output"
+              }
+            ],
+            "name": "Prepare and Summarize PDF",
+            "type": "custom",
+            "namespace": {
+              "functionName": "prepare_and_summarize_pdf",
+              "projectName": "Model mgmt demo",
+              "serviceName": "pdf2podcast-compute-config",
+              "moduleName": "pdf2podcast-module",
+              "packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "PDF to Podcast-CE-825-pdf-to-podcast",
+            "dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
+            "metadata": {
+              "position": {
+                "x": 11355.70728263545,
+                "y": 9605.866371124073,
+                "z": 0
+              },
+              "componentGroupName": "Podcast Generation",
+              "repeatable": true,
+              "pipelineNodeName": "prepare-and-summarize-pdf"
+            }
+          },
+          {
+            "id": "080309cf-5f9b-4adc-a7d0-9c8d396feb62",
+            "inputs": [
+              {
+                "portId": "80c27731-b732-4d86-a3d8-3bab4f00b6d6",
+                "nodeId": "80c27731-b732-4d86-a3d8-3bab4f00b6d6",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "8328bd53-06d3-49b1-b059-70aa432b9b40",
+                "nodeId": "8328bd53-06d3-49b1-b059-70aa432b9b40",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Dialogue Generate Structured Outline",
+            "type": "custom",
+            "namespace": {
+              "functionName": "dialogue_generate_structured_outline",
+              "projectName": "Model mgmt demo",
+              "serviceName": "pdf2podcast-compute-config",
+              "moduleName": "pdf2podcast-module",
+              "packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "PDF to Podcast-CE-825-pdf-to-podcast",
+            "dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
+            "metadata": {
+              "position": {
+                "x": 12669.444488131196,
+                "y": 9754.577170861738,
+                "z": 0
+              },
+              "componentGroupName": "Podcast Generation",
+              "repeatable": true,
+              "pipelineNodeName": "dialogue-generate-structured-outline"
+            }
+          },
+          {
+            "id": "29015027-12bc-4edd-a680-4791be16d2ed",
+            "inputs": [
+              {
+                "portId": "865ed661-e0e3-48bd-ae25-5875ecdbad86",
+                "nodeId": "865ed661-e0e3-48bd-ae25-5875ecdbad86",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "5d5e517b-9440-41b3-840f-f8c32233e4b7",
+                "nodeId": "5d5e517b-9440-41b3-840f-f8c32233e4b7",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Dialogue Process Segments",
+            "type": "custom",
+            "namespace": {
+              "functionName": "dialogue_process_segments",
+              "projectName": "Model mgmt demo",
+              "serviceName": "pdf2podcast-compute-config",
+              "moduleName": "pdf2podcast-module",
+              "packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "PDF to Podcast-CE-825-pdf-to-podcast",
+            "dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
+            "metadata": {
+              "position": {
+                "x": 13289.146711217272,
+                "y": 9753.054199428541,
+                "z": 0
+              },
+              "componentGroupName": "Podcast Generation",
+              "repeatable": true,
+              "pipelineNodeName": "dialogue-process-segments"
+            }
+          },
+          {
+            "id": "bcfecca5-8b0f-48ad-a469-b8ecc9b03838",
+            "inputs": [
+              {
+                "portId": "b7146a80-4bcf-469e-9303-0faa23e1ca2b",
+                "nodeId": "b7146a80-4bcf-469e-9303-0faa23e1ca2b",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "dbfeade9-ffee-447d-ac09-100549ab109c",
+                "nodeId": "dbfeade9-ffee-447d-ac09-100549ab109c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Dialogue Generate Dialogue Segment",
+            "type": "custom",
+            "namespace": {
+              "functionName": "dialogue_generate_dialogue_segment",
+              "projectName": "Model mgmt demo",
+              "serviceName": "pdf2podcast-compute-config",
+              "moduleName": "pdf2podcast-module",
+              "packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "PDF to Podcast-CE-825-pdf-to-podcast",
+            "dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
+            "metadata": {
+              "position": {
+                "x": 13892.10252447502,
+                "y": 9756.281408894827,
+                "z": 0
+              },
+              "componentGroupName": "Podcast Generation",
+              "repeatable": true,
+              "pipelineNodeName": "dialogue-generate-dialogue-segment"
+            }
+          },
+          {
+            "id": "e6fff28e-96b9-414b-bab9-f48e6cd91200",
+            "inputs": [
+              {
+                "portId": "b8d296c9-ce71-434d-b8fe-608c4c10c5ed",
+                "nodeId": "b8d296c9-ce71-434d-b8fe-608c4c10c5ed",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "a9891f44-4047-45b1-b23a-762330f907c2",
+                "nodeId": "a9891f44-4047-45b1-b23a-762330f907c2",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Dialogue Generate Dialogue",
+            "type": "custom",
+            "namespace": {
+              "functionName": "dialogue_generate_dialogue",
+              "projectName": "Model mgmt demo",
+              "serviceName": "pdf2podcast-compute-config",
+              "moduleName": "pdf2podcast-module",
+              "packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "PDF to Podcast-CE-825-pdf-to-podcast",
+            "dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
+            "metadata": {
+              "position": {
+                "x": 14524.28043070728,
+                "y": 9752.43732800687,
+                "z": 0
+              },
+              "componentGroupName": "Podcast Generation",
+              "repeatable": true,
+              "pipelineNodeName": "dialogue-generate-dialogue"
+            }
+          },
+          {
+            "id": "5dc9fdee-fee2-4d91-937e-9e502d79c3ee",
+            "inputs": [
+              {
+                "portId": "23010be6-1b42-4e4c-aa74-42a600ac08a2",
+                "nodeId": "23010be6-1b42-4e4c-aa74-42a600ac08a2",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "f91cb0b9-93d4-447d-a692-97f9316f46ae",
+                "nodeId": "f91cb0b9-93d4-447d-a692-97f9316f46ae",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": [
+                  "continue",
+                  "wait"
+                ],
+                "io": "output"
+              }
+            ],
+            "name": "Wait",
+            "type": "custom",
+            "namespace": {
+              "functionName": "wait_for_cycle",
+              "projectName": "Model mgmt demo",
+              "serviceName": "wait-node",
+              "moduleName": "wait-node",
+              "packageName": "wait-node"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "Wait Node",
+            "dpkName": "wait-node",
+            "metadata": {
+              "position": {
+                "x": 10956.941071562394,
+                "y": 9611.51762401114,
+                "z": 0
+              },
+              "componentGroupName": "data",
+              "customNodeConfig": {
+                "name": "Wait",
+                "returnParent": true,
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "Wait Node"
+            }
+          },
+          {
+            "id": "674ec647-bece-4070-92e4-64e9aae20a2f",
+            "inputs": [
+              {
+                "portId": "e16b8fd8-26d1-4c0c-bb33-c8ad7647621a",
+                "nodeId": "e16b8fd8-26d1-4c0c-bb33-c8ad7647621a",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "c3b81c24-343e-45e1-98a9-67d44a3ff3c9",
+                "nodeId": "c3b81c24-343e-45e1-98a9-67d44a3ff3c9",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Dialogue Create Convo JSON",
+            "type": "custom",
+            "namespace": {
+              "functionName": "dialogue_create_convo_json",
+              "projectName": "Model mgmt demo",
+              "serviceName": "pdf2podcast-compute-config",
+              "moduleName": "pdf2podcast-module",
+              "packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "PDF to Podcast-CE-825-pdf-to-podcast",
+            "dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
+            "metadata": {
+              "position": {
+                "x": 15494.61340028493,
+                "y": 9716.373970470137,
+                "z": 0
+              },
+              "componentGroupName": "Podcast Generation",
+              "repeatable": true,
+              "pipelineNodeName": "dialogue-create-convo-json"
+            }
+          },
+          {
+            "id": "edd8a662-debe-494c-bb69-de9856c650d7",
+            "inputs": [
+              {
+                "portId": "9b4550bc-de54-437f-be89-a05d1d22381a",
+                "nodeId": "9b4550bc-de54-437f-be89-a05d1d22381a",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "66e65f1f-ba83-47a7-b190-5effc010b070",
+                "nodeId": "66e65f1f-ba83-47a7-b190-5effc010b070",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Dialogue Create Final Conversation",
+            "type": "custom",
+            "namespace": {
+              "functionName": "dialogue_create_final_conversation",
+              "projectName": "Model mgmt demo",
+              "serviceName": "pdf2podcast-compute-config",
+              "moduleName": "pdf2podcast-module",
+              "packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "PDF to Podcast-CE-825-pdf-to-podcast",
+            "dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
+            "metadata": {
+              "position": {
+                "x": 16048.992013654573,
+                "y": 9713.690508315163,
+                "z": 0
+              },
+              "componentGroupName": "Podcast Generation",
+              "repeatable": true,
+              "pipelineNodeName": "dialogue-create-final-conversation"
+            }
+          },
+          {
+            "id": "f3feb9da-3b64-4ecf-bd04-3f9c69f8239d",
+            "inputs": [
+              {
+                "portId": "890218a6-5b5f-4940-932f-9de85e2deb97",
+                "nodeId": "890218a6-5b5f-4940-932f-9de85e2deb97",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "1730c461-0110-4afe-b1c4-06a7577097d6",
+                "nodeId": "1730c461-0110-4afe-b1c4-06a7577097d6",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": [
+                  "continue",
+                  "wait"
+                ],
+                "io": "output"
+              }
+            ],
+            "name": "Wait",
+            "type": "custom",
+            "namespace": {
+              "functionName": "wait_for_cycle",
+              "projectName": "Model mgmt demo",
+              "serviceName": "wait-node",
+              "moduleName": "wait-node",
+              "packageName": "wait-node"
+            },
+            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
+            "appName": "Wait Node",
+            "dpkName": "wait-node",
+            "metadata": {
+              "position": {
+                "x": 15146.951431856545,
+                "y": 9731.140863739121,
+                "z": 0
+              },
+              "componentGroupName": "data",
+              "customNodeConfig": {
+                "name": "Wait",
+                "returnParent": false,
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "Wait Node"
+            }
+          }
+        ],
+        "preview": "",
+        "_id": "67d81f83a3db602171e01b4f"
       }
     ],
-    "components": {
-    "pipelineTemplates": [
-  {
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"orgId": "18739a63-4393-43ea-a87e-9a284b14978f",
-"connections": [
-{
-"src": {
-"nodeId": "f9e061ae-9e74-40d5-84de-b2c82d850cd6",
-"portId": "1a90ca4d-7941-48c3-811d-414225053f13"
-},
-"tgt": {
-"nodeId": "1f722666-1041-4cb7-bab3-645c566552d2",
-"portId": "d10adc4b-6258-49a2-95b4-05205a73f621"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "4b865dd5-6d35-4b27-9952-4949f0027bde",
-"portId": "0c384797-58bb-4d71-b754-f9cbbe485361"
-},
-"tgt": {
-"nodeId": "a1b87e96-a002-452a-a3ef-a6dee1c0088f",
-"portId": "0d1ae730-8ef3-40a3-ac9e-b656fbeda8c9"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "f183544e-2245-436d-ba7d-8a93763f7739",
-"portId": "64f7cc5f-9407-4154-87c5-d01677e401a6"
-},
-"tgt": {
-"nodeId": "e976430b-0650-48a4-a133-c120502a9edb",
-"portId": "cbcaa451-f181-4eb4-99f5-2fae76188fe7"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "e976430b-0650-48a4-a133-c120502a9edb",
-"portId": "87c7a9c4-7516-4a54-87d6-f359a85b7e64"
-},
-"tgt": {
-"nodeId": "35dc14e6-4fde-4420-b8fe-3bd97887f574",
-"portId": "e0ecf434-dc4e-4f24-b12a-18f1f809a40f"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "35dc14e6-4fde-4420-b8fe-3bd97887f574",
-"portId": "d804f05d-645c-480a-8ba4-c7848dccc315"
-},
-"tgt": {
-"nodeId": "22fd620f-6fb2-4f5d-8371-c829d9f1fb86",
-"portId": "e9f8d25b-b7f6-4b1b-ac05-3d1d0c3e28ba"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "22fd620f-6fb2-4f5d-8371-c829d9f1fb86",
-"portId": "2a56b05c-7aab-4c00-ae83-4104b7816d11"
-},
-"tgt": {
-"nodeId": "4b865dd5-6d35-4b27-9952-4949f0027bde",
-"portId": "734de896-efba-4f87-a4cf-af0a310fa66e"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "a1b87e96-a002-452a-a3ef-a6dee1c0088f",
-"portId": "d0b90aa0-4da3-4dc4-aef0-b638ce7514be"
-},
-"tgt": {
-"nodeId": "5c38d415-dd6a-4e6c-8065-3486acd1b033",
-"portId": "548885be-0908-49b6-a42d-27e0081bf645"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "8545b530-cda4-438b-bc45-7b0902d38754",
-"portId": "afbcfc99-7442-43f7-b47f-2d8ca6c87fb2"
-},
-"tgt": {
-"nodeId": "2a1ce2d3-87f2-4a00-b3a4-53e35617c469",
-"portId": "65ebf40e-1ad0-40f2-b067-23fc642ab218"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "2a1ce2d3-87f2-4a00-b3a4-53e35617c469",
-"portId": "b8774a2e-c66f-4a95-a1aa-74929f6a08f3"
-},
-"tgt": {
-"nodeId": "b3320e85-b4fd-4d0b-aef3-b89527bae10c",
-"portId": "f30af2da-335b-4178-a732-9bcc92caf70c"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "bba074b3-690c-43fe-bec3-c00acbc9685e",
-"portId": "a095e899-2828-4d7c-83bf-320c70f29ad9"
-},
-"tgt": {
-"nodeId": "a9c330de-067f-4ab9-8cfb-ba90d790069d",
-"portId": "96c0ace6-e4d9-4bb1-a9dd-e46060bca977"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "a9c330de-067f-4ab9-8cfb-ba90d790069d",
-"portId": "aed6b501-cff8-4278-a74f-e1a9ade38632"
-},
-"tgt": {
-"nodeId": "f183544e-2245-436d-ba7d-8a93763f7739",
-"portId": "a7d0d5a5-ba98-4236-b5a3-14a34aec8678"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "0c09ca8b-8d20-42b0-a4ac-07d769708792",
-"portId": "6e4cfe5a-39fc-4f4f-a0c8-753b725ff486"
-},
-"tgt": {
-"nodeId": "bba074b3-690c-43fe-bec3-c00acbc9685e",
-"portId": "ab9a3fb7-2f88-4840-9a90-7780ff6f9065"
-},
-"condition": "{}",
-"action": "monologue"
-},
-{
-"src": {
-"nodeId": "0c09ca8b-8d20-42b0-a4ac-07d769708792",
-"portId": "6e4cfe5a-39fc-4f4f-a0c8-753b725ff486"
-},
-"tgt": {
-"nodeId": "8545b530-cda4-438b-bc45-7b0902d38754",
-"portId": "a0857d40-e8e3-4f87-baa1-dc603288e173"
-},
-"condition": "{}",
-"action": "dialogue"
-},
-{
-"src": {
-"nodeId": "b3320e85-b4fd-4d0b-aef3-b89527bae10c",
-"portId": "5e447986-c586-4c48-875e-17507af85f9e"
-},
-"tgt": {
-"nodeId": "080309cf-5f9b-4adc-a7d0-9c8d396feb62",
-"portId": "80c27731-b732-4d86-a3d8-3bab4f00b6d6"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "080309cf-5f9b-4adc-a7d0-9c8d396feb62",
-"portId": "8328bd53-06d3-49b1-b059-70aa432b9b40"
-},
-"tgt": {
-"nodeId": "05d343a1-32e2-4d2f-a234-4caf82b07a3a",
-"portId": "80cf7e16-e8ab-4a61-8dab-f3c73000aed4"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "05d343a1-32e2-4d2f-a234-4caf82b07a3a",
-"portId": "c3e9dc51-8d75-4a67-b654-f930a0930215"
-},
-"tgt": {
-"nodeId": "29015027-12bc-4edd-a680-4791be16d2ed",
-"portId": "865ed661-e0e3-48bd-ae25-5875ecdbad86"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "29015027-12bc-4edd-a680-4791be16d2ed",
-"portId": "5d5e517b-9440-41b3-840f-f8c32233e4b7"
-},
-"tgt": {
-"nodeId": "8c45b185-f56a-4127-99d0-78f03f19cfd5",
-"portId": "046b499a-91f2-4d8c-9259-57c4782aa6d6"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "8c45b185-f56a-4127-99d0-78f03f19cfd5",
-"portId": "c5adb698-d909-4fd2-b02d-04996bd49c78"
-},
-"tgt": {
-"nodeId": "bcfecca5-8b0f-48ad-a469-b8ecc9b03838",
-"portId": "b7146a80-4bcf-469e-9303-0faa23e1ca2b"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "bcfecca5-8b0f-48ad-a469-b8ecc9b03838",
-"portId": "dbfeade9-ffee-447d-ac09-100549ab109c"
-},
-"tgt": {
-"nodeId": "5ce55d8d-616a-4c2e-98d2-59b0df3b46f8",
-"portId": "2d2cece2-4a9b-416f-9522-77866e42fbf2"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "e6fff28e-96b9-414b-bab9-f48e6cd91200",
-"portId": "a9891f44-4047-45b1-b23a-762330f907c2"
-},
-"tgt": {
-"nodeId": "f3b50cd7-717d-4c95-aa92-a87c827d4023",
-"portId": "95f94b04-702e-4407-ac53-6fc5264149ec"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "1f722666-1041-4cb7-bab3-645c566552d2",
-"portId": "315979f0-a84e-491e-bf46-3146942482c0"
-},
-"tgt": {
-"nodeId": "5dc9fdee-fee2-4d91-937e-9e502d79c3ee",
-"portId": "23010be6-1b42-4e4c-aa74-42a600ac08a2"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "5dc9fdee-fee2-4d91-937e-9e502d79c3ee",
-"portId": "f91cb0b9-93d4-447d-a692-97f9316f46ae"
-},
-"tgt": {
-"nodeId": "0c09ca8b-8d20-42b0-a4ac-07d769708792",
-"portId": "f7a8f3fd-8948-4c5d-baa4-b81abea427ff"
-},
-"condition": "{}",
-"action": "continue"
-},
-{
-"src": {
-"nodeId": "674ec647-bece-4070-92e4-64e9aae20a2f",
-"portId": "c3b81c24-343e-45e1-98a9-67d44a3ff3c9"
-},
-"tgt": {
-"nodeId": "1ed36d30-3a3d-4a42-8ff6-c9e4cc8dfff8",
-"portId": "be24b367-4393-4d67-b47e-4c256f146f1f"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "1ed36d30-3a3d-4a42-8ff6-c9e4cc8dfff8",
-"portId": "876f6ec3-63ed-4090-834f-03de60d3fb05"
-},
-"tgt": {
-"nodeId": "edd8a662-debe-494c-bb69-de9856c650d7",
-"portId": "9b4550bc-de54-437f-be89-a05d1d22381a"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "edd8a662-debe-494c-bb69-de9856c650d7",
-"portId": "66e65f1f-ba83-47a7-b190-5effc010b070"
-},
-"tgt": {
-"nodeId": "a1b87e96-a002-452a-a3ef-a6dee1c0088f",
-"portId": "0d1ae730-8ef3-40a3-ac9e-b656fbeda8c9"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "f3b50cd7-717d-4c95-aa92-a87c827d4023",
-"portId": "607dcdcb-e71f-4075-b40b-eea95d1af630"
-},
-"tgt": {
-"nodeId": "f3feb9da-3b64-4ecf-bd04-3f9c69f8239d",
-"portId": "890218a6-5b5f-4940-932f-9de85e2deb97"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "5ce55d8d-616a-4c2e-98d2-59b0df3b46f8",
-"portId": "812b95f2-1e37-4b6b-a0b2-d86eba3179c4"
-},
-"tgt": {
-"nodeId": "e6fff28e-96b9-414b-bab9-f48e6cd91200",
-"portId": "b8d296c9-ce71-434d-b8fe-608c4c10c5ed"
-},
-"condition": "{}"
-},
-{
-"src": {
-"nodeId": "f3feb9da-3b64-4ecf-bd04-3f9c69f8239d",
-"portId": "1730c461-0110-4afe-b1c4-06a7577097d6"
-},
-"tgt": {
-"nodeId": "674ec647-bece-4070-92e4-64e9aae20a2f",
-"portId": "e16b8fd8-26d1-4c0c-bb33-c8ad7647621a"
-},
-"condition": "{}",
-"action": "continue"
-}
-],
-"startNodes": [
-{
-"nodeId": "f9e061ae-9e74-40d5-84de-b2c82d850cd6",
-"type": "root",
-"id": "576bb518-9994-4545-b68a-18f28e922136"
-}
-],
-"variables": [
-{
-"id": "67d0378403957454641d5ff0",
-"name": "reasoning LLM",
-"reference": "67cef1001633e257cbf19b63",
-"creator": "yaya.t@dataloop.ai",
-"type": "Model",
-"description": null,
-"createdAt": "2025-03-11T13:15:48.874Z",
-"updatedAt": "2025-03-11T13:59:23.503Z",
-"value": "$var(reasoning LLM__model)",
-"_id": "67d0378403957454641d5ff0"
-},
-{
-"id": "67d0378403957449db1d5ff1",
-"name": "iteration LLM",
-"reference": "67cef1001633e257cbf19b63",
-"creator": "yaya.t@dataloop.ai",
-"type": "Model",
-"description": null,
-"createdAt": "2025-03-11T13:15:48.874Z",
-"updatedAt": "2025-03-11T14:53:24.930Z",
-"value": "$var(iteration LLM__model)",
-"_id": "67d0378403957449db1d5ff1"
-},
-{
-"id": "67d037840395744e8a1d5ff2",
-"name": "json LLM",
-"reference": "67cef1001633e257cbf19b63",
-"creator": "yaya.t@dataloop.ai",
-"type": "Model",
-"description": null,
-"createdAt": "2025-03-11T13:15:48.874Z",
-"updatedAt": "2025-03-11T14:22:25.345Z",
-"value": "$var(json LLM__model)",
-"_id": "67d037840395744e8a1d5ff2"
-},
-{
-"id": "67d041bb6e377c44fd67b9b6",
-"name": "pdf dataset",
-"reference": "67cef1001633e257cbf19b63",
-"creator": "yaya.t@dataloop.ai",
-"type": "Dataset",
-"description": null,
-"createdAt": "2025-03-11T13:59:23.504Z",
-"updatedAt": "2025-03-11T15:53:07.787Z",
-"value": "$var(pdf dataset__dataset)",
-"_id": "67d041bb6e377c44fd67b9b6"
-}
-],
-"description": "NVIDIA Blueprint Template for Pdf to Podcast Pipeline",
-"name": "PDF to Podcast Blueprint Template",
-"templateKind": "org",
-"nodes": [
-{
-"id": "f9e061ae-9e74-40d5-84de-b2c82d850cd6",
-"inputs": [
-{
-"portId": "1b75970b-3165-40f0-a0ad-c2df254ffb0c",
-"nodeId": "1b75970b-3165-40f0-a0ad-c2df254ffb0c",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "1a90ca4d-7941-48c3-811d-414225053f13",
-"nodeId": "1a90ca4d-7941-48c3-811d-414225053f13",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "pdf dataset",
-"type": "storage",
-"namespace": {
-"functionName": "clone_item",
-"projectName": "DataloopTasks",
-"serviceName": "pipeline-utils",
-"moduleName": "default_module",
-"packageName": "pipeline-utils"
-},
-"projectId": "4eff4f18-5285-42bb-b43d-f74cea633916",
-"metadata": {
-"position": {
-"x": 10298.910934448242,
-"y": 9615.083587646484,
-"z": 0
-},
-"repeatable": true,
-"variableDataset": "pdf dataset"
-}
-},
-{
-"id": "1f722666-1041-4cb7-bab3-645c566552d2",
-"inputs": [
-{
-"portId": "d10adc4b-6258-49a2-95b4-05205a73f621",
-"nodeId": "d10adc4b-6258-49a2-95b4-05205a73f621",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "315979f0-a84e-491e-bf46-3146942482c0",
-"nodeId": "315979f0-a84e-491e-bf46-3146942482c0",
-"type": "Item[]",
-"name": "items",
-"displayName": "items",
-"io": "output"
-}
-],
-"name": "PDF to Txt",
-"type": "custom",
-"namespace": {
-"functionName": "pdf_extraction",
-"projectName": null,
-"serviceName": "pdf-to-txt-v2",
-"moduleName": "pdf_to_txt_v2",
-"packageName": "pdf_to_txt"
-},
-"appName": "PDF to Txt",
-"dpkName": "pdf_to_txt",
-"metadata": {
-"position": {
-"x": 10641.120880126953,
-"y": 9614.585536956787,
-"z": 0
-},
-"componentGroupName": "text-utils",
-"customNodeConfig": {
-"name": "PDF-to-Txt",
-"remote_path_for_extractions": "/extracted_from_pdfs",
-"extract_images": true,
-"validation": {
-"valid": true,
-"errors": []
-}
-},
-"repeatable": true,
-"pipelineNodeName": "pdf_to_txt"
-},
-"projectId": null
-},
-{
-"id": "f183544e-2245-436d-ba7d-8a93763f7739",
-"inputs": [
-{
-"portId": "a7d0d5a5-ba98-4236-b5a3-14a34aec8678",
-"nodeId": "a7d0d5a5-ba98-4236-b5a3-14a34aec8678",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "64f7cc5f-9407-4154-87c5-d01677e401a6",
-"nodeId": "64f7cc5f-9407-4154-87c5-d01677e401a6",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-},
-{
-"portId": "6d08241b-d7ff-48eb-808d-f93ba96c3ade",
-"nodeId": "6d08241b-d7ff-48eb-808d-f93ba96c3ade",
-"type": "Annotation[]",
-"name": "annotations",
-"displayName": "annotations",
-"io": "output"
-}
-],
-"name": "llama-3-1-405b-instruct",
-"type": "ml",
-"namespace": {
-"functionName": "predict",
-"projectName": "Model mgmt demo",
-"serviceName": "predict-67cfe042c51e4440024a25-tixj",
-"moduleName": "nim-api-module",
-"packageName": "nim-api-llama3-1-405b-instruct-meta"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "llama-3.1-405b-instruct",
-"dpkName": "nim-api-llama3-1-405b-instruct-meta",
-"metadata": {
-"position": {
-"x": 12392.976048361785,
-"y": 9495.17651495705,
-"z": 0
-},
-"modelConfig": {
-"nim_model_name": "meta/llama-3.1-405b-instruct",
-"system_prompt": "You are a helpful and a bit cynical assistant. Give relevant and short answers, if you dont know the answer just say it, dont make up an answer",
-"max_tokens": 1024,
-"temperature": 0.2,
-"top_p": 0.7,
-"seed": 0,
-"stream": true
-},
-"componentGroupName": "models",
-"repeatable": true,
-"pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
-"mlType": "genAi"
-}
-},
-{
-"id": "bba074b3-690c-43fe-bec3-c00acbc9685e",
-"inputs": [
-{
-"portId": "ab9a3fb7-2f88-4840-9a90-7780ff6f9065",
-"nodeId": "ab9a3fb7-2f88-4840-9a90-7780ff6f9065",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "a095e899-2828-4d7c-83bf-320c70f29ad9",
-"nodeId": "a095e899-2828-4d7c-83bf-320c70f29ad9",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-},
-{
-"portId": "531b904c-3933-4d3b-a57b-ed549c4fcc27",
-"nodeId": "531b904c-3933-4d3b-a57b-ed549c4fcc27",
-"type": "Annotation[]",
-"name": "annotations",
-"displayName": "annotations",
-"io": "output"
-}
-],
-"name": "llama-3-1-405b-instruct",
-"type": "ml",
-"namespace": {
-"functionName": "predict",
-"projectName": "Model mgmt demo",
-"serviceName": "predict-67cfe042c51e4440024a25-tixj",
-"moduleName": "nim-api-module",
-"packageName": "nim-api-llama3-1-405b-instruct-meta"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "llama-3.1-405b-instruct",
-"dpkName": "nim-api-llama3-1-405b-instruct-meta",
-"metadata": {
-"position": {
-"x": 11754.41256124525,
-"y": 9503.074223790236,
-"z": 0
-},
-"modelConfig": {
-"nim_model_name": "meta/llama-3.1-405b-instruct",
-"system_prompt": "You are a helpful and a bit cynical assistant. Give relevant and short answers, if you dont know the answer just say it, dont make up an answer",
-"max_tokens": 1024,
-"temperature": 0.2,
-"top_p": 0.7,
-"seed": 0,
-"stream": true
-},
-"componentGroupName": "models",
-"repeatable": true,
-"pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
-"mlType": "genAi"
-}
-},
-{
-"id": "35dc14e6-4fde-4420-b8fe-3bd97887f574",
-"inputs": [
-{
-"portId": "e0ecf434-dc4e-4f24-b12a-18f1f809a40f",
-"nodeId": "e0ecf434-dc4e-4f24-b12a-18f1f809a40f",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "d804f05d-645c-480a-8ba4-c7848dccc315",
-"nodeId": "d804f05d-645c-480a-8ba4-c7848dccc315",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-},
-{
-"portId": "046f57ed-8f35-452d-b983-b5cf4cce053d",
-"nodeId": "046f57ed-8f35-452d-b983-b5cf4cce053d",
-"type": "Annotation[]",
-"name": "annotations",
-"displayName": "annotations",
-"io": "output"
-}
-],
-"name": "llama-3.1-405b-instruct",
-"type": "ml",
-"namespace": {
-"functionName": "predict",
-"projectName": "Model mgmt demo",
-"serviceName": "predict-67cfe042c51e4440024a25-tixj",
-"moduleName": "",
-"packageName": "nim-api-llama3-1-405b-instruct-meta"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "llama-3.1-405b-instruct",
-"dpkName": "nim-api-llama3-1-405b-instruct-meta",
-"metadata": {
-"position": {
-"x": 13031.028018267867,
-"y": 9489.26700285674,
-"z": 0
-},
-"componentGroupName": "models",
-"repeatable": true,
-"variableModel": "reasoning LLM",
-"pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
-"mlType": "genAi"
-}
-},
-{
-"id": "4b865dd5-6d35-4b27-9952-4949f0027bde",
-"inputs": [
-{
-"portId": "734de896-efba-4f87-a4cf-af0a310fa66e",
-"nodeId": "734de896-efba-4f87-a4cf-af0a310fa66e",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "0c384797-58bb-4d71-b754-f9cbbe485361",
-"nodeId": "0c384797-58bb-4d71-b754-f9cbbe485361",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-},
-{
-"portId": "af78e4d3-f73e-4d38-bdcd-d3783b52b110",
-"nodeId": "af78e4d3-f73e-4d38-bdcd-d3783b52b110",
-"type": "Annotation[]",
-"name": "annotations",
-"displayName": "annotations",
-"io": "output"
-}
-],
-"name": "llama-3.1-8b-instruct",
-"type": "ml",
-"namespace": {
-"functionName": "predict",
-"projectName": "Model mgmt demo",
-"serviceName": "predict-67d03bfb2a503ba51a53b5-4pll",
-"moduleName": "",
-"packageName": "nim-api-llama3-1-8b-instruct-meta"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "llama-3.1-8b-instruct",
-"dpkName": "nim-api-llama3-1-8b-instruct-meta",
-"metadata": {
-"position": {
-"x": 13655.724286653107,
-"y": 9480.963049107264,
-"z": 0
-},
-"modelConfig": {},
-"componentGroupName": "models",
-"repeatable": true,
-"variableModel": "json LLM",
-"pipelineNodeName": "nim-api-llama3-1-8b-instruct-meta",
-"mlType": "genAi"
-}
-},
-{
-"id": "8545b530-cda4-438b-bc45-7b0902d38754",
-"inputs": [
-{
-"portId": "a0857d40-e8e3-4f87-baa1-dc603288e173",
-"nodeId": "a0857d40-e8e3-4f87-baa1-dc603288e173",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "afbcfc99-7442-43f7-b47f-2d8ca6c87fb2",
-"nodeId": "afbcfc99-7442-43f7-b47f-2d8ca6c87fb2",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-},
-{
-"portId": "7c7d8b72-7c75-4ee8-86a3-caaa29012952",
-"nodeId": "7c7d8b72-7c75-4ee8-86a3-caaa29012952",
-"type": "Annotation[]",
-"name": "annotations",
-"displayName": "annotations",
-"io": "output"
-}
-],
-"name": "llama-3.1-405b-instruct",
-"type": "ml",
-"namespace": {
-"functionName": "predict",
-"projectName": "Model mgmt demo",
-"serviceName": "predict-67cfe042c51e4440024a25-tixj",
-"moduleName": "",
-"packageName": "nim-api-llama3-1-405b-instruct-meta"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "llama-3.1-405b-instruct",
-"dpkName": "nim-api-llama3-1-405b-instruct-meta",
-"metadata": {
-"position": {
-"x": 11746.652253892687,
-"y": 9747.938396141488,
-"z": 0
-},
-"componentGroupName": "models",
-"repeatable": true,
-"variableModel": "reasoning LLM",
-"pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
-"mlType": "genAi"
-}
-},
-{
-"id": "b3320e85-b4fd-4d0b-aef3-b89527bae10c",
-"inputs": [
-{
-"portId": "f30af2da-335b-4178-a732-9bcc92caf70c",
-"nodeId": "f30af2da-335b-4178-a732-9bcc92caf70c",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "5e447986-c586-4c48-875e-17507af85f9e",
-"nodeId": "5e447986-c586-4c48-875e-17507af85f9e",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-},
-{
-"portId": "e63888bf-dd11-4bd0-aead-784d998ac0e4",
-"nodeId": "e63888bf-dd11-4bd0-aead-784d998ac0e4",
-"type": "Annotation[]",
-"name": "annotations",
-"displayName": "annotations",
-"io": "output"
-}
-],
-"name": "llama-3.1-405b-instruct",
-"type": "ml",
-"namespace": {
-"functionName": "predict",
-"projectName": "Model mgmt demo",
-"serviceName": "predict-67cfe042c51e4440024a25-tixj",
-"moduleName": "",
-"packageName": "nim-api-llama3-1-405b-instruct-meta"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "llama-3.1-405b-instruct",
-"dpkName": "nim-api-llama3-1-405b-instruct-meta",
-"metadata": {
-"position": {
-"x": 12361.799451643725,
-"y": 9753.40621235519,
-"z": 0
-},
-"componentGroupName": "models",
-"repeatable": true,
-"variableModel": "reasoning LLM",
-"pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
-"mlType": "genAi"
-}
-},
-{
-"id": "05d343a1-32e2-4d2f-a234-4caf82b07a3a",
-"inputs": [
-{
-"portId": "80cf7e16-e8ab-4a61-8dab-f3c73000aed4",
-"nodeId": "80cf7e16-e8ab-4a61-8dab-f3c73000aed4",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "c3e9dc51-8d75-4a67-b654-f930a0930215",
-"nodeId": "c3e9dc51-8d75-4a67-b654-f930a0930215",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-},
-{
-"portId": "09326256-bf31-42c3-b084-eacc3fdc63ef",
-"nodeId": "09326256-bf31-42c3-b084-eacc3fdc63ef",
-"type": "Annotation[]",
-"name": "annotations",
-"displayName": "annotations",
-"io": "output"
-}
-],
-"name": "llama-3.1-8b-instruct",
-"type": "ml",
-"namespace": {
-"functionName": "predict",
-"projectName": "Model mgmt demo",
-"serviceName": "predict-67d03bfb2a503ba51a53b5-4pll",
-"moduleName": "",
-"packageName": "nim-api-llama3-1-8b-instruct-meta"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "llama-3.1-8b-instruct",
-"dpkName": "nim-api-llama3-1-8b-instruct-meta",
-"metadata": {
-"position": {
-"x": 12990.316047951435,
-"y": 9757.737334173298,
-"z": 0
-},
-"componentGroupName": "models",
-"repeatable": true,
-"variableModel": "json LLM",
-"pipelineNodeName": "nim-api-llama3-1-8b-instruct-meta",
-"mlType": "genAi"
-}
-},
-{
-"id": "8c45b185-f56a-4127-99d0-78f03f19cfd5",
-"inputs": [
-{
-"portId": "046b499a-91f2-4d8c-9259-57c4782aa6d6",
-"nodeId": "046b499a-91f2-4d8c-9259-57c4782aa6d6",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "c5adb698-d909-4fd2-b02d-04996bd49c78",
-"nodeId": "c5adb698-d909-4fd2-b02d-04996bd49c78",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-},
-{
-"portId": "d734b626-595a-499f-a6fa-d003e614ed31",
-"nodeId": "d734b626-595a-499f-a6fa-d003e614ed31",
-"type": "Annotation[]",
-"name": "annotations",
-"displayName": "annotations",
-"io": "output"
-}
-],
-"name": "llama-3.1-70b-instruct",
-"type": "ml",
-"namespace": {
-"functionName": "predict",
-"projectName": "Model mgmt demo",
-"serviceName": "predict-67d03d65c51e44309e4a25-h4x8",
-"moduleName": "",
-"packageName": "nim-api-llama3-1-70b-instruct-meta"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "llama-3.1-70b-instruct",
-"dpkName": "nim-api-llama3-1-70b-instruct-meta",
-"metadata": {
-"position": {
-"x": 13591.837749340324,
-"y": 9759.078262992743,
-"z": 0
-},
-"modelConfig": {},
-"componentGroupName": "models",
-"repeatable": true,
-"variableModel": "iteration LLM",
-"pipelineNodeName": "nim-api-llama3-1-70b-instruct-meta",
-"mlType": "genAi"
-}
-},
-{
-"id": "5ce55d8d-616a-4c2e-98d2-59b0df3b46f8",
-"inputs": [
-{
-"portId": "2d2cece2-4a9b-416f-9522-77866e42fbf2",
-"nodeId": "2d2cece2-4a9b-416f-9522-77866e42fbf2",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "812b95f2-1e37-4b6b-a0b2-d86eba3179c4",
-"nodeId": "812b95f2-1e37-4b6b-a0b2-d86eba3179c4",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-},
-{
-"portId": "dd3fac77-577a-486e-a2f1-00a6390d4f28",
-"nodeId": "dd3fac77-577a-486e-a2f1-00a6390d4f28",
-"type": "Annotation[]",
-"name": "annotations",
-"displayName": "annotations",
-"io": "output"
-}
-],
-"name": "llama-3.1-405b-instruct",
-"type": "ml",
-"namespace": {
-"functionName": "predict",
-"projectName": "Model mgmt demo",
-"serviceName": "predict-67cfe042c51e4440024a25-tixj",
-"moduleName": "",
-"packageName": "nim-api-llama3-1-405b-instruct-meta"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "llama-3.1-405b-instruct",
-"dpkName": "nim-api-llama3-1-405b-instruct-meta",
-"metadata": {
-"position": {
-"x": 14190.481846562547,
-"y": 9755.744821152466,
-"z": 0
-},
-"componentGroupName": "models",
-"repeatable": true,
-"variableModel": "reasoning LLM",
-"pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
-"mlType": "genAi"
-}
-},
-{
-"id": "f3b50cd7-717d-4c95-aa92-a87c827d4023",
-"inputs": [
-{
-"portId": "95f94b04-702e-4407-ac53-6fc5264149ec",
-"nodeId": "95f94b04-702e-4407-ac53-6fc5264149ec",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "607dcdcb-e71f-4075-b40b-eea95d1af630",
-"nodeId": "607dcdcb-e71f-4075-b40b-eea95d1af630",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-},
-{
-"portId": "f1ee7543-a4d6-4888-889a-3d6696f60ade",
-"nodeId": "f1ee7543-a4d6-4888-889a-3d6696f60ade",
-"type": "Annotation[]",
-"name": "annotations",
-"displayName": "annotations",
-"io": "output"
-}
-],
-"name": "llama-3.1-70b-instruct",
-"type": "ml",
-"namespace": {
-"functionName": "predict",
-"projectName": "Model mgmt demo",
-"serviceName": "predict-67d03d65c51e44309e4a25-h4x8",
-"moduleName": "",
-"packageName": "nim-api-llama3-1-70b-instruct-meta"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "llama-3.1-70b-instruct",
-"dpkName": "nim-api-llama3-1-70b-instruct-meta",
-"metadata": {
-"position": {
-"x": 14835.039246736158,
-"y": 9745.570558999689,
-"z": 0
-},
-"componentGroupName": "models",
-"repeatable": true,
-"variableModel": "iteration LLM",
-"pipelineNodeName": "nim-api-llama3-1-70b-instruct-meta",
-"mlType": "genAi"
-}
-},
-{
-"id": "1ed36d30-3a3d-4a42-8ff6-c9e4cc8dfff8",
-"inputs": [
-{
-"portId": "be24b367-4393-4d67-b47e-4c256f146f1f",
-"nodeId": "be24b367-4393-4d67-b47e-4c256f146f1f",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "876f6ec3-63ed-4090-834f-03de60d3fb05",
-"nodeId": "876f6ec3-63ed-4090-834f-03de60d3fb05",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-},
-{
-"portId": "242c21d1-4e82-47ab-8d52-508e5befd4d0",
-"nodeId": "242c21d1-4e82-47ab-8d52-508e5befd4d0",
-"type": "Annotation[]",
-"name": "annotations",
-"displayName": "annotations",
-"io": "output"
-}
-],
-"name": "llama-3.1-8b-instruct",
-"type": "ml",
-"namespace": {
-"functionName": "predict",
-"projectName": "Model mgmt demo",
-"serviceName": "predict-67d03bfb2a503ba51a53b5-4pll",
-"moduleName": "",
-"packageName": "nim-api-llama3-1-8b-instruct-meta"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "llama-3.1-8b-instruct",
-"dpkName": "nim-api-llama3-1-8b-instruct-meta",
-"metadata": {
-"position": {
-"x": 15761.104893437545,
-"y": 9726.156713513577,
-"z": 0
-},
-"componentGroupName": "models",
-"repeatable": true,
-"variableModel": "json LLM",
-"pipelineNodeName": "nim-api-llama3-1-8b-instruct-meta",
-"mlType": "genAi"
-}
-},
-{
-"id": "a1b87e96-a002-452a-a3ef-a6dee1c0088f",
-"inputs": [
-{
-"portId": "0d1ae730-8ef3-40a3-ac9e-b656fbeda8c9",
-"nodeId": "0d1ae730-8ef3-40a3-ac9e-b656fbeda8c9",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "d0b90aa0-4da3-4dc4-aef0-b638ce7514be",
-"nodeId": "d0b90aa0-4da3-4dc4-aef0-b638ce7514be",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "pdf dataset",
-"type": "storage",
-"namespace": {
-"functionName": "clone_item",
-"projectName": "DataloopTasks",
-"serviceName": "pipeline-utils",
-"moduleName": "default_module",
-"packageName": "pipeline-utils"
-},
-"projectId": "4eff4f18-5285-42bb-b43d-f74cea633916",
-"metadata": {
-"position": {
-"x": 16379.135341578236,
-"y": 9522.829198472033,
-"z": 0
-},
-"componentGroupName": "data",
-"repeatable": true,
-"variableDataset": "pdf dataset"
-}
-},
-{
-"id": "a9c330de-067f-4ab9-8cfb-ba90d790069d",
-"inputs": [
-{
-"portId": "96c0ace6-e4d9-4bb1-a9dd-e46060bca977",
-"nodeId": "96c0ace6-e4d9-4bb1-a9dd-e46060bca977",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "aed6b501-cff8-4278-a74f-e1a9ade38632",
-"nodeId": "aed6b501-cff8-4278-a74f-e1a9ade38632",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "Monologue Generate Outline",
-"type": "custom",
-"namespace": {
-"functionName": "monologue_generate_outline",
-"projectName": "Model mgmt demo",
-"serviceName": "pdf2podcast-compute-config",
-"moduleName": "pdf2podcast-module",
-"packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "PDF to Podcast-CE-825-pdf-to-podcast",
-"dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
-"metadata": {
-"position": {
-"x": 12069.590197340312,
-"y": 9505.178191759993,
-"z": 0
-},
-"componentGroupName": "Podcast Generation",
-"repeatable": true,
-"pipelineNodeName": "monologue-generate-outline"
-}
-},
-{
-"id": "e976430b-0650-48a4-a133-c120502a9edb",
-"inputs": [
-{
-"portId": "cbcaa451-f181-4eb4-99f5-2fae76188fe7",
-"nodeId": "cbcaa451-f181-4eb4-99f5-2fae76188fe7",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "87c7a9c4-7516-4a54-87d6-f359a85b7e64",
-"nodeId": "87c7a9c4-7516-4a54-87d6-f359a85b7e64",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "Monologue Generate Monologue",
-"type": "custom",
-"namespace": {
-"functionName": "monologue_generate_monologue",
-"projectName": "Model mgmt demo",
-"serviceName": "pdf2podcast-compute-config",
-"moduleName": "pdf2podcast-module",
-"packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "PDF to Podcast-CE-825-pdf-to-podcast",
-"dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
-"metadata": {
-"position": {
-"x": 12724.712963957629,
-"y": 9487.319660091925,
-"z": 0
-},
-"componentGroupName": "Podcast Generation",
-"repeatable": true,
-"pipelineNodeName": "monologue-generate-monologue"
-}
-},
-{
-"id": "22fd620f-6fb2-4f5d-8371-c829d9f1fb86",
-"inputs": [
-{
-"portId": "e9f8d25b-b7f6-4b1b-ac05-3d1d0c3e28ba",
-"nodeId": "e9f8d25b-b7f6-4b1b-ac05-3d1d0c3e28ba",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "2a56b05c-7aab-4c00-ae83-4104b7816d11",
-"nodeId": "2a56b05c-7aab-4c00-ae83-4104b7816d11",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "Monologue Create Convo JSON",
-"type": "custom",
-"namespace": {
-"functionName": "monologue_create_convo_json",
-"projectName": "Model mgmt demo",
-"serviceName": "pdf2podcast-compute-config",
-"moduleName": "pdf2podcast-module",
-"packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "PDF to Podcast-CE-825-pdf-to-podcast",
-"dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
-"metadata": {
-"position": {
-"x": 13336.811505140333,
-"y": 9490.005440005003,
-"z": 0
-},
-"componentGroupName": "Podcast Generation",
-"repeatable": true,
-"pipelineNodeName": "monologue-create-convo-json"
-}
-},
-{
-"id": "5c38d415-dd6a-4e6c-8065-3486acd1b033",
-"inputs": [
-{
-"portId": "548885be-0908-49b6-a42d-27e0081bf645",
-"nodeId": "548885be-0908-49b6-a42d-27e0081bf645",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-},
-{
-"portId": "7b220a50-90f8-42f1-b450-038411699654",
-"nodeId": "7b220a50-90f8-42f1-b450-038411699654",
-"type": "String",
-"name": "voice_mapping",
-"displayName": "voice_mapping",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "0351babf-5b89-4394-8739-3594fccbec49",
-"nodeId": "0351babf-5b89-4394-8739-3594fccbec49",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "ElevenLabs Generate Audio",
-"type": "custom",
-"namespace": {
-"functionName": "generate_audio",
-"projectName": "Model mgmt demo",
-"serviceName": "pdf2podcast-compute-config",
-"moduleName": "pdf2podcast-module",
-"packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "PDF to Podcast-CE-825-pdf-to-podcast",
-"dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
-"metadata": {
-"position": {
-"x": 16682.108621105588,
-"y": 9521.669561173409,
-"z": 0
-},
-"componentGroupName": "Podcast Generation",
-"repeatable": true,
-"pipelineNodeName": "generate-audio"
-}
-},
-{
-"id": "2a1ce2d3-87f2-4a00-b3a4-53e35617c469",
-"inputs": [
-{
-"portId": "65ebf40e-1ad0-40f2-b067-23fc642ab218",
-"nodeId": "65ebf40e-1ad0-40f2-b067-23fc642ab218",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "b8774a2e-c66f-4a95-a1aa-74929f6a08f3",
-"nodeId": "b8774a2e-c66f-4a95-a1aa-74929f6a08f3",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "Dialogue Generate Raw Outline",
-"type": "custom",
-"namespace": {
-"functionName": "dialogue_generate_raw_outline",
-"projectName": "Model mgmt demo",
-"serviceName": "pdf2podcast-compute-config",
-"moduleName": "pdf2podcast-module",
-"packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "PDF to Podcast-CE-825-pdf-to-podcast",
-"dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
-"metadata": {
-"position": {
-"x": 12064.961309567308,
-"y": 9746.754349156794,
-"z": 0
-},
-"componentGroupName": "Podcast Generation",
-"repeatable": true,
-"pipelineNodeName": "dialogue-generate-raw-outline"
-}
-},
-{
-"id": "0c09ca8b-8d20-42b0-a4ac-07d769708792",
-"inputs": [
-{
-"portId": "f7a8f3fd-8948-4c5d-baa4-b81abea427ff",
-"nodeId": "f7a8f3fd-8948-4c5d-baa4-b81abea427ff",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-},
-{
-"portId": "f5cc5625-9f3f-439d-9403-f0772653291e",
-"nodeId": "f5cc5625-9f3f-439d-9403-f0772653291e",
-"type": "Boolean",
-"name": "monologue",
-"displayName": "monologue",
-"defaultValue": true,
-"io": "input"
-},
-{
-"portId": "265332ff-c27e-45cb-9f1a-1fd2c4abda81",
-"nodeId": "265332ff-c27e-45cb-9f1a-1fd2c4abda81",
-"type": "String",
-"name": "focus",
-"displayName": "focus",
-"io": "input"
-},
-{
-"portId": "d4eee6ac-b843-4595-ac2d-c143af48dd9c",
-"nodeId": "d4eee6ac-b843-4595-ac2d-c143af48dd9c",
-"type": "Integer",
-"name": "duration",
-"displayName": "duration",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "6e4cfe5a-39fc-4f4f-a0c8-753b725ff486",
-"nodeId": "6e4cfe5a-39fc-4f4f-a0c8-753b725ff486",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"actions": [
-"monologue",
-"dialogue"
-],
-"io": "output"
-}
-],
-"name": "Prepare and Summarize PDF",
-"type": "custom",
-"namespace": {
-"functionName": "prepare_and_summarize_pdf",
-"projectName": "Model mgmt demo",
-"serviceName": "pdf2podcast-compute-config",
-"moduleName": "pdf2podcast-module",
-"packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "PDF to Podcast-CE-825-pdf-to-podcast",
-"dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
-"metadata": {
-"position": {
-"x": 11355.70728263545,
-"y": 9605.866371124073,
-"z": 0
-},
-"componentGroupName": "Podcast Generation",
-"repeatable": true,
-"pipelineNodeName": "prepare-and-summarize-pdf"
-}
-},
-{
-"id": "080309cf-5f9b-4adc-a7d0-9c8d396feb62",
-"inputs": [
-{
-"portId": "80c27731-b732-4d86-a3d8-3bab4f00b6d6",
-"nodeId": "80c27731-b732-4d86-a3d8-3bab4f00b6d6",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "8328bd53-06d3-49b1-b059-70aa432b9b40",
-"nodeId": "8328bd53-06d3-49b1-b059-70aa432b9b40",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "Dialogue Generate Structured Outline",
-"type": "custom",
-"namespace": {
-"functionName": "dialogue_generate_structured_outline",
-"projectName": "Model mgmt demo",
-"serviceName": "pdf2podcast-compute-config",
-"moduleName": "pdf2podcast-module",
-"packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "PDF to Podcast-CE-825-pdf-to-podcast",
-"dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
-"metadata": {
-"position": {
-"x": 12669.444488131196,
-"y": 9754.577170861738,
-"z": 0
-},
-"componentGroupName": "Podcast Generation",
-"repeatable": true,
-"pipelineNodeName": "dialogue-generate-structured-outline"
-}
-},
-{
-"id": "29015027-12bc-4edd-a680-4791be16d2ed",
-"inputs": [
-{
-"portId": "865ed661-e0e3-48bd-ae25-5875ecdbad86",
-"nodeId": "865ed661-e0e3-48bd-ae25-5875ecdbad86",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "5d5e517b-9440-41b3-840f-f8c32233e4b7",
-"nodeId": "5d5e517b-9440-41b3-840f-f8c32233e4b7",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "Dialogue Process Segments",
-"type": "custom",
-"namespace": {
-"functionName": "dialogue_process_segments",
-"projectName": "Model mgmt demo",
-"serviceName": "pdf2podcast-compute-config",
-"moduleName": "pdf2podcast-module",
-"packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "PDF to Podcast-CE-825-pdf-to-podcast",
-"dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
-"metadata": {
-"position": {
-"x": 13289.146711217272,
-"y": 9753.054199428541,
-"z": 0
-},
-"componentGroupName": "Podcast Generation",
-"repeatable": true,
-"pipelineNodeName": "dialogue-process-segments"
-}
-},
-{
-"id": "bcfecca5-8b0f-48ad-a469-b8ecc9b03838",
-"inputs": [
-{
-"portId": "b7146a80-4bcf-469e-9303-0faa23e1ca2b",
-"nodeId": "b7146a80-4bcf-469e-9303-0faa23e1ca2b",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "dbfeade9-ffee-447d-ac09-100549ab109c",
-"nodeId": "dbfeade9-ffee-447d-ac09-100549ab109c",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "Dialogue Generate Dialogue Segment",
-"type": "custom",
-"namespace": {
-"functionName": "dialogue_generate_dialogue_segment",
-"projectName": "Model mgmt demo",
-"serviceName": "pdf2podcast-compute-config",
-"moduleName": "pdf2podcast-module",
-"packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "PDF to Podcast-CE-825-pdf-to-podcast",
-"dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
-"metadata": {
-"position": {
-"x": 13892.10252447502,
-"y": 9756.281408894827,
-"z": 0
-},
-"componentGroupName": "Podcast Generation",
-"repeatable": true,
-"pipelineNodeName": "dialogue-generate-dialogue-segment"
-}
-},
-{
-"id": "e6fff28e-96b9-414b-bab9-f48e6cd91200",
-"inputs": [
-{
-"portId": "b8d296c9-ce71-434d-b8fe-608c4c10c5ed",
-"nodeId": "b8d296c9-ce71-434d-b8fe-608c4c10c5ed",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "a9891f44-4047-45b1-b23a-762330f907c2",
-"nodeId": "a9891f44-4047-45b1-b23a-762330f907c2",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "Dialogue Generate Dialogue",
-"type": "custom",
-"namespace": {
-"functionName": "dialogue_generate_dialogue",
-"projectName": "Model mgmt demo",
-"serviceName": "pdf2podcast-compute-config",
-"moduleName": "pdf2podcast-module",
-"packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "PDF to Podcast-CE-825-pdf-to-podcast",
-"dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
-"metadata": {
-"position": {
-"x": 14524.28043070728,
-"y": 9752.43732800687,
-"z": 0
-},
-"componentGroupName": "Podcast Generation",
-"repeatable": true,
-"pipelineNodeName": "dialogue-generate-dialogue"
-}
-},
-{
-"id": "5dc9fdee-fee2-4d91-937e-9e502d79c3ee",
-"inputs": [
-{
-"portId": "23010be6-1b42-4e4c-aa74-42a600ac08a2",
-"nodeId": "23010be6-1b42-4e4c-aa74-42a600ac08a2",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "f91cb0b9-93d4-447d-a692-97f9316f46ae",
-"nodeId": "f91cb0b9-93d4-447d-a692-97f9316f46ae",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"actions": [
-"continue",
-"wait"
-],
-"io": "output"
-}
-],
-"name": "Wait",
-"type": "custom",
-"namespace": {
-"functionName": "wait_for_cycle",
-"projectName": "Model mgmt demo",
-"serviceName": "wait-node",
-"moduleName": "wait-node",
-"packageName": "wait-node"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "Wait Node",
-"dpkName": "wait-node",
-"metadata": {
-"position": {
-"x": 10956.941071562394,
-"y": 9611.51762401114,
-"z": 0
-},
-"componentGroupName": "data",
-"customNodeConfig": {
-"name": "Wait",
-"returnParent": true,
-"validation": {
-"valid": true,
-"errors": []
-}
-},
-"repeatable": true,
-"pipelineNodeName": "Wait Node"
-}
-},
-{
-"id": "674ec647-bece-4070-92e4-64e9aae20a2f",
-"inputs": [
-{
-"portId": "e16b8fd8-26d1-4c0c-bb33-c8ad7647621a",
-"nodeId": "e16b8fd8-26d1-4c0c-bb33-c8ad7647621a",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "c3b81c24-343e-45e1-98a9-67d44a3ff3c9",
-"nodeId": "c3b81c24-343e-45e1-98a9-67d44a3ff3c9",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "Dialogue Create Convo JSON",
-"type": "custom",
-"namespace": {
-"functionName": "dialogue_create_convo_json",
-"projectName": "Model mgmt demo",
-"serviceName": "pdf2podcast-compute-config",
-"moduleName": "pdf2podcast-module",
-"packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "PDF to Podcast-CE-825-pdf-to-podcast",
-"dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
-"metadata": {
-"position": {
-"x": 15494.61340028493,
-"y": 9716.373970470137,
-"z": 0
-},
-"componentGroupName": "Podcast Generation",
-"repeatable": true,
-"pipelineNodeName": "dialogue-create-convo-json"
-}
-},
-{
-"id": "edd8a662-debe-494c-bb69-de9856c650d7",
-"inputs": [
-{
-"portId": "9b4550bc-de54-437f-be89-a05d1d22381a",
-"nodeId": "9b4550bc-de54-437f-be89-a05d1d22381a",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "66e65f1f-ba83-47a7-b190-5effc010b070",
-"nodeId": "66e65f1f-ba83-47a7-b190-5effc010b070",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "output"
-}
-],
-"name": "Dialogue Create Final Conversation",
-"type": "custom",
-"namespace": {
-"functionName": "dialogue_create_final_conversation",
-"projectName": "Model mgmt demo",
-"serviceName": "pdf2podcast-compute-config",
-"moduleName": "pdf2podcast-module",
-"packageName": "pdf-to-podcast-CE-825-pdf-to-podcast"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "PDF to Podcast-CE-825-pdf-to-podcast",
-"dpkName": "pdf-to-podcast-CE-825-pdf-to-podcast",
-"metadata": {
-"position": {
-"x": 16048.992013654573,
-"y": 9713.690508315163,
-"z": 0
-},
-"componentGroupName": "Podcast Generation",
-"repeatable": true,
-"pipelineNodeName": "dialogue-create-final-conversation"
-}
-},
-{
-"id": "f3feb9da-3b64-4ecf-bd04-3f9c69f8239d",
-"inputs": [
-{
-"portId": "890218a6-5b5f-4940-932f-9de85e2deb97",
-"nodeId": "890218a6-5b5f-4940-932f-9de85e2deb97",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"io": "input"
-}
-],
-"outputs": [
-{
-"portId": "1730c461-0110-4afe-b1c4-06a7577097d6",
-"nodeId": "1730c461-0110-4afe-b1c4-06a7577097d6",
-"type": "Item",
-"name": "item",
-"displayName": "item",
-"actions": [
-"continue",
-"wait"
-],
-"io": "output"
-}
-],
-"name": "Wait",
-"type": "custom",
-"namespace": {
-"functionName": "wait_for_cycle",
-"projectName": "Model mgmt demo",
-"serviceName": "wait-node",
-"moduleName": "wait-node",
-"packageName": "wait-node"
-},
-"projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
-"appName": "Wait Node",
-"dpkName": "wait-node",
-"metadata": {
-"position": {
-"x": 15146.951431856545,
-"y": 9731.140863739121,
-"z": 0
-},
-"componentGroupName": "data",
-"customNodeConfig": {
-"name": "Wait",
-"returnParent": false,
-"validation": {
-"valid": true,
-"errors": []
-}
-},
-"repeatable": true,
-"pipelineNodeName": "Wait Node"
-}
-}
-],
-"preview": "67d81e5d286377ba5d3fc4d1",
-"_id": "67d81f83a3db602171e01b4f"
-}
-    ],
     "services": null
-}
+  }
 }
