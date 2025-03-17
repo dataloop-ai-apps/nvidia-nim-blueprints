@@ -105,6 +105,25 @@ class TTSConverter:
 
 
 class SharedServiceRunner(dl.BaseServiceRunner):
+
+    @staticmethod
+    def collect_pdf_text(item: dl.Item) -> str:   
+        """
+        Collect the text from the PDF file
+        """
+        filters = dl.Filters()
+        filters.add(field="metadata.user.original_item_id", values=item.id)
+        filters.sort_by(field="name", value=dl.FiltersOrderByDirection.ASCENDING)
+        items = item.dataset.items.list(filters=filters)
+        if items.items_count == 0:
+            raise ValueError("No text items found")
+        
+        pdf_text = ""
+        for item in items:
+            buffer = item.download(save_locally=False)
+            pdf_text += buffer.read().decode('utf-8')
+        return pdf_text
+
     @staticmethod
     def prepare_and_summarize_pdf(
         item: dl.Item,
@@ -114,8 +133,21 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         focus: str = None,
         duration: int = 10,
     ):
-        buffer = item.download(save_locally=False)
-        pdf_text = buffer.read().decode('utf-8')
+        """
+        Prepare the PDF text for the summary
+
+        Args:
+            item (dl.Item): Dataloop item containing the original PDF file
+            monologue (bool): Whether to generate a monologue or a podcast
+            progress (dl.Progress): Progress object to update the user
+            context (dl.Context): Context object to access the item
+            focus (str): Focus of the summary
+            duration (int): Duration of the summary
+
+        Returns:
+            str: Prompt for the summary
+        """
+        pdf_text = SharedServiceRunner.collect_pdf_text(item)
 
         if monologue is True:
             template = FinancialSummaryPrompts.get_template("monologue_summary_prompt")

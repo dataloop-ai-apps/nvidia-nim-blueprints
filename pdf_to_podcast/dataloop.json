@@ -2,7 +2,7 @@
     "name": "pdf-to-podcast-CE-825-pdf-to-podcast",
     "displayName": "PDF to Podcast CE-825-pdf-to-podcast", 
     "description": "Generate a podcast based on a given PDF.",
-    "version": "0.0.6",
+    "version": "0.0.8",
     "scope": "project",
     "attributes": {
         "Hub": ["Nvidia", "Dataloop"],
@@ -11,22 +11,14 @@
         "Provider": "NVIDIA",
         "Developed By": "Dataloop"
     },
-    "codebase": {
-        "type": "git",
-        "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
-        "gitTag": "0.0.3"
-    },
     "components": {
       "integrations": [
         {
-        "dl-elevenlabs-api-key": {
-        "to": "ElevenLabs",
-        "env": "ELEVENLABS_API_KEY",
-            "type": "elevenlabs",
-            "description": "ElevenLabs Integration",
-            "displayName": "ElevenLabs Integration",
-            "optional": false
-          }
+          "key": "dl-elevenlabs-api-key",
+          "type": "key_value",
+          "env": "ELEVENLABS_API_KEY",
+          "displayName": "ElevenLabs API Key",
+          "description": "API Key for ElevenLabs generative voice AI"
         }
       ],
       "computeConfigs": [
