@@ -770,10 +770,7 @@
               "pipelineNodeName": "report-writing-node"
             }
           }
-        ],
-        "preview": "67d7de75c2b6f156c53003ff",
-        "variables": null,
-        "_id": "67d7e79fc2b6f1a8d2300e03"
+        ]
       }
     ]
   }
