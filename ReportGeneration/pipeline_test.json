@@ -1,6 +1,6 @@
 {
-    "name": "report-generation-pipeline",
-    "displayName": "Report Generation Blueprint", 
+    "name": "report-generation-pipeline-test",
+    "displayName": "Report Generation Blueprint Test", 
     "description": "Generate a report based on a given topic and report structure.",
     "version": "0.0.3",
     "scope": "public",
