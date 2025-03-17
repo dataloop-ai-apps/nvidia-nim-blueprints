@@ -32,6 +32,53 @@
           }
         }
       ],
+      "pipelineNodes": [
+        {
+          "name": "report-planning-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.report_planning"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "search-tavily-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.search_tavily"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "report-sections-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.report_sections"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "research-agents-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.research_agents"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "report-writing-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.report_writing"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        }
+      ],
       "modules": [
         {
           "name": "report-generation-module",
