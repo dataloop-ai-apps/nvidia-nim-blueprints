@@ -603,15 +603,4 @@ class ReportGenerator(dl.BaseServiceRunner):
             }
         )
         return item
-    
-    def test_report_generation(self):
-        # Generate report
-        report = self.report_writing(item=dl.items.get(item_id="67d055169c69ac70ce174aa1"),
-                                     intro=dl.items.get(item_id="67d055169c69ac70ce174aa1"),
-                                     body=dl.items.get(item_id="67d055169c69ac70ce174aa1"),
-                                     conclusion=dl.items.get(item_id="67d055169c69ac70ce174aa1"))
-        return report
-    
-if __name__ == "__main__":
-    runner = ReportGenerator()
-    runner.test_report_generation()
+
