@@ -2,7 +2,7 @@
     "name": "report-generation",
     "displayName": "Report Generation", 
     "description": "Generate a report based on a given topic and report structure.",
-    "version": "0.0.3",
+    "version": "0.0.5",
     "scope": "public",
     "attributes": {
         "Hub": ["Nvidia", "Dataloop"],
