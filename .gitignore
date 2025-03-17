@@ -4,3 +4,4 @@
 tmp/
 scripts/
 *.mp3
+.dataloop/

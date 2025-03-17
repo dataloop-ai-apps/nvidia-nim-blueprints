@@ -1,6 +1,6 @@
 {
-    "name": "pdf-to-podcast",
-    "displayName": "PDF to Podcast", 
+    "name": "pdf-to-podcast-CE-825-pdf-to-podcast",
+    "displayName": "PDF to Podcast CE-825-pdf-to-podcast", 
     "description": "Generate a podcast based on a given PDF.",
     "version": "0.0.3",
     "scope": "project",
@@ -10,6 +10,11 @@
         "Pipeline Type": "GenAI",
         "Provider": "NVIDIA",
         "Developed By": "Dataloop"
+    },
+    "codebase": {
+        "type": "git",
+        "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
+        "gitTag": "0.0.3"
     },
     "components": {
       "computeConfigs": [
@@ -52,6 +57,10 @@
                 {
                   "name": "focus",
                   "type": "String"
+                },
+                {
+                  "name": "duration",
+                  "type": "Integer"
                 }
               ],
               "output": [
@@ -135,7 +144,7 @@
                 "displayName": "Monologue Create Convo JSON"
             },
             {
-                "name": "podcast_generate_raw_outline",
+                "name": "dialogue_generate_raw_outline",
                 "input": [
                     {
                         "name": "item",
@@ -151,7 +160,7 @@
                 "displayName": "Dialogue Generate Raw Outline"
             },
             {
-                "name": "podcast_generate_structured_outline",
+                "name": "dialogue_generate_structured_outline",
                 "input": [
                     {
                         "name": "item",
@@ -167,7 +176,7 @@
                 "displayName": "Dialogue Generate Structured Outline"
             },
             {
-                "name": "podcast_process_segments",
+                "name": "dialogue_process_segments",
                 "input": [
                     {
                         "name": "item",
@@ -183,7 +192,7 @@
                 "displayName": "Dialogue Process Segments"
             },
             {
-                "name": "podcast_generate_dialogue_segment",
+                "name": "dialogue_generate_dialogue_segment",
                 "input": [
                     {
                         "name": "item",
@@ -199,7 +208,7 @@
                 "displayName": "Dialogue Generate Dialogue Segment"
             },
             {
-                "name": "podcast_generate_dialogue",
+                "name": "dialogue_generate_dialogue",
                 "input": [
                     {
                         "name": "item",
@@ -215,7 +224,7 @@
                 "displayName": "Dialogue Generate Dialogue"
             },
             {
-                "name": "podcast_combine_dialogues",
+                "name": "dialogue_combine_dialogues",
                 "input": [
                     {
                         "name": "item",
@@ -231,7 +240,7 @@
                 "displayName": "Dialogue Combine Dialogues"
             },
             {
-                "name": "podcast_create_convo_json",
+                "name": "dialogue_create_convo_json",
                 "input": [
                     {
                         "name": "item",
@@ -247,7 +256,7 @@
                 "displayName": "Dialogue Create Convo JSON"
             },
             {
-                "name": "podcast_create_final_conversation",
+                "name": "dialogue_create_final_conversation",
                 "input": [
                     {
                         "name": "item",
