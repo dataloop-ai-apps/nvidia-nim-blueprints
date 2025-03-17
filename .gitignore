@@ -10,6 +10,7 @@ scripts/*
 */.pytest_cache/*
 .vscode/*
 output/*
+*.iml
 
 *testing*
 .env*
