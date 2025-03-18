@@ -541,12 +541,10 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              
               "serviceName": "predict-67cfe042c51e4440024a25-tixj",
               "moduleName": "nim-api-module",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-
             "appName": "llama-3.1-405b-instruct",
             "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
@@ -608,7 +606,6 @@
               "moduleName": "nim-api-module",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-
             "appName": "llama-3.1-405b-instruct",
             "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
@@ -670,7 +667,6 @@
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-
             "appName": "llama-3.1-405b-instruct",
             "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
@@ -884,7 +880,6 @@
               "moduleName": "",
               "packageName": "nim-api-llama3-1-8b-instruct-meta"
             },
-
             "appName": "llama-3.1-8b-instruct",
             "dpkName": "nim-api-llama3-1-8b-instruct-meta",
             "metadata": {
@@ -1268,12 +1263,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "monologue_create_convo_json",
-              
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1321,12 +1314,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "generate_audio",
-              
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1366,12 +1357,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_generate_raw_outline",
-              
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1440,12 +1429,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "prepare_and_summarize_pdf",
-              
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1485,12 +1472,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_generate_structured_outline",
-              
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1530,12 +1515,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_process_segments",
-              
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1575,12 +1558,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_generate_dialogue",
-              
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1624,12 +1605,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "wait_for_cycle",
-              
               "serviceName": "wait-node",
               "moduleName": "wait-node",
               "packageName": "wait-node"
             },
-
             "appName": "Wait Node",
             "dpkName": "wait-node",
             "metadata": {
@@ -1677,12 +1656,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_create_convo_json",
-              
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1722,12 +1699,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_create_final_conversation",
-              
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1771,12 +1746,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "wait_for_cycle",
-              
               "serviceName": "wait-node",
               "moduleName": "wait-node",
               "packageName": "wait-node"
             },
-
             "appName": "Wait Node",
             "dpkName": "wait-node",
             "metadata": {
@@ -1824,12 +1797,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_combine_dialogues",
-              
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
