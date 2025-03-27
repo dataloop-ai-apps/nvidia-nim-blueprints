@@ -31,164 +31,187 @@
         "connections": [
           {
             "src": {
-              "nodeId": "a08e6488-8c06-4133-8630-183afe8e73d2",
-              "portId": "e6e29742-b08e-4b2c-bef5-471bfadf20f5"
+              "nodeId": "fbf7177e-e98a-4eef-880d-3e53d518c5cb",
+              "portId": "61d4d1e7-8eb0-4f8c-ae49-49c1f5694209"
             },
             "tgt": {
-              "nodeId": "53fe0a66-b104-49cd-8447-7b6f042e2f78",
-              "portId": "a8991795-1ddb-4948-b2b5-11b7e1e3f917"
+              "nodeId": "03ed9f92-5d5e-43d2-a2ff-ffe34f4d4b58",
+              "portId": "5e563e99-ddfc-42a9-b98e-e6731e7030ed"
             },
             "condition": "{}"
           },
           {
             "src": {
-              "nodeId": "63979589-f2c6-4937-81b0-e72c68742320",
-              "portId": "6945d679-4bce-4bd0-9d72-587074d6350b"
+              "nodeId": "fbf7177e-e98a-4eef-880d-3e53d518c5cb",
+              "portId": "5bd1fcc2-169b-4e6c-a459-8184437973b3"
             },
             "tgt": {
-              "nodeId": "8b858d40-56d3-4e2a-9246-931b3e7083fd",
-              "portId": "4b977342-0a5b-47fe-86c8-f9f84df87b70"
+              "nodeId": "03ed9f92-5d5e-43d2-a2ff-ffe34f4d4b58",
+              "portId": "65e3f63d-6598-4602-a4a1-1756758b008a"
             },
             "condition": "{}"
           },
           {
             "src": {
-              "nodeId": "cb1b4bf6-90e7-4a39-89f5-76f5d799eaee",
-              "portId": "dd2355ce-39e3-48ab-8c71-4226bf741dc6"
+              "nodeId": "97c795b1-7561-47d5-867b-35f7815c0e0f",
+              "portId": "eabfcf3c-9da0-4d82-bb5e-fe6a746b1159"
             },
             "tgt": {
-              "nodeId": "4af5cfc0-cd5b-4011-8f52-a8381fc2c752",
-              "portId": "93bc46f8-a710-475c-8fa1-a861be7f22b4"
+              "nodeId": "575ee540-0be1-4081-85a9-9ee1d4b86d14",
+              "portId": "17a945a1-0fd1-4f89-a019-0d2998fde963"
             },
             "condition": "{}"
           },
           {
             "src": {
-              "nodeId": "f821a5f6-f4a2-473a-b08d-576b2fb0de08",
-              "portId": "fbd4ba81-caa0-4120-8839-2f396e0cc78b"
+              "nodeId": "97c795b1-7561-47d5-867b-35f7815c0e0f",
+              "portId": "121f1a94-431a-4667-9dc4-cd6cc7b0cb27"
             },
             "tgt": {
-              "nodeId": "a08e6488-8c06-4133-8630-183afe8e73d2",
-              "portId": "ee5a942f-1529-4db0-8a5c-abb008cc4461"
+              "nodeId": "575ee540-0be1-4081-85a9-9ee1d4b86d14",
+              "portId": "fa43334e-f8ab-4271-968d-fa330b355a38"
             },
             "condition": "{}"
           },
           {
             "src": {
-              "nodeId": "f821a5f6-f4a2-473a-b08d-576b2fb0de08",
-              "portId": "89b77f45-f8de-4fec-9050-12c3f0bf9394"
+              "nodeId": "6b8f627d-5135-4a27-997b-a81f8bacf5ef",
+              "portId": "f421327c-78ac-4a88-b707-a5696cca80b2"
             },
             "tgt": {
-              "nodeId": "cb1b4bf6-90e7-4a39-89f5-76f5d799eaee",
-              "portId": "10ac768f-80e1-449d-af0d-d71016ed9b15"
+              "nodeId": "556fecea-5dde-49ea-9eb0-1ca2d7d04545",
+              "portId": "aae4dcdf-96ed-4457-b803-573e9210d711"
             },
             "condition": "{}"
           },
           {
             "src": {
-              "nodeId": "87328089-5d9a-4a0e-afaa-ff1390976c04",
-              "portId": "be3526bf-1dca-4313-9936-f047fcd53d9f"
+              "nodeId": "556fecea-5dde-49ea-9eb0-1ca2d7d04545",
+              "portId": "7688bb6b-c781-4a0e-bb1e-f0c821762a6f"
             },
             "tgt": {
-              "nodeId": "fcd15b0e-bb80-4e90-b346-ede429c2e51e",
-              "portId": "9b8f753a-72cb-4945-9ee8-918182e89010"
+              "nodeId": "fbf7177e-e98a-4eef-880d-3e53d518c5cb",
+              "portId": "96ed8695-548b-49a3-a990-c857beb2572c"
             },
             "condition": "{}"
           },
           {
             "src": {
-              "nodeId": "fcd15b0e-bb80-4e90-b346-ede429c2e51e",
-              "portId": "c1b2a942-ab35-4e47-b7d4-784a83e1dc6f"
+              "nodeId": "03ed9f92-5d5e-43d2-a2ff-ffe34f4d4b58",
+              "portId": "c0c03f58-0f28-4a14-aea3-3c94403e08de"
             },
             "tgt": {
-              "nodeId": "f821a5f6-f4a2-473a-b08d-576b2fb0de08",
-              "portId": "0b992186-1f2b-42c0-aa7b-fab0e3b0195c"
+              "nodeId": "ce5a4c2b-32a6-4d7e-b2d7-f514c3aaa58d",
+              "portId": "435746b2-c8be-4e68-ab71-920e92f51411"
             },
             "condition": "{}"
           },
           {
             "src": {
-              "nodeId": "543bc3cd-0a12-48f4-9f5d-0703b2625b7e",
-              "portId": "9b4f60de-e2da-4c7f-87e9-d1e20000daca"
+              "nodeId": "575ee540-0be1-4081-85a9-9ee1d4b86d14",
+              "portId": "d9e0447c-6b8e-4316-b1bf-776b58d889c3"
             },
             "tgt": {
-              "nodeId": "63979589-f2c6-4937-81b0-e72c68742320",
-              "portId": "a72022df-00db-4a32-9af1-bd648b689dde"
+              "nodeId": "83410df1-440d-47a8-be80-d560a5315b3c",
+              "portId": "5288f42d-696c-48fb-a9c5-59e3db770da0"
             },
             "condition": "{}"
           },
           {
             "src": {
-              "nodeId": "f821a5f6-f4a2-473a-b08d-576b2fb0de08",
-              "portId": "2dd2140a-31d8-4b90-9a67-351931da6a5b"
+              "nodeId": "ce5a4c2b-32a6-4d7e-b2d7-f514c3aaa58d",
+              "portId": "8209c772-3426-4652-b617-4f05301fc97c"
             },
             "tgt": {
-              "nodeId": "543bc3cd-0a12-48f4-9f5d-0703b2625b7e",
-              "portId": "f39c872c-5ec5-4591-85f8-220e396e1b89"
+              "nodeId": "cb174c09-f91e-40ae-a41e-b26bf5789647",
+              "portId": "ba10dec7-2180-4efa-b131-53b1813aa60e"
             },
             "condition": "{}"
           },
           {
             "src": {
-              "nodeId": "8b858d40-56d3-4e2a-9246-931b3e7083fd",
-              "portId": "81e9f56a-d2ec-400b-bbb9-3c67c33a64dd"
+              "nodeId": "cb174c09-f91e-40ae-a41e-b26bf5789647",
+              "portId": "ca9982b3-a705-4609-9ce5-6c294a2d9961"
             },
             "tgt": {
-              "nodeId": "9ad3e30d-0f57-4cbf-8b8f-a086660e5360",
-              "portId": "26ae6f96-999a-4773-81da-41851d9cd6f3"
+              "nodeId": "83410df1-440d-47a8-be80-d560a5315b3c",
+              "portId": "5288f42d-696c-48fb-a9c5-59e3db770da0"
             },
             "condition": "{}"
           },
           {
             "src": {
-              "nodeId": "53fe0a66-b104-49cd-8447-7b6f042e2f78",
-              "portId": "885198a2-6b62-40d5-828b-c538be21aaaf"
+              "nodeId": "cb174c09-f91e-40ae-a41e-b26bf5789647",
+              "portId": "4fdb78eb-eadb-4cd5-bb0f-c7b138500b21"
             },
             "tgt": {
-              "nodeId": "9ad3e30d-0f57-4cbf-8b8f-a086660e5360",
-              "portId": "83cdcdbe-b76c-4e17-9183-23f97b243b97"
+              "nodeId": "a7751f8b-e284-4362-9aa9-d1a05eee0574",
+              "portId": "a67c7d18-a41b-4f0d-b0c3-41702aed4836"
             },
             "condition": "{}"
           },
           {
             "src": {
-              "nodeId": "4af5cfc0-cd5b-4011-8f52-a8381fc2c752",
-              "portId": "a1c17b47-a6fe-485c-b2d6-6eac5ba1c99e"
+              "nodeId": "a7751f8b-e284-4362-9aa9-d1a05eee0574",
+              "portId": "ed549380-6206-463a-bd60-efe9e292a418"
             },
             "tgt": {
-              "nodeId": "9ad3e30d-0f57-4cbf-8b8f-a086660e5360",
-              "portId": "5b3d55bd-4d44-4bc2-8370-e6c3fa184e4b"
+              "nodeId": "97c795b1-7561-47d5-867b-35f7815c0e0f",
+              "portId": "9d05ddca-c17b-4f87-a6d6-136978c4ed3c"
             },
             "condition": "{}"
           },
           {
             "src": {
-              "nodeId": "f821a5f6-f4a2-473a-b08d-576b2fb0de08",
-              "portId": "e16e01a7-7a3c-4078-ac5f-7dddfafae879"
+              "nodeId": "83410df1-440d-47a8-be80-d560a5315b3c",
+              "portId": "f4f17212-61a7-41a5-856e-33cc8b8547f5"
             },
             "tgt": {
-              "nodeId": "9ad3e30d-0f57-4cbf-8b8f-a086660e5360",
-              "portId": "f1ff0866-cd7c-4164-a93a-01817f4a70a6"
+              "nodeId": "50fe5c2f-98fc-42cb-8418-fe0eece18c9c",
+              "portId": "479495e9-53ee-4906-aaf9-6dd6b1b2a64f"
             },
             "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "50fe5c2f-98fc-42cb-8418-fe0eece18c9c",
+              "portId": "bad26cba-bbb8-4e23-87f3-d65f6a088f04"
+            },
+            "tgt": {
+              "nodeId": "3a91e1e8-feb3-45b1-9c3d-8f62a9984eec",
+              "portId": "0a7ad74f-02da-472e-ac25-391644bc0dcf"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "3a91e1e8-feb3-45b1-9c3d-8f62a9984eec",
+              "portId": "7fe86f40-cd48-4093-80fb-845adf2b2291"
+            },
+            "tgt": {
+              "nodeId": "f9131cd9-c078-4bbb-ba79-ff20f43a38e8",
+              "portId": "64ac2529-e5c3-4017-a0ab-5c00c88b69a6"
+            },
+            "condition": "{}",
+            "action": "continue"
           }
         ],
         "startNodes": [
           {
-            "nodeId": "87328089-5d9a-4a0e-afaa-ff1390976c04",
+            "nodeId": "6b8f627d-5135-4a27-997b-a81f8bacf5ef",
             "type": "root",
-            "id": "f9b0a956-3204-43ab-8e9c-2c7795526550"
+            "id": "61e0e099-171a-4534-9033-1e996e9ac3dc"
           }
         ],
         "description": "NVIDIA blueprint for report generation.",
         "name": "Report Generation Nvidia Blueprint",
         "nodes": [
           {
-            "id": "87328089-5d9a-4a0e-afaa-ff1390976c04",
+            "id": "6b8f627d-5135-4a27-997b-a81f8bacf5ef",
             "inputs": [
               {
-                "portId": "ae8d30e9-d087-4920-a7a9-16886a3e7993",
-                "nodeId": "ae8d30e9-d087-4920-a7a9-16886a3e7993",
+                "portId": "085af306-0ac0-4628-80d4-c736c2037fdd",
+                "nodeId": "085af306-0ac0-4628-80d4-c736c2037fdd",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
@@ -197,8 +220,110 @@
             ],
             "outputs": [
               {
-                "portId": "be3526bf-1dca-4313-9936-f047fcd53d9f",
-                "nodeId": "be3526bf-1dca-4313-9936-f047fcd53d9f",
+                "portId": "f421327c-78ac-4a88-b707-a5696cca80b2",
+                "nodeId": "f421327c-78ac-4a88-b707-a5696cca80b2",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Report Search Queries",
+            "type": "custom",
+            "namespace": {
+              "functionName": "report_search_queries",
+              "serviceName": "report-generation-compute-config",
+              "moduleName": "report-generation-module",
+              "packageName": "report-generation"
+            },
+            "appName": "Report Generation",
+            "dpkName": "report-generation",
+            "metadata": {
+              "position": {
+                "x": 9785.53025817871,
+                "y": 10272.9248008728,
+                "z": 0
+              },
+              "componentGroupName": "Report Generation",
+              "repeatable": true,
+              "pipelineNodeName": "report-search-queries-node"
+            }
+          },
+          {
+            "id": "fbf7177e-e98a-4eef-880d-3e53d518c5cb",
+            "inputs": [
+              {
+                "portId": "96ed8695-548b-49a3-a990-c857beb2572c",
+                "nodeId": "96ed8695-548b-49a3-a990-c857beb2572c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "5bd1fcc2-169b-4e6c-a459-8184437973b3",
+                "nodeId": "5bd1fcc2-169b-4e6c-a459-8184437973b3",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "61d4d1e7-8eb0-4f8c-ae49-49c1f5694209",
+                "nodeId": "61d4d1e7-8eb0-4f8c-ae49-49c1f5694209",
+                "type": "String",
+                "name": "source_str",
+                "displayName": "source_str",
+                "io": "output"
+              }
+            ],
+            "name": "Search Tavily",
+            "type": "custom",
+            "namespace": {
+              "functionName": "search_tavily",
+              "serviceName": "report-generation-compute-config",
+              "moduleName": "report-generation-module",
+              "packageName": "report-generation"
+            },
+            "appName": "Report Generation",
+            "dpkName": "report-generation",
+            "metadata": {
+              "position": {
+                "x": 10496.9999847412,
+                "y": 10273.9999961853,
+                "z": 0
+              },
+              "componentGroupName": "Report Generation",
+              "repeatable": true,
+              "pipelineNodeName": "search-tavily-node"
+            }
+          },
+          {
+            "id": "03ed9f92-5d5e-43d2-a2ff-ffe34f4d4b58",
+            "inputs": [
+              {
+                "portId": "65e3f63d-6598-4602-a4a1-1756758b008a",
+                "nodeId": "65e3f63d-6598-4602-a4a1-1756758b008a",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              },
+              {
+                "portId": "5e563e99-ddfc-42a9-b98e-e6731e7030ed",
+                "nodeId": "5e563e99-ddfc-42a9-b98e-e6731e7030ed",
+                "type": "String",
+                "name": "source_str",
+                "displayName": "source_str",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "c0c03f58-0f28-4a14-aea3-3c94403e08de",
+                "nodeId": "c0c03f58-0f28-4a14-aea3-3c94403e08de",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
@@ -217,8 +342,8 @@
             "dpkName": "report-generation",
             "metadata": {
               "position": {
-                "x": 9713.5869140625,
-                "y": 10221.8544921875,
+                "x": 10821.9999847412,
+                "y": 10275.9999961853,
                 "z": 0
               },
               "componentGroupName": "Report Generation",
@@ -227,11 +352,11 @@
             }
           },
           {
-            "id": "63979589-f2c6-4937-81b0-e72c68742320",
+            "id": "97c795b1-7561-47d5-867b-35f7815c0e0f",
             "inputs": [
               {
-                "portId": "a72022df-00db-4a32-9af1-bd648b689dde",
-                "nodeId": "a72022df-00db-4a32-9af1-bd648b689dde",
+                "portId": "9d05ddca-c17b-4f87-a6d6-136978c4ed3c",
+                "nodeId": "9d05ddca-c17b-4f87-a6d6-136978c4ed3c",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
@@ -240,18 +365,26 @@
             ],
             "outputs": [
               {
-                "portId": "6945d679-4bce-4bd0-9d72-587074d6350b",
-                "nodeId": "6945d679-4bce-4bd0-9d72-587074d6350b",
+                "portId": "eabfcf3c-9da0-4d82-bb5e-fe6a746b1159",
+                "nodeId": "eabfcf3c-9da0-4d82-bb5e-fe6a746b1159",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
                 "io": "output"
+              },
+              {
+                "portId": "121f1a94-431a-4667-9dc4-cd6cc7b0cb27",
+                "nodeId": "121f1a94-431a-4667-9dc4-cd6cc7b0cb27",
+                "type": "String",
+                "name": "source_str",
+                "displayName": "source_str",
+                "io": "output"
               }
             ],
-            "name": "Research Agents",
+            "name": "Search Tavily",
             "type": "custom",
             "namespace": {
-              "functionName": "research_agents",
+              "functionName": "search_tavily",
               "serviceName": "report-generation-compute-config",
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
@@ -260,41 +393,49 @@
             "dpkName": "report-generation",
             "metadata": {
               "position": {
-                "x": 11091.9755477461,
-                "y": 10220.1962561341,
+                "x": 12119.5263519287,
+                "y": 10188.2294883728,
                 "z": 0
               },
               "componentGroupName": "Report Generation",
               "repeatable": true,
-              "pipelineNodeName": "research-agents-node"
+              "pipelineNodeName": "search-tavily-node"
             }
           },
           {
-            "id": "a08e6488-8c06-4133-8630-183afe8e73d2",
+            "id": "575ee540-0be1-4081-85a9-9ee1d4b86d14",
             "inputs": [
               {
-                "portId": "ee5a942f-1529-4db0-8a5c-abb008cc4461",
-                "nodeId": "ee5a942f-1529-4db0-8a5c-abb008cc4461",
+                "portId": "17a945a1-0fd1-4f89-a019-0d2998fde963",
+                "nodeId": "17a945a1-0fd1-4f89-a019-0d2998fde963",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
+                "io": "input"
+              },
+              {
+                "portId": "fa43334e-f8ab-4271-968d-fa330b355a38",
+                "nodeId": "fa43334e-f8ab-4271-968d-fa330b355a38",
+                "type": "String",
+                "name": "source_str",
+                "displayName": "source_str",
                 "io": "input"
               }
             ],
             "outputs": [
               {
-                "portId": "e6e29742-b08e-4b2c-bef5-471bfadf20f5",
-                "nodeId": "e6e29742-b08e-4b2c-bef5-471bfadf20f5",
+                "portId": "d9e0447c-6b8e-4316-b1bf-776b58d889c3",
+                "nodeId": "d9e0447c-6b8e-4316-b1bf-776b58d889c3",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
                 "io": "output"
               }
             ],
-            "name": "Research Agents",
+            "name": "Write Final Section Research",
             "type": "custom",
             "namespace": {
-              "functionName": "research_agents",
+              "functionName": "write_final_section_research",
               "serviceName": "report-generation-compute-config",
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
@@ -303,21 +444,21 @@
             "dpkName": "report-generation",
             "metadata": {
               "position": {
-                "x": 11088.196372039,
-                "y": 10095.4636999238,
+                "x": 12428.3779144287,
+                "y": 10191.1142539978,
                 "z": 0
               },
               "componentGroupName": "Report Generation",
               "repeatable": true,
-              "pipelineNodeName": "research-agents-node"
+              "pipelineNodeName": "write-final-section-research-node"
             }
           },
           {
-            "id": "f821a5f6-f4a2-473a-b08d-576b2fb0de08",
+            "id": "556fecea-5dde-49ea-9eb0-1ca2d7d04545",
             "inputs": [
               {
-                "portId": "0b992186-1f2b-42c0-aa7b-fab0e3b0195c",
-                "nodeId": "0b992186-1f2b-42c0-aa7b-fab0e3b0195c",
+                "portId": "aae4dcdf-96ed-4457-b803-573e9210d711",
+                "nodeId": "aae4dcdf-96ed-4457-b803-573e9210d711",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
@@ -326,35 +467,201 @@
             ],
             "outputs": [
               {
-                "portId": "e16e01a7-7a3c-4078-ac5f-7dddfafae879",
-                "nodeId": "e16e01a7-7a3c-4078-ac5f-7dddfafae879",
+                "portId": "7688bb6b-c781-4a0e-bb1e-f0c821762a6f",
+                "nodeId": "7688bb6b-c781-4a0e-bb1e-f0c821762a6f",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
                 "io": "output"
               },
               {
-                "portId": "fbd4ba81-caa0-4120-8839-2f396e0cc78b",
-                "nodeId": "fbd4ba81-caa0-4120-8839-2f396e0cc78b",
+                "portId": "07dc6a2a-ad4c-4f55-a681-9e938e890197",
+                "nodeId": "07dc6a2a-ad4c-4f55-a681-9e938e890197",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3-3-70b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "serviceName": "predict-67cd8e2c608546c04ead58-nd5b",
+              "moduleName": "nim-api-module",
+              "packageName": "nim-api-llama3-3-70b-instruct-meta"
+            },
+            "appName": "llama-3.3-70b-instruct",
+            "dpkName": "nim-api-llama3-3-70b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 10135.8341894597,
+                "y": 10272.4284179253,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.3-70b-instruct",
+                "system_prompt": "",
+                "max_tokens": 1024,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "seed": 0,
+                "stream": true
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "ce5a4c2b-32a6-4d7e-b2d7-f514c3aaa58d",
+            "inputs": [
+              {
+                "portId": "435746b2-c8be-4e68-ab71-920e92f51411",
+                "nodeId": "435746b2-c8be-4e68-ab71-920e92f51411",
                 "type": "Item",
-                "name": "intro",
-                "displayName": "intro",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "8209c772-3426-4652-b617-4f05301fc97c",
+                "nodeId": "8209c772-3426-4652-b617-4f05301fc97c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
                 "io": "output"
               },
               {
-                "portId": "2dd2140a-31d8-4b90-9a67-351931da6a5b",
-                "nodeId": "2dd2140a-31d8-4b90-9a67-351931da6a5b",
+                "portId": "f0ea0660-fbb0-43f5-82a1-8c611c585950",
+                "nodeId": "f0ea0660-fbb0-43f5-82a1-8c611c585950",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3-3-70b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "moduleName": "nim-api-module",
+              "packageName": "nim-api-llama3-3-70b-instruct-meta"
+            },
+            "appName": "llama-3.3-70b-instruct",
+            "dpkName": "nim-api-llama3-3-70b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 11180.4980231741,
+                "y": 10274.3525687466,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.3-70b-instruct",
+                "system_prompt": "",
+                "max_tokens": 1024,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "seed": 0,
+                "stream": true
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "83410df1-440d-47a8-be80-d560a5315b3c",
+            "inputs": [
+              {
+                "portId": "5288f42d-696c-48fb-a9c5-59e3db770da0",
+                "nodeId": "5288f42d-696c-48fb-a9c5-59e3db770da0",
                 "type": "Item",
-                "name": "body",
-                "displayName": "body",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "f4f17212-61a7-41a5-856e-33cc8b8547f5",
+                "nodeId": "f4f17212-61a7-41a5-856e-33cc8b8547f5",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
                 "io": "output"
               },
               {
-                "portId": "89b77f45-f8de-4fec-9050-12c3f0bf9394",
-                "nodeId": "89b77f45-f8de-4fec-9050-12c3f0bf9394",
+                "portId": "9f5f5a81-a373-403f-be59-8e8c5539dbe1",
+                "nodeId": "9f5f5a81-a373-403f-be59-8e8c5539dbe1",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "llama-3-3-70b-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "serviceName": "predict-67cd8e2c608546c04ead58-nd5b",
+              "moduleName": "nim-api-module",
+              "packageName": "nim-api-llama3-3-70b-instruct-meta"
+            },
+            "appName": "llama-3.3-70b-instruct",
+            "dpkName": "nim-api-llama3-3-70b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 12722.430611895,
+                "y": 10286.7869085618,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.3-70b-instruct",
+                "system_prompt": "",
+                "max_tokens": 1024,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "seed": 0,
+                "stream": true
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "cb174c09-f91e-40ae-a41e-b26bf5789647",
+            "inputs": [
+              {
+                "portId": "ba10dec7-2180-4efa-b131-53b1813aa60e",
+                "nodeId": "ba10dec7-2180-4efa-b131-53b1813aa60e",
                 "type": "Item",
-                "name": "conclusion",
-                "displayName": "conclusion",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "4fdb78eb-eadb-4cd5-bb0f-c7b138500b21",
+                "nodeId": "4fdb78eb-eadb-4cd5-bb0f-c7b138500b21",
+                "type": "Item[]",
+                "name": "research_sections_prompt_items",
+                "displayName": "research_sections_prompt_items",
+                "io": "output"
+              },
+              {
+                "portId": "ca9982b3-a705-4609-9ce5-6c294a2d9961",
+                "nodeId": "ca9982b3-a705-4609-9ce5-6c294a2d9961",
+                "type": "Item[]",
+                "name": "non_research_sections_prompt_items",
+                "displayName": "non_research_sections_prompt_items",
                 "io": "output"
               }
             ],
@@ -366,12 +673,13 @@
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
             },
+            "projectId": "0ed621e3-7e6d-456e-a8c2-ddcc3017dfed",
             "appName": "Report Generation",
             "dpkName": "report-generation",
             "metadata": {
               "position": {
-                "x": 10343.6907688127,
-                "y": 10203.1501008826,
+                "x": 11518.7572838088,
+                "y": 10273.2643369331,
                 "z": 0
               },
               "componentGroupName": "Report Generation",
@@ -380,11 +688,11 @@
             }
           },
           {
-            "id": "cb1b4bf6-90e7-4a39-89f5-76f5d799eaee",
+            "id": "a7751f8b-e284-4362-9aa9-d1a05eee0574",
             "inputs": [
               {
-                "portId": "10ac768f-80e1-449d-af0d-d71016ed9b15",
-                "nodeId": "10ac768f-80e1-449d-af0d-d71016ed9b15",
+                "portId": "a67c7d18-a41b-4f0d-b0c3-41702aed4836",
+                "nodeId": "a67c7d18-a41b-4f0d-b0c3-41702aed4836",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
@@ -393,59 +701,16 @@
             ],
             "outputs": [
               {
-                "portId": "dd2355ce-39e3-48ab-8c71-4226bf741dc6",
-                "nodeId": "dd2355ce-39e3-48ab-8c71-4226bf741dc6",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "output"
-              }
-            ],
-            "name": "Research Agents",
-            "type": "custom",
-            "namespace": {
-              "functionName": "research_agents",
-              "serviceName": "report-generation-compute-config",
-              "moduleName": "report-generation-module",
-              "packageName": "report-generation"
-            },
-            "appName": "Report Generation",
-            "dpkName": "report-generation",
-            "metadata": {
-              "position": {
-                "x": 11093.2361654788,
-                "y": 10371.3864500794,
-                "z": 0
-              },
-              "componentGroupName": "Report Generation",
-              "repeatable": true,
-              "pipelineNodeName": "research-agents-node"
-            }
-          },
-          {
-            "id": "53fe0a66-b104-49cd-8447-7b6f042e2f78",
-            "inputs": [
-              {
-                "portId": "a8991795-1ddb-4948-b2b5-11b7e1e3f917",
-                "nodeId": "a8991795-1ddb-4948-b2b5-11b7e1e3f917",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "input"
-              }
-            ],
-            "outputs": [
-              {
-                "portId": "885198a2-6b62-40d5-828b-c538be21aaaf",
-                "nodeId": "885198a2-6b62-40d5-828b-c538be21aaaf",
+                "portId": "ed549380-6206-463a-bd60-efe9e292a418",
+                "nodeId": "ed549380-6206-463a-bd60-efe9e292a418",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
                 "io": "output"
               },
               {
-                "portId": "50d42a0f-94e0-4de1-a27a-641d1436b990",
-                "nodeId": "50d42a0f-94e0-4de1-a27a-641d1436b990",
+                "portId": "f364ce20-109d-495e-81ae-d649dac032a2",
+                "nodeId": "f364ce20-109d-495e-81ae-d649dac032a2",
                 "type": "Annotation[]",
                 "name": "annotations",
                 "displayName": "annotations",
@@ -464,190 +729,8 @@
             "dpkName": "nim-api-llama3-3-70b-instruct-meta",
             "metadata": {
               "position": {
-                "x": 11381.7585711052,
-                "y": 10094.2042912089,
-                "z": 0
-              },
-              "modelConfig": {
-                "nim_model_name": "meta/llama-3.3-70b-instruct",
-                "system_prompt": "",
-                "max_tokens": 1024,
-                "temperature": 0.2,
-                "top_p": 0.7,
-                "seed": 0,
-                "stream": true
-              },
-              "componentGroupName": "models",
-              "repeatable": true,
-              "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
-              "mlType": "genAi"
-            }
-          },
-          {
-            "id": "8b858d40-56d3-4e2a-9246-931b3e7083fd",
-            "inputs": [
-              {
-                "portId": "4b977342-0a5b-47fe-86c8-f9f84df87b70",
-                "nodeId": "4b977342-0a5b-47fe-86c8-f9f84df87b70",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "input"
-              }
-            ],
-            "outputs": [
-              {
-                "portId": "81e9f56a-d2ec-400b-bbb9-3c67c33a64dd",
-                "nodeId": "81e9f56a-d2ec-400b-bbb9-3c67c33a64dd",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "output"
-              },
-              {
-                "portId": "76a7dce2-246b-4121-a853-8632dbc06e72",
-                "nodeId": "76a7dce2-246b-4121-a853-8632dbc06e72",
-                "type": "Annotation[]",
-                "name": "annotations",
-                "displayName": "annotations",
-                "io": "output"
-              }
-            ],
-            "name": "llama-3-3-70b-instruct",
-            "type": "ml",
-            "namespace": {
-              "functionName": "predict",
-              "moduleName": "nim-api-module",
-              "packageName": "nim-api-llama3-3-70b-instruct-meta"
-            },
-            "appName": "llama-3.3-70b-instruct",
-            "dpkName": "nim-api-llama3-3-70b-instruct-meta",
-            "metadata": {
-              "position": {
-                "x": 11383.0179607244,
-                "y": 10220.1965919723,
-                "z": 0
-              },
-              "modelConfig": {
-                "nim_model_name": "meta/llama-3.3-70b-instruct",
-                "system_prompt": "",
-                "max_tokens": 1024,
-                "temperature": 0.2,
-                "top_p": 0.7,
-                "seed": 0,
-                "stream": true
-              },
-              "componentGroupName": "models",
-              "repeatable": true,
-              "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
-              "mlType": "genAi"
-            }
-          },
-          {
-            "id": "4af5cfc0-cd5b-4011-8f52-a8381fc2c752",
-            "inputs": [
-              {
-                "portId": "93bc46f8-a710-475c-8fa1-a861be7f22b4",
-                "nodeId": "93bc46f8-a710-475c-8fa1-a861be7f22b4",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "input"
-              }
-            ],
-            "outputs": [
-              {
-                "portId": "a1c17b47-a6fe-485c-b2d6-6eac5ba1c99e",
-                "nodeId": "a1c17b47-a6fe-485c-b2d6-6eac5ba1c99e",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "output"
-              },
-              {
-                "portId": "ca3ed18c-be74-45c4-b0a3-e87ece7b430a",
-                "nodeId": "ca3ed18c-be74-45c4-b0a3-e87ece7b430a",
-                "type": "Annotation[]",
-                "name": "annotations",
-                "displayName": "annotations",
-                "io": "output"
-              }
-            ],
-            "name": "llama-3-3-70b-instruct",
-            "type": "ml",
-            "namespace": {
-              "functionName": "predict",
-              "serviceName": "predict-67cd8e2c608546c04ead58-nd5b",
-              "moduleName": "nim-api-module",
-              "packageName": "nim-api-llama3-3-70b-instruct-meta"
-            },
-            "appName": "llama-3.3-70b-instruct",
-            "dpkName": "nim-api-llama3-3-70b-instruct-meta",
-            "metadata": {
-              "position": {
-                "x": 11381.7579264288,
-                "y": 10371.3868491331,
-                "z": 0
-              },
-              "modelConfig": {
-                "nim_model_name": "meta/llama-3.3-70b-instruct",
-                "system_prompt": "",
-                "max_tokens": 1024,
-                "temperature": 0.2,
-                "top_p": 0.7,
-                "seed": 0,
-                "stream": true
-              },
-              "componentGroupName": "models",
-              "repeatable": true,
-              "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
-              "mlType": "genAi"
-            }
-          },
-          {
-            "id": "fcd15b0e-bb80-4e90-b346-ede429c2e51e",
-            "inputs": [
-              {
-                "portId": "9b8f753a-72cb-4945-9ee8-918182e89010",
-                "nodeId": "9b8f753a-72cb-4945-9ee8-918182e89010",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "input"
-              }
-            ],
-            "outputs": [
-              {
-                "portId": "c1b2a942-ab35-4e47-b7d4-784a83e1dc6f",
-                "nodeId": "c1b2a942-ab35-4e47-b7d4-784a83e1dc6f",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "output"
-              },
-              {
-                "portId": "78b9e6f2-6c89-45b0-9507-15a858c24f39",
-                "nodeId": "78b9e6f2-6c89-45b0-9507-15a858c24f39",
-                "type": "Annotation[]",
-                "name": "annotations",
-                "displayName": "annotations",
-                "io": "output"
-              }
-            ],
-            "name": "llama-3-3-70b-instruct",
-            "type": "ml",
-            "namespace": {
-              "functionName": "predict",
-              "serviceName": "predict-67cd8e2c608546c04ead58-nd5b",
-              "moduleName": "nim-api-module",
-              "packageName": "nim-api-llama3-3-70b-instruct-meta"
-            },
-            "appName": "llama-3.3-70b-instruct",
-            "dpkName": "nim-api-llama3-3-70b-instruct-meta",
-            "metadata": {
-              "position": {
-                "x": 10026.1008675723,
-                "y": 10217.9498384737,
+                "x": 11807.8873768078,
+                "y": 10192.137143502,
                 "z": 0
               },
               "modelConfig": {
