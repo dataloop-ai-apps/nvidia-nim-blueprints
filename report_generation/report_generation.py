@@ -608,7 +608,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         ordered_sections = [self.all_completed_sections[section['name']] for section in main_item.metadata['user']['sections']]
         
         # Compile final report
-        final_report = "\n\n".join([section.content for section in ordered_sections])
+        final_report = "\n\n".join([section_text for section_text in ordered_sections])
         
         prompt_item = dl.PromptItem.from_item(main_item)
         prompt_item.add(
