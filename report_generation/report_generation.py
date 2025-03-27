@@ -251,9 +251,11 @@ class ReportGenerator(dl.BaseServiceRunner):
         prompt_item_search_queries.prompts.append(prompt1)
         item_search_queries = item.dataset.items.upload(prompt_item_search_queries, overwrite=True, remote_path="/.dataloop")
 
+        item.metadata.setdefault('user', {})
         item.metadata['user']['item_search_queries'] = item_search_queries.id
         item.update()
-        item_search_queries.metadata['user'] = {'main_item': item.id}
+        item_search_queries.metadata.setdefault('user', {})
+        item_search_queries.metadata['user']['main_item'] = item.id
         item_search_queries.update()  
         
         return item_search_queries
@@ -307,9 +309,11 @@ class ReportGenerator(dl.BaseServiceRunner):
         prompt_item_report_planning.prompts.append(prompt1)
         item_report_planning = item.dataset.items.upload(prompt_item_report_planning, overwrite=True, remote_path="/.dataloop")
 
+        item.metadata.setdefault('user', {})
         item.metadata['user']['item_report_planning'] = item_report_planning.id
         item.update()
-        item_report_planning.metadata['user'] = {'main_item': item.id}
+        item_report_planning.metadata.setdefault('user', {})
+        item_report_planning.metadata['user']['main_item'] = item.id
         item_report_planning.update()
         return item_report_planning
     
@@ -323,6 +327,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         non_research_sections_promt_items = []
 
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
+        main_item.metadata.setdefault('user', {})
         main_item.metadata['user']['sections'] = sections
         # Process sections that require research
         for i, section in enumerate(sections):
@@ -361,9 +366,11 @@ class ReportGenerator(dl.BaseServiceRunner):
                 prompt_item_research.prompts.append(prompt1)
                 item_research = item.dataset.items.upload(prompt_item_research, overwrite=True, remote_path="/.dataloop")
 
+                main_item.metadata.setdefault('user', {})
                 main_item.metadata['user'][f'section_item_{i}'] = item_research.id
                 main_item.update()
-                item_research.metadata['user'] = {'main_item': main_item.id}
+                item_research.metadata.setdefault('user', {})
+                item_research.metadata['user']['main_item'] = main_item.id
                 item_research.update()
                 research_sections_promt_items.append(item_research)
             else:
@@ -426,9 +433,11 @@ class ReportGenerator(dl.BaseServiceRunner):
                 prompt_item_non_research.prompts.append(prompt1)
                 item_non_research = item.dataset.items.upload(prompt_item_non_research, overwrite=True, remote_path="/.dataloop")
                 
+                main_item.metadata.setdefault('user', {})
                 main_item.metadata['user'][f'section_item_{i}'] = item_non_research.id
                 main_item.update()
-                item_non_research.metadata['user'] = {'main_item': main_item.id}
+                item_non_research.metadata.setdefault('user', {})
+                item_non_research.metadata['user']['main_item'] = main_item.id
                 item_non_research.update()
                 non_research_sections_promt_items.append(item_non_research)
         
@@ -507,9 +516,11 @@ class ReportGenerator(dl.BaseServiceRunner):
         item_research = item.dataset.items.upload(prompt_item_research, overwrite=True, remote_path="/.dataloop")
 
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
+        main_item.metadata.setdefault('user', {})
         main_item.metadata['user'][f'item_research_{item.name}'] = item_research.id
         main_item.update()
-        item_research.metadata['user'] = {'main_item': main_item.id}
+        item_research.metadata.setdefault('user', {})
+        item_research.metadata['user']['main_item'] = main_item.id
         item_research.update()
         return item_research
     
