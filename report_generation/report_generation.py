@@ -489,7 +489,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         """
         # Get section name and description from the item metadata
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
-        sections = eval(main_item.metadata['user']['sections'])
+        sections = main_item.metadata['user']['sections']
         section_number = None
         if item.name:
             match = re.search(r'section_(\d+)', item.name)
@@ -503,7 +503,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         
         if section_number is None:
             logger.warning(f"Could not extract section number from item name: {item.name}")
-        section_topic = eval(sections[int(section_number)])['name']
+        section_topic = sections[int(section_number)]['name']
         context = source_str
         
         # Section writer instructions
