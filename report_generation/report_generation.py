@@ -605,7 +605,7 @@ class ReportGenerator(dl.BaseServiceRunner):
     def write_final_report(self, item: dl.Item):
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         # Maintain original order
-        ordered_sections = [self.all_completed_sections[section.name] for section in main_item.metadata['user']['sections']]
+        ordered_sections = [self.all_completed_sections[section['name']] for section in main_item.metadata['user']['sections']]
         
         # Compile final report
         final_report = "\n\n".join([section.content for section in ordered_sections])
