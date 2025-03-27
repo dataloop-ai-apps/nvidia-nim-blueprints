@@ -95,7 +95,6 @@
           "entryPoint": "report_generation/report_generation.py",
           "className": "ReportGenerator",
           "integrations": [
-            "dl-ngc-api-key",
             "dl-tavily-api-key"
           ],
           "functions": [
@@ -166,11 +165,11 @@
               "output": [
                 {
                   "name": "research_sections_promt_items",
-                  "type": "Items"
+                  "type": "Item[]"
                 },
                 {
                   "name": "non_research_sections_promt_items",
-                  "type": "Items"
+                  "type": "Item[]"
                 }
               ],
               "displayName": "Report Sections"
