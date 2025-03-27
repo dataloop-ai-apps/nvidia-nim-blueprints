@@ -314,17 +314,18 @@ class ReportGenerator(dl.BaseServiceRunner):
         """
         sections_str = item.annotations.list()[0].coordinates
 
-        # Try to find a dictionary-like pattern in the string
-        dict_match = re.search(r'\{.*\}', sections_str, re.DOTALL)
-        if dict_match:
+        # Extract the JSON part from the string
+        json_match = re.search(r'({.*})', sections_str, re.DOTALL)
+        if json_match:
             try:
-                sections = json.loads(dict_match.group(0))
-            except json.JSONDecodeError:
-                # If JSON parsing fails, try using eval with safety precautions
-                sections = eval(dict_match.group(0))
+                sections_data = json.loads(json_match.group(1))
+                sections = sections_data.get('sections', [])
+            except json.JSONDecodeError as e:
+                logger.error(f"Failed to parse JSON: {e}")
+                sections = []
         else:
-            # Fallback to direct evaluation if no dict pattern found
-            sections = eval(sections_str)
+            logger.error("No JSON structure found in the response")
+            sections = []
 
         research_sections_promt_items = []
         non_research_sections_promt_items = []
@@ -334,7 +335,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         main_item.metadata['user']['sections'] = sections
         # Process sections that require research
         for i, section in enumerate(sections):
-            if section.research:
+            if section.get('research', False):
                 # Query writer instructions
                 query_writer_instructions = f"""Your goal is to generate targeted web search queries that will gather comprehensive information for writing a technical report section.
 
