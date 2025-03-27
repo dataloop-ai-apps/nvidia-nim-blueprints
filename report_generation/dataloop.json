@@ -86,6 +86,15 @@
           },
           "categories": ["Report Generation"],
           "scope": "project"
+        },
+        {
+          "name": "write-final-report-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.write_final_report"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
         }
       ],
       "modules": [
@@ -209,6 +218,22 @@
                 }
               ],
               "displayName": "Gather Sections"
+            },
+            {
+              "name": "write_final_report",
+              "input": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "output": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "displayName": "Write Final Report"
             }
           ]
         }

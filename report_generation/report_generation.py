@@ -580,10 +580,29 @@ class ReportGenerator(dl.BaseServiceRunner):
         return item_research
     
     def gather_sections(self, item: dl.Item):
-
-        section = item.annotations.list()[0].coordinates
-        self.all_completed_sections[section.name] = section
-
+        # Get section name and description from the item metadata
+        main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
+        sections = main_item.metadata['user']['sections']
+        section_number = None
+        if item.name:
+            match = re.search(r'section_(\d+)', item.name)
+            if match:
+                section_number = match.group(1)
+            else:
+                # Try to extract number if it's in a different format
+                match = re.findall(r'\d+', item.name)
+                if match:
+                    section_number = match[0]
+        
+        if section_number is None:
+            logger.warning(f"Could not extract section number from item name: {item.name}")
+        section_name = sections[int(section_number)]['name']
+        section_text = item.annotations.list()[0].coordinates
+        self.all_completed_sections[section_name] = section_text
+        
+        return item
+    
+    def write_final_report(self, item: dl.Item):
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         # Maintain original order
         ordered_sections = [self.all_completed_sections[section.name] for section in main_item.metadata['user']['sections']]
