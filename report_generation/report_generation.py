@@ -100,40 +100,28 @@ class ReportGenerator(dl.BaseServiceRunner):
                                 """
         return formatted_str
 
-    @traceable
-    def tavily_search(self, query):
-        """Search the web using the Tavily API."""
-        return self.tavily_client.search(query, 
-                             max_results=5, 
-                             include_raw_content=True)
-
-    def tavily_search_async(self, search_queries, tavily_topic, tavily_days):
-        """Performs concurrent web searches using the Tavily API."""
-        search_tasks = []
+    def tavily_search(self, search_queries, tavily_topic, tavily_days):
+        """Performs web searches using the Tavily API."""
+        search_results = []
         for query in search_queries:
             if tavily_topic == "news":
-                search_tasks.append(
-                    self.tavily_async_client.search(
-                        query,
-                        max_results=5,
-                        include_raw_content=True,
-                        topic="news",
-                        days=tavily_days
-                    )
+                result = self.tavily_client.search(
+                    query,
+                    max_results=5,
+                    include_raw_content=True,
+                    topic="news",
+                    days=tavily_days
                 )
             else:
-                search_tasks.append(
-                    self.tavily_async_client.search(
-                        query,
-                        max_results=5,
-                        include_raw_content=True,
-                        topic="general"
-                    )
+                result = self.tavily_client.search(
+                    query,
+                    max_results=5,
+                    include_raw_content=True,
+                    topic="general"
                 )
-
-        # Execute all searches concurrently
-        search_docs = asyncio.run(asyncio.gather(*search_tasks))
-        return search_docs
+            search_results.append(result)
+        
+        return search_results
 
     def _extract_parameters_from_prompt(self, prompt_text_variable: str):
         """Extract parameters from the prompt text"""
@@ -263,7 +251,7 @@ class ReportGenerator(dl.BaseServiceRunner):
     def search_tavily(self, item: dl.Item):
         queries = item.annotations.list()[0].coordinates
         query_list = [line.strip() for line in queries.split('\n') if line.strip()]
-        search_docs = self.tavily_search_async(query_list, self.params['tavily_topic'], self.params['tavily_days'])
+        search_docs = self.tavily_search(query_list, self.params['tavily_topic'], self.params['tavily_days'])
         # Deduplicate and format sources
         source_str = self.deduplicate_and_format_sources(search_docs, max_tokens_per_source=1000, include_raw_content=True)
         return item, source_str
