@@ -330,49 +330,38 @@ class ReportGenerator(dl.BaseServiceRunner):
         """
         sections_str = item.annotations.list()[0].coordinates
 
-        # Try to extract the sections part
+        # Extract the sections array directly from the string
         sections_match = re.search(r'sections:\s*\[(.*?)\]', sections_str, re.DOTALL)
+        sections = []
+
         if sections_match:
-            try:
-                # Get the content inside the brackets
-                sections_content = sections_match.group(1).strip()
+            sections_content = sections_match.group(1)
+            # Split by section objects (each starting with {)
+            section_objects = re.findall(r'\s*{\s*(.*?)\s*}', sections_content, re.DOTALL)
+            
+            for section_str in section_objects:
+                section = {}
+                # Extract name
+                name_match = re.search(r'"name":\s*"([^"]*)"', section_str)
+                if name_match:
+                    section['name'] = name_match.group(1)
                 
-                # Split by section identifiers (section1:, section2:, etc.)
-                section_blocks = re.split(r'\s*section\d+:\s*', sections_content)
-                # Remove empty entries
-                section_blocks = [block for block in section_blocks if block.strip()]
+                # Extract description
+                desc_match = re.search(r'"description":\s*"([^"]*)"', section_str)
+                if desc_match:
+                    section['description'] = desc_match.group(1)
                 
-                sections = []
-                for block in section_blocks:
-                    # Parse each section block
-                    section = {}
-                    # Extract name
-                    name_match = re.search(r'name:\s*"([^"]*)"', block)
-                    if name_match:
-                        section['name'] = name_match.group(1)
-                    
-                    # Extract description
-                    desc_match = re.search(r'description:\s*"([^"]*)"', block)
-                    if desc_match:
-                        section['description'] = desc_match.group(1)
-                    
-                    # Extract research (boolean)
-                    research_match = re.search(r'research:\s*(true|false)', block)
-                    if research_match:
-                        section['research'] = research_match.group(1) == 'true'
-                    
-                    # Extract content (usually empty)
-                    content_match = re.search(r'content:\s*"([^"]*)"', block)
-                    if content_match:
-                        section['content'] = content_match.group(1)
-                    else:
-                        section['content'] = ""
-                    
-                    sections.append(section)
+                # Extract research flag
+                research_match = re.search(r'"research":\s*(true|false)', section_str)
+                if research_match:
+                    section['research'] = research_match.group(1) == 'true'
                 
-            except Exception as e:
-                logger.error(f"Failed to parse sections format: {e}")
-                sections = []
+                # Extract content
+                content_match = re.search(r'"content":\s*"([^"]*)"', section_str)
+                if content_match:
+                    section['content'] = content_match.group(1)
+                
+                sections.append(section)
 
         research_sections_prompt_items = []
         non_research_sections_prompt_items = []
