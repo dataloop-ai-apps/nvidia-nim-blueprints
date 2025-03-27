@@ -318,7 +318,12 @@ class ReportGenerator(dl.BaseServiceRunner):
         json_match = re.search(r'({.*})', sections_str, re.DOTALL)
         if json_match:
             try:
-                sections_data = json.loads(json_match.group(1))
+                # Add quotes to keys and boolean values to make it valid JSON
+                json_str = json_match.group(1)
+                json_str = re.sub(r'(\w+):', r'"\1":', json_str)
+                json_str = re.sub(r':\s*true', r': true', json_str)
+                json_str = re.sub(r':\s*false', r': false', json_str)
+                sections_data = json.loads(json_str)
                 sections = sections_data.get('sections', [])
             except json.JSONDecodeError as e:
                 logger.error(f"Failed to parse JSON: {e}")
@@ -327,8 +332,8 @@ class ReportGenerator(dl.BaseServiceRunner):
             logger.error("No JSON structure found in the response")
             sections = []
 
-        research_sections_promt_items = []
-        non_research_sections_promt_items = []
+        research_sections_prompt_items = []
+        non_research_sections_prompt_items = []
 
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         main_item.metadata.setdefault('user', {})
@@ -372,11 +377,11 @@ class ReportGenerator(dl.BaseServiceRunner):
 
                 main_item.metadata.setdefault('user', {})
                 main_item.metadata['user'][f'section_item_{i}'] = item_research.id
-                main_item.update()
+                main_item.update(True)
                 item_research.metadata.setdefault('user', {})
                 item_research.metadata['user']['main_item'] = main_item.id
-                item_research.update()
-                research_sections_promt_items.append(item_research)
+                item_research.update(True)
+                research_sections_prompt_items.append(item_research)
             else:
                 final_section_writer_instructions = f"""You are an expert technical writer crafting a section that synthesizes information from the rest of the report.
 
@@ -439,13 +444,13 @@ class ReportGenerator(dl.BaseServiceRunner):
                 
                 main_item.metadata.setdefault('user', {})
                 main_item.metadata['user'][f'section_item_{i}'] = item_non_research.id
-                main_item.update()
+                main_item.update(True)
                 item_non_research.metadata.setdefault('user', {})
                 item_non_research.metadata['user']['main_item'] = main_item.id
-                item_non_research.update()
-                non_research_sections_promt_items.append(item_non_research)
+                item_non_research.update(True)
+                non_research_sections_prompt_items.append(item_non_research)
         
-        return research_sections_promt_items, non_research_sections_promt_items
+        return research_sections_prompt_items, non_research_sections_prompt_items
         
     def write_final_section_research(self, item: dl.Item, source_str: str):
         """

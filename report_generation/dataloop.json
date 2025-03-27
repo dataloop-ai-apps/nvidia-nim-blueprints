@@ -164,11 +164,11 @@
               ],
               "output": [
                 {
-                  "name": "research_sections_promt_items",
+                  "name": "research_sections_prompt_items",
                   "type": "Item[]"
                 },
                 {
-                  "name": "non_research_sections_promt_items",
+                  "name": "non_research_sections_prompt_items",
                   "type": "Item[]"
                 }
               ],
