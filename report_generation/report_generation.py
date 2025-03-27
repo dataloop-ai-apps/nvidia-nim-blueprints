@@ -241,10 +241,10 @@ class ReportGenerator(dl.BaseServiceRunner):
 
         item.metadata.setdefault('user', {})
         item.metadata['user']['item_search_queries'] = item_search_queries.id
-        item.update()
+        item.update(True)
         item_search_queries.metadata.setdefault('user', {})
         item_search_queries.metadata['user']['main_item'] = item.id
-        item_search_queries.update()  
+        item_search_queries.update(True)  
         
         return item_search_queries
     
@@ -297,12 +297,13 @@ class ReportGenerator(dl.BaseServiceRunner):
         prompt_item_report_planning.prompts.append(prompt1)
         item_report_planning = item.dataset.items.upload(prompt_item_report_planning, overwrite=True, remote_path="/.dataloop")
 
-        item.metadata.setdefault('user', {})
-        item.metadata['user']['item_report_planning'] = item_report_planning.id
-        item.update()
+        main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
+        main_item.metadata['user']['item_report_planning'] = item_report_planning.id
+        main_item.update(True)
+        
         item_report_planning.metadata.setdefault('user', {})
-        item_report_planning.metadata['user']['main_item'] = item.id
-        item_report_planning.update()
+        item_report_planning.metadata['user']['main_item'] = main_item.id
+        item_report_planning.update(True)
         return item_report_planning
     
     def report_sections(self, item: dl.Item):
