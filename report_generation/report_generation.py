@@ -289,7 +289,23 @@ class ReportGenerator(dl.BaseServiceRunner):
         Consider which sections require web research. For example, introduction and conclusion will not require research because they will distill information from other parts of the report.
         
         Important:
-        Generate the sections of the report. Your response must include a 'sections' field containing a list of sections. Each section must have: name, description, plan, research, and content fields."""
+        Generate the sections of the report. Your response must include a 'sections' field containing a list of sections. Each section must have: name, description, plan, research, and content fields. 
+        The sections should be in this JSON format (without any additional text):
+        
+        sections: [
+          section1: 
+            name: "Introduction"
+            description: "Brief overview of the topic and its importance"
+            research: false
+            content: ""
+          section2:
+            name: "Section Name"
+            description: "Description of what this section covers"
+            research: true
+            content: ""
+        ]
+        
+        Ensure your response can be parsed as valid JSON with the proper structure."""
         prompt_item_report_planning = dl.PromptItem(name='report_planning')
         prompt1 = dl.Prompt(key='1')
         prompt1.add_element(
@@ -314,23 +330,49 @@ class ReportGenerator(dl.BaseServiceRunner):
         """
         sections_str = item.annotations.list()[0].coordinates
 
-        # Extract the JSON part from the string
-        json_match = re.search(r'({.*})', sections_str, re.DOTALL)
-        if json_match:
+        # Try to extract the sections part
+        sections_match = re.search(r'sections:\s*\[(.*?)\]', sections_str, re.DOTALL)
+        if sections_match:
             try:
-                # Add quotes to keys and boolean values to make it valid JSON
-                json_str = json_match.group(1)
-                json_str = re.sub(r'(\w+):', r'"\1":', json_str)
-                json_str = re.sub(r':\s*true', r': true', json_str)
-                json_str = re.sub(r':\s*false', r': false', json_str)
-                sections_data = json.loads(json_str)
-                sections = sections_data.get('sections', [])
-            except json.JSONDecodeError as e:
-                logger.error(f"Failed to parse JSON: {e}")
+                # Get the content inside the brackets
+                sections_content = sections_match.group(1).strip()
+                
+                # Split by section identifiers (section1:, section2:, etc.)
+                section_blocks = re.split(r'\s*section\d+:\s*', sections_content)
+                # Remove empty entries
+                section_blocks = [block for block in section_blocks if block.strip()]
+                
                 sections = []
-        else:
-            logger.error("No JSON structure found in the response")
-            sections = []
+                for block in section_blocks:
+                    # Parse each section block
+                    section = {}
+                    # Extract name
+                    name_match = re.search(r'name:\s*"([^"]*)"', block)
+                    if name_match:
+                        section['name'] = name_match.group(1)
+                    
+                    # Extract description
+                    desc_match = re.search(r'description:\s*"([^"]*)"', block)
+                    if desc_match:
+                        section['description'] = desc_match.group(1)
+                    
+                    # Extract research (boolean)
+                    research_match = re.search(r'research:\s*(true|false)', block)
+                    if research_match:
+                        section['research'] = research_match.group(1) == 'true'
+                    
+                    # Extract content (usually empty)
+                    content_match = re.search(r'content:\s*"([^"]*)"', block)
+                    if content_match:
+                        section['content'] = content_match.group(1)
+                    else:
+                        section['content'] = ""
+                    
+                    sections.append(section)
+                
+            except Exception as e:
+                logger.error(f"Failed to parse sections format: {e}")
+                sections = []
 
         research_sections_prompt_items = []
         non_research_sections_prompt_items = []
