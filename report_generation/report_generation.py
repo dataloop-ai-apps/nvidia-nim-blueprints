@@ -438,8 +438,12 @@ class ReportGenerator(dl.BaseServiceRunner):
         """
         Process the LLM's search queries and generate report sections
         """
+        # Get section name and description from the item metadata
+        section_topic = item.name
+        context = source_str
+        
         # Section writer instructions
-        section_writer_instructions = """You are an expert technical writer crafting one section of a technical report.
+        section_writer_instructions = f"""You are an expert technical writer crafting one section of a technical report.
 
         Topic for this section:
         {section_topic}
