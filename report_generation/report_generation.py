@@ -8,6 +8,8 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from tavily import TavilyClient, AsyncTavilyClient
 from langsmith import traceable
 import logging
+import json
+import re
 
 logger = logging.getLogger('[ReportGeneration]')
 
@@ -230,7 +232,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         Important:
         Each line should be a search query and nothing else."""
         
-        prompt_item_search_queries = dl.PromptItem(name='report_planning')
+        prompt_item_search_queries = dl.PromptItem(name='report_search_queries')
         prompt1 = dl.Prompt(key='1')
         prompt1.add_element(
             mimetype=dl.PromptType.TEXT,
@@ -300,7 +302,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         main_item.metadata['user']['item_report_planning'] = item_report_planning.id
         main_item.update(True)
-        
+
         item_report_planning.metadata.setdefault('user', {})
         item_report_planning.metadata['user']['main_item'] = main_item.id
         item_report_planning.update(True)
@@ -310,7 +312,19 @@ class ReportGenerator(dl.BaseServiceRunner):
         """
         Process the LLM's search queries and generate report sections
         """
-        sections = item.annotations.list()[0].coordinates
+        sections_str = item.annotations.list()[0].coordinates
+
+        # Try to find a dictionary-like pattern in the string
+        dict_match = re.search(r'\{.*\}', sections_str, re.DOTALL)
+        if dict_match:
+            try:
+                sections = json.loads(dict_match.group(0))
+            except json.JSONDecodeError:
+                # If JSON parsing fails, try using eval with safety precautions
+                sections = eval(dict_match.group(0))
+        else:
+            # Fallback to direct evaluation if no dict pattern found
+            sections = eval(sections_str)
 
         research_sections_promt_items = []
         non_research_sections_promt_items = []
