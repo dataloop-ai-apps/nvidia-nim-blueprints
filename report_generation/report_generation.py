@@ -240,7 +240,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         Make the query specific enough to find high-quality, relevant sources while covering the breadth needed for the report structure.
         
         Important:
-        Generate search queries that will help with planning the sections of the report."""
+        Each line should be a search query and nothing else."""
         
         prompt_item_search_queries = dl.PromptItem(name='report_planning')
         prompt1 = dl.Prompt(key='1')
@@ -262,7 +262,7 @@ class ReportGenerator(dl.BaseServiceRunner):
     
     def search_tavily(self, item: dl.Item):
         queries = item.annotations.list()[0].coordinates
-        query_list = [query.search_query for query in queries.queries]
+        query_list = [line.strip() for line in queries.split('\n') if line.strip()]
         search_docs = self.tavily_search_async(query_list, self.params['tavily_topic'], self.params['tavily_days'])
         # Deduplicate and format sources
         source_str = self.deduplicate_and_format_sources(search_docs, max_tokens_per_source=1000, include_raw_content=True)
@@ -355,7 +355,7 @@ class ReportGenerator(dl.BaseServiceRunner):
                 - Focused on authoritative sources (documentation, technical blogs, academic papers)
                 
                 Important:
-                Generate search queries on the provided topic."""
+                Each line should be a search query and nothing else."""
 
                 prompt_item_research = dl.PromptItem(name=f'section_{i}')
                 prompt1 = dl.Prompt(key='1')
