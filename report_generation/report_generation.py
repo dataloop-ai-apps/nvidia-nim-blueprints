@@ -457,7 +457,22 @@ class ReportGenerator(dl.BaseServiceRunner):
         Process the LLM's search queries and generate report sections
         """
         # Get section name and description from the item metadata
-        section_topic = item.name
+        main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
+        sections = eval(main_item.metadata['user']['sections'])
+        section_number = None
+        if item.name:
+            match = re.search(r'section_(\d+)', item.name)
+            if match:
+                section_number = match.group(1)
+            else:
+                # Try to extract number if it's in a different format
+                match = re.findall(r'\d+', item.name)
+                if match:
+                    section_number = match[0]
+        
+        if section_number is None:
+            logger.warning(f"Could not extract section number from item name: {item.name}")
+        section_topic = eval(sections[int(section_number)])['name']
         context = source_str
         
         # Section writer instructions
