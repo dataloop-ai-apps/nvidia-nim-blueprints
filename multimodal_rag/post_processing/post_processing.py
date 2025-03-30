@@ -95,8 +95,8 @@ class ServiceRunner(dl.BaseServiceRunner):
 
 if __name__ == "__main__":
     dl.setenv("rc")
-    item = dl.items.get(item_id="67cef9eff57e50ad019c1822")
-    prompt_item = dl.items.get(item_id="67d012514202ed0897b5c857")
+    item = dl.items.get(item_id="")
+    prompt_item = dl.items.get(item_id="")
     runner = ServiceRunner()
     runner.post_processing(item=item)
     runner.post_processing(item=prompt_item)
