@@ -46,6 +46,6 @@ class ServiceRunner(dl.BaseServiceRunner):
     
 if __name__ == "__main__":
     dl.setenv("rc")
-    item = dl.items.get(item_id="67e2ce4f258200bf1d61522d")
+    item = dl.items.get(item_id="")
     runner = ServiceRunner()
     runner.image_to_prompt(item=item, prompt_text="generate underlying data table of the figure below")
