@@ -2,7 +2,7 @@
   "name": "pdf-to-podcast-blueprint",
   "displayName": "PDF to Podcast NVIDIA Blueprint",
   "description": "The NVIDIA blueprint for the PDF to Podcast pipeline uses the ElevenLabs API to generate audio for original podcast content on provided PDFs.",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "scope": "public",
   "attributes": {
     "Hub": [
@@ -24,7 +24,7 @@
   "codebase": {
     "type": "git",
     "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
-    "gitTag": "0.0.14"
+    "gitTag": "0.0.15"
   },
   "dependencies": [
     {
