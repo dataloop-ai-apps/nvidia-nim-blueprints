@@ -44,6 +44,9 @@
     },
     {
       "name": "txt_to_chunks"
+    },
+    {
+      "name": "image-utils-img-crop"
     }
   ],
   "components": {
