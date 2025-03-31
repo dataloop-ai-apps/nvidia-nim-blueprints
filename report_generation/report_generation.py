@@ -572,7 +572,7 @@ class ReportGenerator(dl.BaseServiceRunner):
 
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         main_item.metadata.setdefault('user', {})
-        main_item.metadata['user'][f'item_research_{item.name}'] = item_research.id
+        main_item.metadata['user'][f'item_research_{item.name.strip(".json")}'] = item_research.id
         main_item.update()
         item_research.metadata.setdefault('user', {})
         item_research.metadata['user']['main_item'] = main_item.id
