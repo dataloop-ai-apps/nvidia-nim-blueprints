@@ -1,32 +1,13 @@
 import dtlpy as dl
-import asyncio
 from typing import List, Optional
 from pydantic import BaseModel, Field
 import os
-from langchain_nvidia_ai_endpoints import ChatNVIDIA
-from langchain_core.messages import HumanMessage, SystemMessage
 from tavily import TavilyClient, AsyncTavilyClient
-from langsmith import traceable
 import logging
 import json
 import re
 
 logger = logging.getLogger('[ReportGeneration]')
-
-class Section(BaseModel):
-    name: str = Field(description="Name for this section of the report.",)
-    description: str = Field(description="Brief overview of the main topics and concepts to be covered in this section.",)
-    research: bool = Field(description="Whether to perform web research for this section of the report.")
-    content: str = Field(description="The content of the section.")
-
-class Sections(BaseModel):
-    sections: List[Section] = Field(description="Sections of the report.",)
-
-class SearchQuery(BaseModel):
-    search_query: str = Field(None, description="Query for web search.")
-
-class Queries(BaseModel):
-    queries: List[SearchQuery] = Field(description="List of search queries.",)
 
 class ReportGenerator(dl.BaseServiceRunner):
     def __init__(self):
@@ -35,7 +16,6 @@ class ReportGenerator(dl.BaseServiceRunner):
         self.tavily_api_key = os.environ.get("TAVILY_API_KEY", None)
 
         self.tavily_client = TavilyClient(api_key=self.tavily_api_key)
-        self.tavily_async_client = AsyncTavilyClient(api_key=self.tavily_api_key)
 
         self.all_completed_sections = {}
 
@@ -84,23 +64,6 @@ class ReportGenerator(dl.BaseServiceRunner):
                 formatted_text += f"Full source content limited to {max_tokens_per_source} tokens: {raw_content}\n\n"
                     
         return formatted_text.strip()
-
-    def format_sections(self, sections: List[Section]) -> str:
-        """Format a list of sections into a string"""
-        formatted_str = ""
-        for idx, section in enumerate(sections, 1):
-            formatted_str += f"""{'='*60}
-                                Section {idx}: {section.name}
-                                {'='*60}
-                                Description:
-                                {section.description}
-                                Requires Research: 
-                                {section.research}
-                                Content:
-                                {section.content if section.content else '[Not yet written]'}
-
-                                """
-        return formatted_str
 
     def tavily_search(self, search_queries, tavily_topic, tavily_days):
         """Performs web searches using the Tavily API."""
