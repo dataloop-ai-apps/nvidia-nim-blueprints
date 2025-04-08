@@ -4,9 +4,10 @@ import dotenv
 import logging
 import dtlpy as dl
 
+from io import BytesIO
 from pathlib import Path
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List, Dict
 from elevenlabs.client import ElevenLabs
 
 from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
@@ -106,23 +107,29 @@ class TTSConverter:
 
 
 class SharedServiceRunner(dl.BaseServiceRunner):
-
     @staticmethod
-    def collect_pdf_text(item: dl.Item) -> str:   
+    def _collect_text_items(item: dl.Item) -> str:   
         """
         Collect the text from the PDF file
+
+        Child items are found in the dataset by searching for the item id in the metadata
+
+        Args:
+            item (dl.Item): The oroginal PDF file to be processed
+
+        Returns:
+            str: The text from the PDF file
         """
         filters = dl.Filters()
         filters.add(field="metadata.user.original_item_id", values=item.id)
         filters.sort_by(field="name", value=dl.FiltersOrderByDirection.ASCENDING)
-        items = item.dataset.items.list(filters=filters)
-        if items.items_count == 0:
-            raise ValueError("No text items found")
+        items = item.dataset.items.list(filters=filters).all()
         
         pdf_text = ""
-        for item in items:
-            buffer = item.download(save_locally=False)
-            pdf_text += buffer.read().decode('utf-8')
+        for child_item in items:
+            if "text" in child_item.mimetype:
+                buffer = child_item.download(save_locally=False)
+                pdf_text += buffer.read().decode('utf-8')
         return pdf_text
 
     @staticmethod
@@ -134,11 +141,31 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         focus: str = None,
         duration: int = 10,
     ):
-        pdf_text = SharedServiceRunner.collect_pdf_text(item)
-        # upload text to dataloop item
-        text_name = Path(item.filename).stem + "_text.txt"
-        text_item = item.dataset.items.upload(pdf_text, remote_name=text_name, remote_path=item.dir, overwrite=True)
+        """
+        Prepare the PDF file into a prompt item with the text to be processed
 
+        Args:
+            item (dl.Item): The PDF file to be processed
+            monologue (bool): Whether to generate a monologue or a podcast
+            progress (dl.Progress): The progress object to update the user
+            context (dl.Context): The context object to access the item
+            focus (str): The focus of the summary
+            duration (int): The duration of the summary
+
+        Returns:
+            dl.Item: The prompt item with the text to be processed
+        """
+
+        pdf_text = SharedServiceRunner._collect_text_items(item)
+        # upload text to dataloop item
+        text_filename = Path(item.filename).stem + "_text.txt"
+        with open(text_filename, "w", encoding='utf-8') as f: 
+            f.write(pdf_text)
+        text_item = item.dataset.items.upload(local_path=text_filename, 
+                                              remote_name=text_filename, 
+                                              remote_path=item.dir, # same dir as pdf 
+                                              overwrite=True, 
+                                              item_metadata={"user": {"podcast": {"original_item_filename": item.filename}}})
 
         if monologue is True:
             template = FinancialSummaryPrompts.get_template("monologue_summary_prompt")
@@ -146,27 +173,34 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             template = PodcastPrompts.get_template("podcast_summary_prompt")
         llm_prompt = template.render(text=pdf_text)
 
-        new_name = f"{item.filename}_prompt"
+        new_name = f"{Path(item.name).stem}_prompt1_summary.json"
         prompt_item = dl.PromptItem(name=new_name)
-        prompt_item.add(
-            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]},  # role default is user
-            prompt_key='1',
+        prompt = dl.Prompt(key="1")
+        prompt.add_element(
+            mimetype=dl.PromptType.TEXT,
+            value=llm_prompt
         )
+        prompt_item.prompts.append(prompt)
 
-        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
-        new_item.metadata.get("user", {}).update(
+        new_item_metadata = {"user": item.metadata.get("user", {})}
+        new_item_metadata['user'].update(
             {
                 "podcast": {
-                    "pdf_id": item.metadata.user["original_item_id"],
+                    "pdf_id": item.id,
+                    "pdf_name": item.name,
                     "focus": focus,
                     "monologue": monologue,
                     "duration": duration,
                 }
             }
         )
-        new_item.update()
+        new_item = item.dataset.items.upload(prompt_item, 
+                                             remote_name=new_name, 
+                                             remote_path=item.dir, 
+                                             overwrite=True, 
+                                             item_metadata=new_item_metadata)
 
-        logger.info(f"Successfully created prompt item for {item.filename} ID {item.id}")
+        logger.info(f"Successfully created prompt item for {item.name} in new item {new_item.id}")
 
         actions = ['monologue', 'dialogue']
         if monologue is True:
@@ -189,10 +223,20 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         Returns:
             str: Path to the generated audio file
         """
+        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
+        pdf_name = podcast_metadata.get("pdf_name", None)
+        monologue = podcast_metadata.get("monologue", None)
+
+        if monologue is True:
+            output_file_name = Path(pdf_name).stem + "_monologue.mp3"
+        else:
+            output_file_name = Path(pdf_name).stem + "_podcast.mp3"
+
         if output_file is None:
             # Create output directory if it doesn't exist
-            os.makedirs("output", exist_ok=True)
-            output_file = os.path.join("output", "output.mp3")
+            output_dir = os.path.join(os.path.dirname(__file__), "output")
+            os.makedirs(output_dir, exist_ok=True)
+            output_file = os.path.join(output_dir, output_file_name)
 
         api_key = os.getenv("ELEVENLABS_API_KEY")
         if not api_key:
@@ -200,10 +244,16 @@ class SharedServiceRunner(dl.BaseServiceRunner):
 
         converter = TTSConverter(api_key=api_key)
 
-        # Download and process the conversation JSON
-        buffer = item.download(save_locally=True)
+        # Download and process the conversation JSON from the last response
+        prompt_item = dl.PromptItem.from_item(item)
+        messages = prompt_item.to_messages()
+        last_message = messages[-1]
+        conversation_json = last_message.get("content", [])[0].get("text", None)
+        if conversation_json is None:
+            raise ValueError("No conversation JSON found in the prompt item.")
+
         try:
-            conversation_json = json.loads(buffer.read().decode('utf-8'))
+            conversation_json = json.loads(conversation_json)
 
             # Create a temporary JSON file for the converter
             temp_file = os.path.join(os.path.dirname(__file__), "temp_conversation.json")
@@ -217,10 +267,14 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             os.remove(temp_file)
 
         except Exception as e:
-            logger.error(f"Error processing conversation JSON: {e}")
+            logger.error(f"Error processing conversation JSON: {e} from item {item.id}")
             raise
 
-        mp3_item = item.dataset.items.upload(output_file, remote_name=output_file, remote_path=item.dir, overwrite=True)
+        mp3_item = item.dataset.items.upload(output_file, 
+                                             remote_name=output_file_name, 
+                                             remote_path=item.dir, 
+                                             overwrite=True, 
+                                             item_metadata=item.metadata)
         logger.info(f"Successfully uploaded audio file: {mp3_item.id}")
         return mp3_item
 
