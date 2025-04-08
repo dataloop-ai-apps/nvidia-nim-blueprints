@@ -23,6 +23,9 @@
     },
     {
       "name": "nim-api-llama3-3-70b-instruct-meta"
+    },
+    {
+      "name": "wait-node"
     }
   ],
   "components": {
@@ -487,8 +490,8 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "serviceName": "predict-67cd8e2c608546c04ead58-nd5b",
-              "moduleName": "nim-api-module",
+              "serviceName": "",
+              "moduleName": "",
               "packageName": "nim-api-llama3-3-70b-instruct-meta"
             },
             "appName": "llama-3.3-70b-instruct",
@@ -548,7 +551,8 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "moduleName": "nim-api-module",
+              "serviceName": "",
+              "moduleName": "",
               "packageName": "nim-api-llama3-3-70b-instruct-meta"
             },
             "appName": "llama-3.3-70b-instruct",
@@ -608,8 +612,8 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "serviceName": "predict-67cd8e2c608546c04ead58-nd5b",
-              "moduleName": "nim-api-module",
+              "serviceName": "",
+              "moduleName": "",
               "packageName": "nim-api-llama3-3-70b-instruct-meta"
             },
             "appName": "llama-3.3-70b-instruct",
@@ -720,8 +724,8 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "serviceName": "predict-67cd8e2c608546c04ead58-nd5b",
-              "moduleName": "nim-api-module",
+              "serviceName": "",
+              "moduleName": "",
               "packageName": "nim-api-llama3-3-70b-instruct-meta"
             },
             "appName": "llama-3.3-70b-instruct",
@@ -748,11 +752,11 @@
             }
           },
           {
-            "id": "543bc3cd-0a12-48f4-9f5d-0703b2625b7e",
+            "id": "3a91e1e8-feb3-45b1-9c3d-8f62a9984eec",
             "inputs": [
               {
-                "portId": "f39c872c-5ec5-4591-85f8-220e396e1b89",
-                "nodeId": "f39c872c-5ec5-4591-85f8-220e396e1b89",
+                "portId": "0a7ad74f-02da-472e-ac25-391644bc0dcf",
+                "nodeId": "0a7ad74f-02da-472e-ac25-391644bc0dcf",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
@@ -761,85 +765,73 @@
             ],
             "outputs": [
               {
-                "portId": "9b4f60de-e2da-4c7f-87e9-d1e20000daca",
-                "nodeId": "9b4f60de-e2da-4c7f-87e9-d1e20000daca",
+                "portId": "7fe86f40-cd48-4093-80fb-845adf2b2291",
+                "nodeId": "7fe86f40-cd48-4093-80fb-845adf2b2291",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
+                "actions": [
+                  "continue",
+                  "wait"
+                ],
                 "io": "output"
               }
             ],
-            "name": "Search Tavily",
+            "name": "Wait",
             "type": "custom",
             "namespace": {
-              "functionName": "search_tavily",
-              "serviceName": "report-generation-compute-config",
-              "moduleName": "report-generation-module",
-              "packageName": "report-generation"
+              "functionName": "wait_for_cycle",
+              "serviceName": "wait-node",
+              "moduleName": "wait-node",
+              "packageName": "wait-node"
             },
-            "appName": "Report Generation",
-            "dpkName": "report-generation",
+            "appName": "Wait Node",
+            "dpkName": "wait-node",
             "metadata": {
               "position": {
-                "x": 10735.2069212637,
-                "y": 10218.0844351496,
+                "x": 13379.140114678275,
+                "y": 10292.222430759006,
                 "z": 0
               },
-              "componentGroupName": "Report Generation",
+              "componentGroupName": "data",
+              "customNodeConfig": {
+                "name": "Wait",
+                "returnParent": false,
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
               "repeatable": true,
-              "pipelineNodeName": "search-tavily-node"
+              "pipelineNodeName": "Wait Node"
             }
           },
           {
-            "id": "9ad3e30d-0f57-4cbf-8b8f-a086660e5360",
+            "id": "50fe5c2f-98fc-42cb-8418-fe0eece18c9c",
             "inputs": [
               {
-                "portId": "f1ff0866-cd7c-4164-a93a-01817f4a70a6",
-                "nodeId": "f1ff0866-cd7c-4164-a93a-01817f4a70a6",
+                "portId": "479495e9-53ee-4906-aaf9-6dd6b1b2a64f",
+                "nodeId": "479495e9-53ee-4906-aaf9-6dd6b1b2a64f",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
-                "io": "input"
-              },
-              {
-                "portId": "83cdcdbe-b76c-4e17-9183-23f97b243b97",
-                "nodeId": "83cdcdbe-b76c-4e17-9183-23f97b243b97",
-                "type": "Item",
-                "name": "intro",
-                "displayName": "intro",
-                "io": "input"
-              },
-              {
-                "portId": "26ae6f96-999a-4773-81da-41851d9cd6f3",
-                "nodeId": "26ae6f96-999a-4773-81da-41851d9cd6f3",
-                "type": "Item",
-                "name": "body",
-                "displayName": "body",
-                "io": "input"
-              },
-              {
-                "portId": "5b3d55bd-4d44-4bc2-8370-e6c3fa184e4b",
-                "nodeId": "5b3d55bd-4d44-4bc2-8370-e6c3fa184e4b",
-                "type": "Item",
-                "name": "conclusion",
-                "displayName": "conclusion",
                 "io": "input"
               }
             ],
             "outputs": [
               {
-                "portId": "9a97a489-0142-4c5c-a78a-4a9d2e9d8fce",
-                "nodeId": "9a97a489-0142-4c5c-a78a-4a9d2e9d8fce",
+                "portId": "bad26cba-bbb8-4e23-87f3-d65f6a088f04",
+                "nodeId": "bad26cba-bbb8-4e23-87f3-d65f6a088f04",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
                 "io": "output"
               }
             ],
-            "name": "Report Writing",
+            "name": "Gather Sections",
             "type": "custom",
             "namespace": {
-              "functionName": "report_writing",
+              "functionName": "gather_sections",
               "serviceName": "report-generation-compute-config",
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
@@ -848,13 +840,56 @@
             "dpkName": "report-generation",
             "metadata": {
               "position": {
-                "x": 11817.4725829545,
-                "y": 10220.0509297596,
+                "x": 13044.418197570256,
+                "y": 10286.666122457871,
                 "z": 0
               },
               "componentGroupName": "Report Generation",
               "repeatable": true,
-              "pipelineNodeName": "report-writing-node"
+              "pipelineNodeName": "gather-sections-node"
+            }
+          },
+          {
+            "id": "f9131cd9-c078-4bbb-ba79-ff20f43a38e8",
+            "inputs": [
+              {
+                "portId": "64ac2529-e5c3-4017-a0ab-5c00c88b69a6",
+                "nodeId": "64ac2529-e5c3-4017-a0ab-5c00c88b69a6",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b5b06255-a0d0-4950-898d-8d0bba9b5d7c",
+                "nodeId": "b5b06255-a0d0-4950-898d-8d0bba9b5d7c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Write Final Report",
+            "type": "custom",
+            "namespace": {
+              "functionName": "write_final_report",
+              "serviceName": "report-generation-compute-config",
+              "moduleName": "report-generation-module",
+              "packageName": "report-generation"
+            },
+            "appName": "Report Generation",
+            "dpkName": "report-generation",
+            "metadata": {
+              "position": {
+                "x": 13791.08499090202,
+                "y": 10286.666231555762,
+                "z": 0
+              },
+              "componentGroupName": "Report Generation",
+              "repeatable": true,
+              "pipelineNodeName": "write-final-report-node"
             }
           }
         ],
