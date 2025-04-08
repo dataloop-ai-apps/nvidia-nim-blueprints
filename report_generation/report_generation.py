@@ -292,39 +292,74 @@ class ReportGenerator(dl.BaseServiceRunner):
         Process the LLM's search queries and generate report sections
         """
         sections_str = item.annotations.list()[0].coordinates
-
-        # Extract the sections array directly from the string
-        sections_match = re.search(r'sections:\s*\[(.*?)\]', sections_str, re.DOTALL)
         sections = []
 
-        if sections_match:
-            sections_content = sections_match.group(1)
-            # Split by section objects (each starting with {)
-            section_objects = re.findall(r'\s*{\s*(.*?)\s*}', sections_content, re.DOTALL)
-            
-            for section_str in section_objects:
-                section = {}
-                # Extract name
-                name_match = re.search(r'"name":\s*"([^"]*)"', section_str)
-                if name_match:
-                    section['name'] = name_match.group(1)
+        # First try to parse as proper JSON if it's enclosed in a code block
+        json_match = re.search(r'```(?:json)?\s*(.*?)\s*```', sections_str, re.DOTALL)
+        if json_match:
+            try:
+                # Parse the JSON content
+                json_content = json_match.group(1)
+                data = json.loads(json_content)
+                if isinstance(data, dict) and 'sections' in data:
+                    sections = data['sections']
+                else:
+                    # The JSON might be just the sections array
+                    sections = data
+            except json.JSONDecodeError:
+                # If JSON parsing fails, continue to regex approach
+                pass
+        
+        # If sections is still empty, try regex approach
+        if not sections:
+            # Try to find a sections array in the text
+            sections_match = re.search(r'(?:sections|"sections")?\s*:?\s*\[(.*?)\]', sections_str, re.DOTALL)
+            if sections_match:
+                sections_content = sections_match.group(1)
                 
-                # Extract description
-                desc_match = re.search(r'"description":\s*"([^"]*)"', section_str)
-                if desc_match:
-                    section['description'] = desc_match.group(1)
+                # Extract individual section objects
+                section_objects = re.findall(r'{(.*?)}', sections_content, re.DOTALL)
                 
-                # Extract research flag
-                research_match = re.search(r'"research":\s*(true|false)', section_str)
-                if research_match:
-                    section['research'] = research_match.group(1) == 'true'
+                for section_str in section_objects:
+                    section = {}
+                    
+                    # Extract fields using regex patterns that can handle both quoted and unquoted keys
+                    name_match = re.search(r'(?:"name"|name)\s*:\s*"([^"]*)"', section_str)
+                    if name_match:
+                        section['name'] = name_match.group(1)
+                    
+                    desc_match = re.search(r'(?:"description"|description)\s*:\s*"([^"]*)"', section_str)
+                    if desc_match:
+                        section['description'] = desc_match.group(1)
+                    
+                    research_match = re.search(r'(?:"research"|research)\s*:\s*(true|false)', section_str)
+                    if research_match:
+                        section['research'] = research_match.group(1).lower() == 'true'
+                    
+                    content_match = re.search(r'(?:"content"|content)\s*:\s*"([^"]*)"', section_str)
+                    if content_match:
+                        section['content'] = content_match.group(1)
+                    
+                    # Only add if we have at least name and description
+                    if 'name' in section and 'description' in section:
+                        sections.append(section)
+
+        # If we still don't have sections, try a more lenient approach to extract structured content
+        if not sections:
+            # Look for section-like patterns in the text
+            section_patterns = re.findall(r'(?:section\d+|{)\s*(?:name|"name")?\s*:?\s*"([^"]*)"\s*(?:description|"description")?\s*:?\s*"([^"]*)"', sections_str, re.DOTALL)
+            for name, description in section_patterns:
+                # Default research to true for content sections, false for intro/conclusion
+                research = True
+                if name.lower() in ['introduction', 'conclusion', 'summary']:
+                    research = False
                 
-                # Extract content
-                content_match = re.search(r'"content":\s*"([^"]*)"', section_str)
-                if content_match:
-                    section['content'] = content_match.group(1)
-                
-                sections.append(section)
+                sections.append({
+                    'name': name,
+                    'description': description,
+                    'research': research,
+                    'content': ""
+                })
 
         research_sections_prompt_items = []
         non_research_sections_prompt_items = []
@@ -332,6 +367,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         main_item.metadata.setdefault('user', {})
         main_item.metadata['user']['sections'] = sections
+        
         # Process sections that require research
         for i, section in enumerate(sections):
             if section.get('research', False):
