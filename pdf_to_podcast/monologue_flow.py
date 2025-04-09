@@ -24,8 +24,6 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         Returns:
             item (dl.Item): the prompt item
         """
-        logger.info("Generating outline")
-
         # get the podcast metadata from the item
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
         if podcast_metadata is None:
@@ -41,6 +39,8 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         if summary is None:
             raise ValueError("No text summary found in the prompt item. Try running the previous step again.")
 
+        logger.info("Preparing to generate outline")
+
         # create summary file
         summary_filename = f"{Path(pdf_name).stem}_summary.txt"
         with open(summary_filename, "w", encoding='utf-8') as f:
@@ -53,9 +53,17 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
             overwrite=True,
             item_metadata={"user": item.metadata['user']},
         )
+        logger.info(f"Saved PDF summary as text item {summary_item.id}")
 
-        # generate the outline
-        documents = [f"Document: {item.filename}\n{summary}"]  # TODO support multiple documents as context
+        # retreieve documents for context
+        if podcast_metadata.get("with_references", None) is None:
+            documents = [f"Document: {item.filename}\n{summary}"]
+        else:
+            documents = [f"Document: {item.filename}\n{summary}"]
+            # TODO support multiple documents as context
+            # # get all documents 
+            # reference_docs = MonologueServiceRunner._get_references(item)
+            # documents = [f"Document: {item.filename}\n{summary}" for doc in reference_docs]
 
         template = FinancialSummaryPrompts.get_template("monologue_multi_doc_synthesis_prompt")
         llm_prompt = template.render(
@@ -107,6 +115,8 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         summary = summary_item.read().decode('utf-8')
         if summary is None:
             raise ValueError("No summary found in the prompt item. Try running the previous step again.")
+
+        logger.info("Preparing to generate monologue")
 
         # get the outline from the last respoinse
         prompt_item = dl.PromptItem.from_item(item)
@@ -163,7 +173,9 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         last_message = messages[-1]
         monologue = last_message.get("content", [])[0].get("text", None)
         if monologue is None:
-            raise ValueError("No monologue found in the prompt item.")
+            raise ValueError("No monologue found in the prompt item. Try running the previous step again.")
+
+        logger.info("Preparing to generate final monologue transcript JSON")
 
         # create the final conversation in JSON format
         schema = Conversation.model_json_schema()

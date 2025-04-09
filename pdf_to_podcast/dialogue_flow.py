@@ -14,6 +14,58 @@ logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
 
 class DialogueServiceRunner(dl.BaseServiceRunner):
     @staticmethod
+    def _get_last_message(item: dl.Item) -> str:
+        """
+        Get the last message from the item.
+
+        Args:
+            item (dl.Item): Dataloop item containing the last message
+
+        Returns:
+            str: The last message from the item
+
+        Converts the item to a prompt item and gets the last message.
+        """
+        prompt_item = dl.PromptItem.from_item(item)
+        messages = prompt_item.to_messages()
+        try:
+            last_message = messages[-1]
+            text = last_message.get("content", [])[0].get("text", None)
+        except Exception as e:
+            logger.error(f"Error getting last message from item {item.id}: {e}")
+            text = None
+        return text
+
+    @staticmethod
+    def _get_summary_text(summary_item_id: str) -> str:
+        """
+        Get the summary text from the summary item.
+        """
+        summary_item = dl.items.get(item_id=summary_item_id)
+        if summary_item is None:
+            raise ValueError(f"Summary item not found for id: {summary_item_id}")
+        if "text" not in summary_item.mimetype:
+            raise ValueError(f"Summary item is not a text file for id: {summary_item_id}")
+        text = summary_item.download(save_locally=False).decode('utf-8')
+        return text
+
+    @staticmethod
+    def _get_outline_dict(outline_item: dl.Item) -> PodcastOutline:
+        """
+        Get the PodcastOutline from an outline item.
+        """
+        prompt_outline_item = dl.PromptItem.from_item(outline_item)
+        messages = prompt_outline_item.to_messages()
+        last_message = messages[-1]
+        outline_dict = last_message.get("content", [])[0].get("text", None)
+        if outline_dict is None:
+            raise ValueError(f"No outline found in item {outline_item.id} metadata.")
+        if isinstance(outline_dict, str):
+            outline_dict = json.loads(outline_dict)
+        outline = PodcastOutline.model_validate_json(outline_dict)
+        return outline
+
+    @staticmethod
     def generate_raw_outline(item: dl.Item, progress: dl.Progress, context: dl.Context):
         """
         Generate initial raw outline from summarized PDFs.
@@ -26,8 +78,6 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         Returns:
             item (dl.Item): the prompt item
         """
-        logger.info("Generating initial outline")
-
         # get the podcast metadata from the item
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
         if podcast_metadata is None:
@@ -44,21 +94,27 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         if summary is None:
             raise ValueError("No text summary found in the prompt item. Try running the previous step again.")
 
+        logger.info("Preparing to generate initial outline")
+
         # create summary file
         summary_filename = f"{Path(pdf_name).stem}_summary.txt"
         with open(summary_filename, "w", encoding='utf-8') as f:
             f.write(summary)
 
-        summary_item = item.dataset.items.upload(local_path=summary_filename,
-                                                 remote_name=summary_filename,
-                                                 remote_path=item.dir,
-                                                 overwrite=True,
-                                                 item_metadata={"user": item.metadata['user']})
+        summary_item = item.dataset.items.upload(
+            local_path=summary_filename,
+            remote_name=summary_filename,
+            remote_path=item.dir,
+            overwrite=True,
+            item_metadata={"user": item.metadata['user']},
+        )
+
+        logger.info(f"Saved PDF summary as text item {summary_item.id}")
 
         # generate the outline
         documents = [f"Document: {pdf_name}\n{summary}"]
         # TODO support multiple pdfs as context
-        # basically add a section of the metadata that includes the filename, pdf id, and summary text item id for each pdf
+        # add a section of the metadata that includes the filename, pdf id, and summary text item id for each pdf
         # then load each of the summary texts, and compile into them into a new json item to load all the relevant pdfs + metadata
         # This is the original code:
         # for pdf in summarized_pdfs:
@@ -78,24 +134,25 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         )
 
         # create new prompt item for the raw outline
-        new_name = f"{Path(item.name).stem}_prompt2_raw_outline"
+        new_name = f"{Path(pdf_name).stem}_prompt2_raw_outline"
         prompt_item = dl.PromptItem(name=new_name)
         prompt_item.add(
             message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
         )
         new_metadata = item.metadata
         new_metadata["user"]["podcast"]["summary_item_id"] = summary_item.id
-        new_item = item.dataset.items.upload(prompt_item,
-                                             remote_name=new_name,
-                                             remote_path=item.dir,
-                                             overwrite=True,
-                                             item_metadata=new_metadata)
+        new_item = item.dataset.items.upload(
+            prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=new_metadata
+        )
         return new_item
-    
+
     @staticmethod
     def generate_structured_outline(item: dl.Item, progress: dl.Progress, context: dl.Context):
         """
         Convert raw outline text to structured PodcastOutline format.
+
+        Uses JSON schema validation to ensure the outline follows the required structure
+        and only references valid PDF filenames.
 
         Args:
             item (dl.Item): Dataloop item containing the raw outline
@@ -104,44 +161,45 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             prompt_focus (str): Focus instructions guide for the prompt
 
         Returns:
-            PodcastOutline: Structured outline following the PodcastOutline schema
+            item (dl.Item): Item for prompting to generate structured outline following the PodcastOutline schema
 
-        Uses JSON schema validation to ensure the outline follows the required structure
-        and only references valid PDF filenames.
         """
-        logging.info("Converting raw outline to structured format")
+        # get the podcast metadata from the item
+        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
+        if podcast_metadata is None:
+            raise ValueError("No podcast metadata found in the prompt item. Try running the previous step again.")
+        pdf_name = podcast_metadata.get("pdf_name", None)
+        references = podcast_metadata.get("references", None)  # TODO
 
-        prompt_item = dl.PromptItem.from_json(item)
+        prompt_item = dl.PromptItem.from_item(item)
         messages = prompt_item.to_messages()
         last_message = messages[-1]
         raw_outline = last_message.get("content", [])[0].get("text", None)
         if raw_outline is None:
-            raise ValueError("No raw outline found in the prompt item.")
+            raise ValueError(f"No outline found in item {item.id}.")
+
+        logger.info("Preparing to generate structured outline")
 
         # Force the model to only reference valid filenames
-        valid_filenames = [item.filename]
+        valid_filenames = [pdf_name] + references  # TODO support multiple pdfs as valid files to reference
         schema = PodcastOutline.model_json_schema()
         schema["$defs"]["PodcastSegment"]["properties"]["references"]["items"] = {
             "type": "string",
             "enum": valid_filenames,
         }
 
-        schema = PodcastOutline.model_json_schema()
         template = PodcastPrompts.get_template("podcast_multi_pdf_structured_outline_prompt")
         llm_prompt = template.render(
             outline=raw_outline, schema=json.dumps(schema, indent=2), valid_filenames=valid_filenames
         )
 
         # create new prompt item for the structured outline
-        new_name = f"{Path(item.name).stem}_prompt3_structured_outline"
+        new_name = f"{Path(pdf_name).stem}_prompt3_structured_outline"
         prompt_item = dl.PromptItem(name=new_name)
         prompt_item.add(
             message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
         )
-        new_item = item.dataset.items.upload(prompt_item, 
-                                             remote_name=new_name, 
-                                             remote_path=item.dir, 
-                                             overwrite=True)
+        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
         return new_item
 
     @staticmethod
@@ -152,22 +210,30 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         Process a single outline segment to generate initial content.
 
         Args:
+            item (dl.Item): Dataloop item containing the outline segment
             segment (Any): Segment from the outline to process
             idx (int): Index of the segment
-            request (TranscriptionRequest): Original transcription request
-            llm_manager (LLMManager): Manager for LLM interactions
-            prompt_tracker (PromptTracker): Tracks prompts and responses
+            total_segments (int): Total number of segments
+            focus (str): Focus of the podcast
+            duration (int): Duration of the podcast
+            summary (str): Summary of the podcast
 
         Returns:
             dl.Item: Dataloop item containing the generated content
-
-        Generates initial content for a segment, incorporating referenced PDF content
-        if available. Uses different templates based on whether references exist.
         """
-        prompt_item = dl.PromptItem.from_json(item)
+        logger.info(f"Preparing to generate initial content for segment {idx + 1}/{total_segments}")
 
-        pdf_text = prompt_item.prompts[0].elements[0].value
-        text_content = [f"Document: {item.filename}\n{pdf_text}"]
+        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
+        if podcast_metadata is None:
+            raise ValueError("No podcast metadata found in the prompt item. Try running the previous step again.")
+        focus = podcast_metadata.get("focus", None)
+        duration = podcast_metadata.get("duration", 10)
+        pdf_name = podcast_metadata.get("pdf_name", None)
+
+        # Get the PDF content
+        text_content = []
+        # TODO support multiple documents
+        text_content = [f"Document: {item.name}\n{summary}"]
 
         # Choose template based on whether we have references
         template_name = "podcast_prompt_with_references" if text_content else "podcast_prompt_no_references"
@@ -186,12 +252,16 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         llm_prompt = template.render(**llm_prompt_params)
 
-        prompt = dl.Prompt(key="3")  # "3_segment_prompt")
-        prompt.add_element(mimetype=dl.PromptType.TEXT, value=llm_prompt)
-        prompt_item.prompts.append(prompt)
+        # Create a new prompt item
+        new_name = f"{Path(item.name).stem}_prompt4_segment_{idx}"
+        prompt_item = dl.PromptItem(name=new_name)
+        prompt_item.add(
+            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
+        )
 
-        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
-        podcast_metadata.update(
+        # Update metadata with segment information
+        new_metadata = podcast_metadata.copy()
+        new_metadata.update(
             {
                 "focus": focus,
                 "duration": duration,
@@ -203,9 +273,10 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
                 "references": [reference.filename for reference in segment.references],
             }
         )
-        new_name = f"{Path(item.name).stem}_prompt4_segment_{idx}"
+        new_name = f"{Path(pdf_name).stem}_prompt4_segment_{idx}"
+        new_dir = f"{item.dir}/.dataloop/{pdf_name}"
         new_item = item.dataset.items.upload(
-            prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=podcast_metadata
+            prompt_item, remote_name=new_name, remote_path=new_dir, overwrite=True, item_metadata=new_metadata
         )
         return new_item
 
@@ -221,27 +292,16 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         Returns:
             List[dl.Item]: List of Dataloop items containing the prompt items for each segment
-
-        Creates tasks for processing each segment and executes them in parallel using
-        asyncio.gather.
         """
-        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
+        podcast_metadata = item.metadata.get("user", {}).get("podcast", {})
         focus = podcast_metadata.get("focus", None)
         duration = podcast_metadata.get("duration", 10)
-        summary = podcast_metadata.get("summary", None)
+        summary = DialogueServiceRunner._get_summary_text(summary_item_id=podcast_metadata.get("summary_item_id", None))
 
-        # create the outline item
-        prompt_item = dl.PromptItem.from_json(item)
-        messages = prompt_item.to_messages()
-        last_message = messages[-1]
-        outline_dict = last_message.get("content", [])[0].get("text", None)
+        # Create the outline item
+        outline = DialogueServiceRunner._get_outline_dict(outline_item=item)
 
-        if outline_dict is None:
-            raise ValueError("No outline found in the prompt item.")
-        if isinstance(outline_dict, str):
-            outline_dict = json.loads(outline_dict)
-
-        outline = PodcastOutline.model_validate_json(outline_dict)
+        logger.info(f"Preparing to process {len(outline.segments)} segments")
 
         # Create items for processing each segment
         segment_items: List[Any] = []
@@ -256,20 +316,16 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         return segment_items
 
     @staticmethod
-    def _generate_dialogue_segment(item: dl.Item, segment: Any, idx: int) -> Dict[str, str]:
+    def _generate_dialogue_segment(item: dl.Item, outline: PodcastOutline, segment: Any, idx: int) -> dl.Item:
         """
         Generate dialogue for a single segment.
 
         Args:
             segment (Any): Segment from the outline
             idx (int): Index of the segment
-            segment_text (str): Generated content for the segment
-            request (TranscriptionRequest): Original transcription request
-            llm_manager (LLMManager): Manager for LLM interactions
-            prompt_tracker (PromptTracker): Tracks prompts and responses
 
         Returns:
-            Dict[str, str]: Dictionary containing section name and generated dialogue
+            dl.Item: Dataloop item containing the generated dialogue
 
         Formats segment topics and uses a template to convert content into a dialogue
         format between two speakers.
@@ -280,20 +336,15 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         speaker_1_name = podcast_metadata.get("speaker_1_name", "Alice")
         speaker_2_name = podcast_metadata.get("speaker_2_name", "Will")
 
-        prompt_item = dl.PromptItem.from_json(item)
-
-        # Get the segment text from the last prompt
-        messages = prompt_item.to_messages()
-        last_message = messages[-1]
-        segment_text = last_message.get("content", [])[0].get("text", None)
+        segment_text = DialogueServiceRunner._get_last_message(item=item)
         if segment_text is None:
-            raise ValueError("No segment text found in the prompt item.")
+            raise ValueError(f"No segment text found in item {item.id}.")
 
         # Format topics for prompt
         topics_text = "\n".join(
             [
                 f"- {topic.title}\n" + "\n".join([f"  * {point.description}" for point in topic.points])
-                for topic in segment.topics
+                for topic in outline.segments[idx].topics
             ]
         )
 
@@ -314,100 +365,111 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
         )
 
-        # Upload the new prompt item
-        new_item = item.dataset.items.upload(
-            prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=item.metadata
+        # Update metadata with segment information
+        new_metadata = item.metadata.copy()
+        new_metadata.update(
+            {
+                "segment": segment.section,
+                "segment_idx": idx, 
+                "total_segments": len(outline.segments),
+            }
         )
 
+        # Upload the new prompt item
+        new_item = item.dataset.items.upload(
+            prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=new_metadata
+        )
         return new_item
 
     @staticmethod
-    def generate_dialogue(item: dl.Item) -> List[Dict[str, str]]:
+    def generate_dialogue(item: dl.Item, progress: dl.Progress, context: dl.Context) -> List[dl.Item]:
         """
         Generate dialogue for each segment.
 
         Args:
-            item (dl.Item): Dataloop item containing the outline
-            outline (PodcastOutline): Structured outline
+            item (dl.Item): Dataloop item containing the outline segment to be converted to dialogue
+            progress (dl.Progress): Dataloop progress object
+            context (dl.Context): Dataloop context object
+
 
         Returns:
-            List[Dict[str, str]]: List of dictionaries containing section names and dialogues
+            List[dl.Item]: List of Dataloop items containing the generated dialogue
 
         Creates tasks for generating dialogue for each segment and executes them in parallel.
         """
-        logger.info("Generating dialogue")
+        logger.info("Generating segment dialogue")
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
-
-        prompt_item = dl.PromptItem.from_json(item)
-        messages = prompt_item.to_messages()
-        last_message = messages[-1]
-        segment_text = last_message.get("content", [])[0].get("text", None)
+        outline_item_id = podcast_metadata.get("outline_item_id", None)
+        outline = DialogueServiceRunner._get_outline_dict(outline_item=dl.items.get(item_id=outline_item_id))
+        segment_text = DialogueServiceRunner._get_last_message(item=item)
         if segment_text is None:
-            raise ValueError("No segment text found in the prompt item.")
+            raise ValueError(f"No segment text found in item {item.id}.")
 
         # Update status
         logger.info(
             f"Converting segment {podcast_metadata.get('segment_idx', 0) + 1}/{podcast_metadata.get('total_segments', 0)} to dialogue"
         )
 
-        dialogue_segments = []
+        segment_items = []
         for idx, segment in enumerate(outline.segments):
-            dialogue_segments.append(DialogueServiceRunner._generate_dialogue_segment(segment, idx, segment_text))
+            segment_items.append(DialogueServiceRunner._generate_dialogue_segment(item, outline, segment, idx))
 
-        return dialogue_segments
-
-        # return item
+        return segment_items
 
     @staticmethod
-    def combine_dialogues(item: dl.Item) -> str:
+    def combine_dialogues(item: dl.Item, progress: dl.Progress, context: dl.Context) -> dl.Item:
         """
-        Iteratively combine dialogue segments into a cohesive conversation.
+        Combine all dialogue segments into one cohesive conversation.
 
         Args:
-            item (dl.Item): Dataloop item containing the outline
+            item (dl.Item): Dataloop item containing the original structure outline
 
         Returns:
-            dl.Item: Dataloop item containing the combined dialogue
+            new_item (dl.Item): Dataloop item containing the combined dialogue
         """
+        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
+        pdf_name = podcast_metadata.get("pdf_name", None)
+        
         logger.info("Combining dialogue segments")
 
-        prompt_item = dl.PromptItem.from_json(item)
-        messages = prompt_item.to_messages()
-        last_message = messages[-1]
-        segment_text = last_message.get("content", [])[0].get("text", None)
-        if segment_text is None:
-            raise ValueError("No segment text found in the prompt item.")
-
         # search for all the segment dialogues
+        segments_dir = f"{item.dir}/.dataloop/{pdf_name}"
         filters = dl.Filters()
-        filters.add(field='dir', values=item.dir)
+        filters.add(field='dir', values=segments_dir)
         filters.add(field='metadata.system.mimetype', values='*json*')
-        items = item.dataset.items.list(filters=filters).all()
+        segment_items = item.dataset.items.list(filters=filters).all()
 
         # combine the segment dialogues
         combined_dialogue = ""
-        for item in items:
-            segment_text = item.metadata.get("user", {}).get("podcast", {}).get("segment_text", None)
+        for segment_item in segment_items:
+            segment_text = DialogueServiceRunner._get_last_message(item=segment_item)
             if segment_text is None:
-                raise ValueError("No segment text found in the prompt item.")
+                raise ValueError(f"No segment text found in item {segment_item.id}.")
             combined_dialogue += segment_text
-        dialogue_item = item.dataset.items.upload(
-            combined_dialogue,
-            remote_name=f"{item.filename}_prompt6_combined_dialogue",
+
+        # create a new prompt item for the combined dialogue
+        new_name = f"{Path(item.name).stem}_prompt6_combined_dialogue"
+        prompt_item = dl.PromptItem(name=new_name)
+        prompt_item.add(
+            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": combined_dialogue}]}  # role default is user
+        )
+        new_item = item.dataset.items.upload(
+            prompt_item,
+            remote_name=new_name,
             remote_path=item.dir,
             overwrite=True,
         )
-        return dialogue_item
+        return new_item
 
     @staticmethod
-    def create_convo_json(item: dl.Item, dialogue: str) -> dl.Item:
+    def create_convo_json(item: dl.Item, progress: dl.Progress, context: dl.Context) -> dl.Item:
         """
         Convert the dialogue into structured Conversation format.
 
         Args:
             item (dl.Item): Dataloop item containing the dialogue
-            dialogue (str): Combined dialogue text
-            llm_manager (LLMManager): Manager for LLM interactions
+            progress (dl.Progress): Dataloop progress object
+            context (dl.Context): Dataloop context object
 
         Returns:
             dl.Item: Dataloop item containing the structured conversation
@@ -415,12 +477,15 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         Formats the dialogue into a structured conversation format with proper speaker
         attribution and timing information.
         """
-        logging.info("Formatting final conversation")
+        logger.info("Formatting final conversation")
 
-        item_metadata = item.metadata
-        podcast_metadata = item_metadata.get("user", {}).get("podcast", None)
+        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
         speaker_1_name = podcast_metadata.get("speaker_1_name", "Alice")
         speaker_2_name = podcast_metadata.get("speaker_2_name", "Will")
+
+        dialogue = DialogueServiceRunner._get_last_message(item=item)
+        if dialogue is None:
+            raise ValueError(f"No dialogue found in item {item.id}.")
 
         schema = {
             "type": "object",
@@ -432,7 +497,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
                         "type": "object",
                         "properties": {
                             "text": {"type": "string"},
-                            "speaker": {"type": "string", "enum": ["speaker-1", "speaker-2"]},
+                            "speaker": {"type": "string", "enum": [speaker_1_name, speaker_2_name]},
                         },
                         "required": ["text", "speaker"],
                     },
@@ -451,33 +516,33 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         prompt_item = dl.PromptItem(name=f"{Path(item.name).stem}_prompt_json")
         prompt_item.add(
             message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]},  # role default is user
-            prompt_key='1',
         )
 
         new_name = f"{Path(item.name).stem}_prompt7_convo_json"
-        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
+        new_item = item.dataset.items.upload(prompt_item, 
+                                             remote_name=new_name, 
+                                             remote_path=item.dir, 
+                                             overwrite=True, 
+                                             item_metadata=item.metadata)
 
         return new_item
 
     @staticmethod
-    def create_final_conversation(item: dl.Item, dialogue: str) -> dl.Item:
+    def create_final_conversation(item: dl.Item, progress: dl.Progress, context: dl.Context) -> dl.Item:
         """
         Create a final conversation from the dialogue.
+
+        Args:
+            item (dl.Item): Dataloop item containing the dialogue
+
+        Returns:
+            dl.Item: Dataloop item containing the structured conversation JSON
         """
-        filters = dl.Filters()
-        filters.add(field='dir', values=item.dir)
-        filters.add(field='metadata.system.mimetype', values='*json*')
-        items = item.dataset.items.list(filters=filters).all()
+        logger.info("Formatting final conversation")
 
-        for item in items:
-            # Process the conversation JSON
-            prompt_item = dl.PromptItem.from_json(item)
-            messages = prompt_item.to_messages()
-            last_message = messages[-1]
-            conversation_json_str = last_message.get("content", [])[0].get("text", None)
-
-            if conversation_json_str is None:
-                raise ValueError(f"No conversation JSON found in the conversation segment. Check item {item.id}.")
+        conversation_json_str = DialogueServiceRunner._get_last_message(item=item)
+        if conversation_json_str is None:
+            raise ValueError(f"No conversation JSON found in the conversation segment item {item.id}.")
 
         # Convert string to JSON if needed
         if isinstance(conversation_json_str, str):

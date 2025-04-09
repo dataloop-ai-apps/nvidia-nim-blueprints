@@ -135,11 +135,12 @@ class SharedServiceRunner(dl.BaseServiceRunner):
     @staticmethod
     def prepare_and_summarize_pdf(
         item: dl.Item,
-        monologue: bool,
         progress: dl.Progress,
         context: dl.Context,
+        monologue: bool,
         focus: str = None,
-        duration: int = 10,
+        with_references: bool = False,
+        duration: int = None,
     ):
         """
         Prepare the PDF file into a prompt item with the text to be processed
@@ -150,7 +151,8 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             progress (dl.Progress): The progress object to update the user
             context (dl.Context): The context object to access the item
             focus (str): The focus of the summary
-            duration (int): The duration of the summary
+            with_references (bool): Whether to include references in the summary
+            duration (int): The duration of a dialogue podcast
 
         Returns:
             dl.Item: The prompt item with the text to be processed
@@ -158,14 +160,14 @@ class SharedServiceRunner(dl.BaseServiceRunner):
 
         pdf_text = SharedServiceRunner._collect_text_items(item)
         # upload text to dataloop item
-        text_filename = Path(item.filename).stem + "_text.txt"
+        text_filename = Path(item.name).stem + "_text.txt"
         with open(text_filename, "w", encoding='utf-8') as f: 
             f.write(pdf_text)
         text_item = item.dataset.items.upload(local_path=text_filename, 
                                               remote_name=text_filename, 
                                               remote_path=item.dir, # same dir as pdf 
                                               overwrite=True, 
-                                              item_metadata={"user": {"podcast": {"original_item_filename": item.filename}}})
+                                              item_metadata={"user": {"podcast": {"original_item_name": item.name}}})
 
         if monologue is True:
             template = FinancialSummaryPrompts.get_template("monologue_summary_prompt")
@@ -175,12 +177,9 @@ class SharedServiceRunner(dl.BaseServiceRunner):
 
         new_name = f"{Path(item.name).stem}_prompt1_summary.json"
         prompt_item = dl.PromptItem(name=new_name)
-        prompt = dl.Prompt(key="1")
-        prompt.add_element(
-            mimetype=dl.PromptType.TEXT,
-            value=llm_prompt
+        prompt_item.add(
+            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
         )
-        prompt_item.prompts.append(prompt)
 
         new_item_metadata = {"user": item.metadata.get("user", {})}
         new_item_metadata['user'].update(
@@ -190,10 +189,12 @@ class SharedServiceRunner(dl.BaseServiceRunner):
                     "pdf_name": item.name,
                     "focus": focus,
                     "monologue": monologue,
-                    "duration": duration,
+                    "with_references": with_references,
                 }
             }
         )
+        if duration is not None:
+            new_item_metadata['user']['podcast']['duration'] = duration
         new_item = item.dataset.items.upload(prompt_item, 
                                              remote_name=new_name, 
                                              remote_path=item.dir, 

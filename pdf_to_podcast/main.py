@@ -19,7 +19,7 @@ logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
 class ServiceRunner(dl.BaseServiceRunner):
     @staticmethod
     def prepare_and_summarize_pdf(
-        item: dl.Item, monologue: bool, progress: dl.Progress, context: dl.Context, focus: str = None, duration: int = 10
+        item: dl.Item, progress: dl.Progress, context: dl.Context, monologue: bool, focus: str = None, duration: int = 10
     ):
         """
         Prepare the PDF text for the summary
@@ -64,55 +64,55 @@ class ServiceRunner(dl.BaseServiceRunner):
         return DialogueServiceRunner.generate_structured_outline(item, progress, context)
 
     @staticmethod
-    def dialogue_process_segments(item: dl.Item, outline, progress: dl.Progress, context: dl.Context):
-        return DialogueServiceRunner.process_segments(item, outline, progress, context)
+    def dialogue_process_segments(item: dl.Item, progress: dl.Progress, context: dl.Context):
+        return DialogueServiceRunner.process_segments(item, progress, context)
 
     @staticmethod
-    def dialogue_generate_dialogue(segments, outline):
-        return DialogueServiceRunner.generate_dialogue(segments, outline)
+    def dialogue_generate_dialogue(item: dl.Item, progress: dl.Progress, context: dl.Context):
+        return DialogueServiceRunner.generate_dialogue(item, progress, context)
 
     @staticmethod
-    def dialogue_combine_dialogues(segment_dialogues, outline):
-        return DialogueServiceRunner.combine_dialogues(segment_dialogues, outline)
+    def dialogue_combine_dialogues(item: dl.Item, progress: dl.Progress, context: dl.Context):
+        return DialogueServiceRunner.combine_dialogues(item, progress, context)
 
     @staticmethod
-    def dialogue_create_convo_json(item: dl.Item, dialogue: str):
-        return DialogueServiceRunner.create_convo_json(item, dialogue)
+    def dialogue_create_convo_json(item: dl.Item, progress: dl.Progress, context: dl.Context):
+        return DialogueServiceRunner.create_convo_json(item, progress, context)
 
     @staticmethod
-    def dialogue_create_final_conversation(dir_item: dl.Item, dialogue: str):
-        return DialogueServiceRunner.create_final_conversation(dir_item, dialogue)
+    def dialogue_create_final_conversation(dir_item: dl.Item, progress: dl.Progress, context: dl.Context):
+        return DialogueServiceRunner.create_final_conversation(dir_item, progress, context)
 
 
 if __name__ == "__main__":
     env = "prod"
     dl.setenv(env)
 
-    monologue = True
+    monologue = False
     item_id = "67d05c15c3d298140be63374"
 
     progress = dl.Progress()
     context = dl.Context()
 
     # item should be a pdf file
-    # item = dl.items.get(item_id=item_id)
-    # # go through each function and test whether it works with a real item
-    # processed_item = ServiceRunner.prepare_and_summarize_pdf(item, monologue, progress, context)
-    # print(f"1: Successfully processed item: {processed_item.name} ({processed_item.id})")
-    # print(f"Link here: {processed_item.platform_url}")
+    item = dl.items.get(item_id=item_id)
+    # go through each function and test whether it works with a real item
+    processed_item = ServiceRunner.prepare_and_summarize_pdf(item, monologue, progress, context)
+    print(f"1: Successfully processed item: {processed_item.name} ({processed_item.id})")
+    print(f"Link here: {processed_item.platform_url}")
 
     # wait for llama prediction on UI...
-    # input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
-    # processed_item = dl.items.get(item_id="67f3d39c17f211184f0beced") # TODO DEBUG DELETE, monologue results
+    input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
+    # processed_item = dl.items.get(item_id="67f531d517f2114e910d7327") # TODO DEBUG DELETE, monologue results
 
     if monologue is True:
-        # outline = ServiceRunner.monologue_generate_outline(processed_item, progress, context)
-        # print(f"2/5: Successfully prepared outline: {outline.name} ({outline.id})")
-        # print(f"Link here: {outline.platform_url}")
+        outline = ServiceRunner.monologue_generate_outline(processed_item, progress, context)
+        print(f"2/5: Successfully prepared outline: {outline.name} ({outline.id})")
+        print(f"Link here: {outline.platform_url}")
 
-        # # wait for llama prediction on UI...
-        # input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
-        outline = dl.items.get(item_id="67f534d829b36bf6a83e1195") # TODO DEBUG DELETE
+        # wait for llama prediction on UI...
+        input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
+        # outline = dl.items.get(item_id="67f534d829b36bf6a83e1195") # TODO DEBUG DELETE
 
         # Generate monologue
         monologue = ServiceRunner.monologue_generate_monologue(outline, progress, context)
