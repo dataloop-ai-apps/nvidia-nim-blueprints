@@ -496,7 +496,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         Important:
         Generate a report section based on the provided content."""
         
-        prompt_item_research = dl.PromptItem(name=f"research_section_{item.name.replace('.json','')}")
+        prompt_item_research = dl.PromptItem(name=f"research_section_{section_number}")
         prompt1 = dl.Prompt(key='1')
         prompt1.add_element(
             mimetype=dl.PromptType.TEXT,
