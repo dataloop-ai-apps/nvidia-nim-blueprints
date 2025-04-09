@@ -88,6 +88,15 @@
           "scope": "project"
         },
         {
+          "name": "write-non-research-sections-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.write_non_research_sections"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
           "name": "write-final-report-node",
           "invoke": {
             "type": "function",
@@ -175,10 +184,6 @@
                 {
                   "name": "research_sections_prompt_items",
                   "type": "Item[]"
-                },
-                {
-                  "name": "non_research_sections_prompt_items",
-                  "type": "Item[]"
                 }
               ],
               "displayName": "Report Sections"
@@ -218,6 +223,22 @@
                 }
               ],
               "displayName": "Gather Sections"
+            },
+            {
+              "name": "write_non_research_sections",
+              "input": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "output": [
+                {
+                  "name": "non_research_sections_prompt_items",
+                  "type": "Item[]"
+                }
+              ],
+              "displayName": "Write Non Research Sections"
             },
             {
               "name": "write_final_report",

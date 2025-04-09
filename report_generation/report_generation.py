@@ -414,75 +414,8 @@ class ReportGenerator(dl.BaseServiceRunner):
                 item_research.metadata['user']['main_item'] = main_item.id
                 item_research.update(True)
                 research_sections_prompt_items.append(item_research)
-            else:
-                final_section_writer_instructions = f"""You are an expert technical writer crafting a section that synthesizes information from the rest of the report.
-
-                Section to write: 
-                {section['name']}
-
-                Available report content:
-                {section['description']}
-
-                1. Section-Specific Approach:
-
-                For Introduction:
-                - Use # for report title (Markdown format)
-                - 50-100 word limit
-                - Write in simple and clear language
-                - Focus on the core motivation for the report in 1-2 paragraphs
-                - Use a clear narrative arc to introduce the report
-                - Include NO structural elements (no lists or tables)
-                - No sources section needed
-
-                For Conclusion/Summary:
-                - Use ## for section title (Markdown format)
-                - 100-150 word limit
-                - For comparative reports:
-                    * Must include a focused comparison table using Markdown table syntax
-                    * Table should distill insights from the report
-                    * Keep table entries clear and concise
-                - For non-comparative reports: 
-                    * Only use ONE structural element IF it helps distill the points made in the report:
-                    * Either a focused table comparing items present in the report (using Markdown table syntax)
-                    * Or a short list using proper Markdown list syntax:
-                    - Use `*` or `-` for unordered lists
-                    - Use `1.` for ordered lists
-                    - Ensure proper indentation and spacing
-                - End with specific next steps or implications
-                - No sources section needed
-
-                3. Writing Approach:
-                - Use concrete details over general statements
-                - Make every word count
-                - Focus on your single most important point
-
-                4. Quality Checks:
-                - For introduction: 50-100 word limit, # for report title, no structural elements, no sources section
-                - For conclusion: 100-150 word limit, ## for section title, only ONE structural element at most, no sources section
-                - Markdown format
-                - Do not include word count or any preamble in your response
-                
-                Important:
-                Generate a report section based on the provided content."""
-
-                prompt_item_non_research = dl.PromptItem(name=f'section_{i}')
-                prompt1 = dl.Prompt(key='1')
-                prompt1.add_element(
-                    mimetype=dl.PromptType.TEXT,
-                    value=final_section_writer_instructions
-                ) 
-                prompt_item_non_research.prompts.append(prompt1)
-                item_non_research = item.dataset.items.upload(prompt_item_non_research, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name}")
-                
-                main_item.metadata.setdefault('user', {})
-                main_item.metadata['user'][f'section_item_{i}'] = item_non_research.id
-                main_item.update(True)
-                item_non_research.metadata.setdefault('user', {})
-                item_non_research.metadata['user']['main_item'] = main_item.id
-                item_non_research.update(True)
-                non_research_sections_prompt_items.append(item_non_research)
         
-        return research_sections_prompt_items, non_research_sections_prompt_items
+        return research_sections_prompt_items
         
     def write_final_section_research(self, item: dl.Item, source_str: str):
         """
@@ -580,6 +513,95 @@ class ReportGenerator(dl.BaseServiceRunner):
         item_research.metadata['user']['main_item'] = main_item.id
         item_research.update()
         return item_research
+    
+    def write_non_research_sections(self, item: dl.Item):
+        """
+        Process and write sections that don't require research after research sections are completed
+        """
+        main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
+        sections = main_item.metadata['user']['sections']
+        non_research_sections_prompt_items = []
+        
+        # Get all completed research sections to provide context
+        completed_sections_context = ""
+        for section_name, section_text in self.all_completed_sections.items():
+            completed_sections_context += f"\n\n{section_name}:\n{section_text}"
+        
+        # Process sections that don't require research
+        for i, section in enumerate(sections):
+            if not section.get('research', False):
+                final_section_writer_instructions = f"""You are an expert technical writer crafting a section that synthesizes information from the rest of the report.
+
+                Section to write: 
+                {section['name']}
+
+                Description:
+                {section['description']}
+
+                Available report content from other sections:
+                {completed_sections_context}
+
+                1. Section-Specific Approach:
+
+                For Introduction:
+                - Use # for report title (Markdown format)
+                - 50-100 word limit
+                - Write in simple and clear language
+                - Focus on the core motivation for the report in 1-2 paragraphs
+                - Use a clear narrative arc to introduce the report
+                - Include NO structural elements (no lists or tables)
+                - No sources section needed
+
+                For Conclusion/Summary:
+                - Use ## for section title (Markdown format)
+                - 100-150 word limit
+                - For comparative reports:
+                    * Must include a focused comparison table using Markdown table syntax
+                    * Table should distill insights from the report
+                    * Keep table entries clear and concise
+                - For non-comparative reports: 
+                    * Only use ONE structural element IF it helps distill the points made in the report:
+                    * Either a focused table comparing items present in the report (using Markdown table syntax)
+                    * Or a short list using proper Markdown list syntax:
+                    - Use `*` or `-` for unordered lists
+                    - Use `1.` for ordered lists
+                    - Ensure proper indentation and spacing
+                - End with specific next steps or implications
+                - No sources section needed
+
+                2. Writing Approach:
+                - Use concrete details over general statements
+                - Make every word count
+                - Focus on your single most important point
+
+                3. Quality Checks:
+                - For introduction: 50-100 word limit, # for report title, no structural elements, no sources section
+                - For conclusion: 100-150 word limit, ## for section title, only ONE structural element at most, no sources section
+                - Markdown format
+                - Do not include word count or any preamble in your response
+                
+                Important:
+                Generate a report section based on the provided content."""
+
+                prompt_item_non_research = dl.PromptItem(name=f'section_{i}')
+                prompt1 = dl.Prompt(key='1')
+                prompt1.add_element(
+                    mimetype=dl.PromptType.TEXT,
+                    value=final_section_writer_instructions
+                ) 
+                prompt_item_non_research.prompts.append(prompt1)
+                item_non_research = item.dataset.items.upload(prompt_item_non_research, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name}")
+                
+                main_item.metadata.setdefault('user', {})
+                main_item.metadata['user'][f'section_item_{i}'] = item_non_research.id
+                main_item.update(True)
+                item_non_research.metadata.setdefault('user', {})
+                item_non_research.metadata['user']['main_item'] = main_item.id
+                item_non_research.update(True)
+                non_research_sections_prompt_items.append(item_non_research)
+        
+        return non_research_sections_prompt_items
+
     
     def gather_sections(self, item: dl.Item):
         # Get section name and description from the item metadata
