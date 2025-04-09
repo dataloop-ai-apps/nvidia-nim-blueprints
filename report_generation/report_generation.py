@@ -508,7 +508,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         item_research = item.dataset.items.upload(prompt_item_research, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name.replace('.json','')}/")
 
         main_item.metadata.setdefault('user', {})
-        main_item.metadata['user'][f'item_research_section_{section_number}'] = item_research.id
+        main_item.metadata['user'][f'item_researches_section_{section_number}'] = item_research.id
         main_item.update()
         item_research.metadata.setdefault('user', {})
         item_research.metadata['user']['main_item'] = main_item.id
