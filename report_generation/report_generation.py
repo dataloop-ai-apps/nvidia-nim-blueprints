@@ -203,7 +203,7 @@ class ReportGenerator(dl.BaseServiceRunner):
             value=report_planner_query_writer_instructions
         )
         prompt_item_search_queries.prompts.append(prompt1)
-        item_search_queries = item.dataset.items.upload(prompt_item_search_queries, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{item.name}/")
+        item_search_queries = item.dataset.items.upload(prompt_item_search_queries, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{item.name.replace('.json','')}/")
 
         item.metadata.setdefault('user', {})
         item.metadata['user']['item_search_queries'] = item_search_queries.id
@@ -280,7 +280,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         
 
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
-        item_report_planning = item.dataset.items.upload(prompt_item_report_planning, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name}/")
+        item_report_planning = item.dataset.items.upload(prompt_item_report_planning, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name.replace('.json','')}/")
         main_item.metadata['user']['item_report_planning'] = item_report_planning.id
         main_item.update(True)
         
@@ -406,7 +406,7 @@ class ReportGenerator(dl.BaseServiceRunner):
                     value=query_writer_instructions
                 )
                 prompt_item_research.prompts.append(prompt1)
-                item_research = item.dataset.items.upload(prompt_item_research, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name}/")
+                item_research = item.dataset.items.upload(prompt_item_research, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name.replace('.json','')}/")
 
                 main_item.metadata.setdefault('user', {})
                 main_item.metadata['user'][f'section_item_{i}'] = item_research.id
@@ -505,7 +505,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         prompt_item_research.prompts.append(prompt1)
         
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
-        item_research = item.dataset.items.upload(prompt_item_research, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name}/")
+        item_research = item.dataset.items.upload(prompt_item_research, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name.replace('.json','')}/")
 
         main_item.metadata.setdefault('user', {})
         main_item.metadata['user'][f'item_research_section_{section_number}'] = item_research.id
@@ -591,7 +591,7 @@ class ReportGenerator(dl.BaseServiceRunner):
                     value=final_section_writer_instructions
                 ) 
                 prompt_item_non_research.prompts.append(prompt1)
-                item_non_research = item.dataset.items.upload(prompt_item_non_research, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name}/")
+                item_non_research = item.dataset.items.upload(prompt_item_non_research, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name.replace('.json','')}/")
                 
                 main_item.metadata.setdefault('user', {})
                 main_item.metadata['user'][f'section_item_{i}'] = item_non_research.id
