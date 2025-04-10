@@ -25,6 +25,9 @@
     },
     {
       "name": "nim-api-llama3-1-405b-instruct-meta"
+    },
+    {
+      "name": "llm-tools-retriever"
     }
   ],
   "components": {
