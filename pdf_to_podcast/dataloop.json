@@ -73,7 +73,7 @@
               ],
               "output": [
                 {
-                  "name": "item",
+                  "name": "new_item",
                   "type": "Item",
                   "actions": [
                     "monologue",
@@ -92,7 +92,7 @@
                 },
                 {
                   "name": "voice_mapping",
-                  "type": "Dict"
+                  "type": "Json"
                 },
                 {
                   "name": "output_file",
@@ -101,7 +101,7 @@
               ],
               "output": [
                 {
-                  "name": "item",
+                  "name": "new_item",
                   "type": "Item"
                 }
               ],
@@ -117,7 +117,7 @@
                 ],
                 "output": [
                     {
-                        "name": "item",
+                        "name": "new_item",
                         "type": "Item"
                     }
                 ],
@@ -133,7 +133,7 @@
                 ],
                 "output": [
                     {
-                        "name": "item",
+                        "name": "new_item",
                         "type": "Item"
                     }
                 ],
@@ -149,7 +149,7 @@
                 ],
                 "output": [
                     {
-                        "name": "item",
+                        "name": "new_item",
                         "type": "Item"
                     }
                 ],
@@ -165,7 +165,7 @@
                 ],
                 "output": [
                     {
-                        "name": "item",
+                        "name": "new_item",
                         "type": "Item"
                     }
                 ],
@@ -181,7 +181,7 @@
                 ],
                 "output": [
                     {
-                        "name": "item",
+                        "name": "new_item",
                         "type": "Item"
                     }
                 ],
@@ -197,7 +197,7 @@
                 ],
                 "output": [
                     {
-                        "name": "item",
+                        "name": "new_item",
                         "type": "Item"
                     }
                 ],
@@ -213,7 +213,7 @@
                 ],
                 "output": [
                     {
-                        "name": "item",
+                        "name": "new_item",
                         "type": "Item"
                     }
                 ],
@@ -229,7 +229,7 @@
                 ],
                 "output": [
                     {
-                        "name": "item",
+                        "name": "new_item",
                         "type": "Item"
                     }
                 ],
@@ -245,7 +245,7 @@
                 ],
                 "output": [
                     {
-                        "name": "item",
+                        "name": "new_item",
                         "type": "Item"
                     }
                 ],
@@ -261,7 +261,7 @@
                 ],
                 "output": [
                     {
-                        "name": "item",
+                        "name": "new_item",
                         "type": "Item"
                     }
                 ],

@@ -3,8 +3,9 @@ import logging
 import dtlpy as dl
 
 from pathlib import Path
-from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
 from pdf_to_podcast.podcast_types import Conversation  # Podcast conversation data structures
+from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
+from pdf_to_podcast.shared_functions import SharedServiceRunner
 
 # Configure logging
 logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
@@ -104,17 +105,12 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         pdf_name = podcast_metadata.get("pdf_name", None)
         speaker_1_name = podcast_metadata.get("speaker_1_name", None)
 
-        # get the summary from the last prompt
+        # get the summary from the summary item
         summary_item_id = podcast_metadata.get("summary_item_id", None)
-        if summary_item_id is None:
-            raise ValueError(
-                "No summary item ID found in the prompt item. Please check that your pdf item has been processed correctly."
-            )
-
-        summary_item = dl.items.get(item_id=summary_item_id).download(save_locally=False)
-        summary = summary_item.read().decode('utf-8')
-        if summary is None:
-            raise ValueError("No summary found in the prompt item. Try running the previous step again.")
+        try:
+            summary = SharedServiceRunner._get_summary_text(summary_item_id)
+        except ValueError as e:
+            raise ValueError(f"Error getting summary text: {e} for item {item.id}")
 
         logger.info("Preparing to generate monologue")
 

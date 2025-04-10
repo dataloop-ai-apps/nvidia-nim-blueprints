@@ -149,7 +149,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         prompt_item.add(
             message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
         )
-        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
+        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=item.metadata)
         return new_item
 
     @staticmethod
@@ -246,7 +246,8 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         podcast_metadata = item.metadata.get("user", {}).get("podcast", {})
         focus = podcast_metadata.get("focus", None)
         duration = podcast_metadata.get("duration", 10)
-        summary = SharedServiceRunner._get_summary_text(summary_item_id=podcast_metadata.get("summary_item_id", None))
+        summary_item_id = podcast_metadata.get("summary_item_id", None)
+        summary = SharedServiceRunner._get_summary_text(summary_item_id=summary_item_id)
 
         # Create the outline item
         outline = SharedServiceRunner._get_outline_dict(outline_item=item)

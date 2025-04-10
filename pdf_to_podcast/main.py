@@ -89,8 +89,8 @@ class ServiceRunner(dl.BaseServiceRunner):
         return DialogueServiceRunner.create_convo_json(item, progress, context)
 
     @staticmethod
-    def create_final_json(dir_item: dl.Item, progress: dl.Progress, context: dl.Context):
-        return SharedServiceRunner.create_final_json(dir_item, progress, context)
+    def create_final_json(item: dl.Item, progress: dl.Progress, context: dl.Context):
+        return SharedServiceRunner.create_final_json(item, progress, context)
 
 
 if __name__ == "__main__":
@@ -118,7 +118,7 @@ if __name__ == "__main__":
 
     # wait for llama prediction on UI...
     input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
-    # processed_item = dl.items.get(item_id="67f531d517f2114e910d7327") # TODO DEBUG DELETE, monologue results
+    # outline = dl.items.get(item_id="67f765bb9d79af79958872d9") # TODO DEBUG DELETE
 
     if monologue is True:
         outline = ServiceRunner.monologue_generate_outline(processed_item, progress, context)
@@ -161,6 +161,7 @@ if __name__ == "__main__":
 
         # wait for llama prediction on UI...
         input("Please get llama json prediction via UI. Once it's finished, press Enter to continue...")
+        # structured_outline = dl.items.get(item_id="67f7684f9d79af8b368874d6") # TODO DEBUG DELETE
 
         # Process segments
         segments = ServiceRunner.dialogue_process_segments(structured_outline, progress, context)
@@ -189,8 +190,6 @@ if __name__ == "__main__":
         convo_json = ServiceRunner.dialogue_create_convo_json(combined_dialogue, progress, context)
         print(f"7/9: Successfully prepared convo json: {convo_json.name} ({convo_json.id})")
         print(f"Link here: {convo_json.platform_url}")
-        # wait for llama prediction on UI...
-        input("Please get llama json prediction via UI. Once it's finished, press Enter to continue...")
 
     # wait for llama prediction on UI...
     input("Please get llama json prediction via UI. Once it's finished, press Enter to continue...")

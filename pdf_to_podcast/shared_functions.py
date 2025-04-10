@@ -176,7 +176,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             template = PodcastPrompts.get_template("podcast_summary_prompt")
         llm_prompt = template.render(text=pdf_text)
 
-        new_name = f"{Path(item.name).stem}_prompt1_summary.json"
+        new_name = f"{Path(item.name).stem}_{'monologue_' if monologue is True else 'podcast_'}prompt1_summary.json"
         prompt_item = dl.PromptItem(name=new_name)
         prompt_item.add(
             message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
@@ -349,14 +349,14 @@ class SharedServiceRunner(dl.BaseServiceRunner):
     @staticmethod
     def _get_summary_text(summary_item_id: str) -> str:
         """
-        Get the summary text from the summary item.
+        Get the summary text from the summary item id.
         """
         summary_item = dl.items.get(item_id=summary_item_id)
         if summary_item is None:
             raise ValueError(f"Summary item not found for id: {summary_item_id}")
         if "text" not in summary_item.mimetype:
             raise ValueError(f"Summary item is not a text file for id: {summary_item_id}")
-        text = summary_item.download(save_locally=False).decode('utf-8')
+        text = summary_item.download(save_locally=False).read().decode('utf-8')
         return text
 
     @staticmethod
@@ -370,9 +370,13 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         outline_dict = last_message.get("content", [])[0].get("text", None)
         if outline_dict is None:
             raise ValueError(f"No outline found in item {outline_item.id} metadata.")
-        if isinstance(outline_dict, str):
-            outline_dict = json.loads(outline_dict)
-        outline = PodcastOutline.model_validate_json(outline_dict)
+        try:
+            if isinstance(outline_dict, str):
+                outline_dict = json.loads(outline_dict)
+            outline = PodcastOutline.model_validate_json(outline_dict)
+        except json.decoder.JSONDecodeError as e:
+            # check text is a valid json and fixes it if not with pydantic
+            outline_dict = PodcastOutline.model_validate_json(outline_dict)
         return outline
 
 
@@ -393,3 +397,4 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         """
         # This handles both raw strings (with extra backslashes) and regular strings
         return s.encode("utf-8").decode("unicode-escape")
+
