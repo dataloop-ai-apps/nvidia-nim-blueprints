@@ -154,6 +154,48 @@ class ReportGenerator(dl.BaseServiceRunner):
         
         return params
     
+    def _create_prompt_item(self, item, prompt_text, prompt_name, main_item=None):
+        """
+        Utility function to create and upload a prompt item
+        
+        Args:
+            item: The parent Dataloop item
+            prompt_text: The text content for the prompt
+            prompt_name: Name for the new prompt item
+            main_item: Optional main item to link to (defaults to item if None)
+            
+        Returns:
+            item_prompt: The created prompt item
+        """
+        if main_item is None:
+            main_item = item
+            
+        prompt_item = dl.PromptItem(name=prompt_name)
+        prompt1 = dl.Prompt(key='1')
+        prompt1.add_element(
+            mimetype=dl.PromptType.TEXT,
+            value=prompt_text
+        )
+        prompt_item.prompts.append(prompt1)
+        
+        # Upload the prompt item
+        item_prompt = item.dataset.items.upload(
+            prompt_item, 
+            overwrite=True, 
+            remote_path=f"/.dataloop/temp_prompts_{main_item.name.replace('.json','')}/",
+            item_metadata={
+                "user":{
+                    "main_item": main_item.id
+                }
+            })
+        
+        # Update metadata on main item
+        main_item.metadata.setdefault('user', {})
+        main_item.metadata['user'][f'item_{prompt_name}'] = item_prompt.id
+        main_item.update()
+        
+        return item_prompt
+    
     def report_search_queries(self, item: dl.Item):
         """
         First node in the pipeline - Extract parameters and generate report plan queries
@@ -196,21 +238,11 @@ class ReportGenerator(dl.BaseServiceRunner):
         Important:
         Each line should be a search query and nothing else."""
         
-        prompt_item_search_queries = dl.PromptItem(name='report_search_queries')
-        prompt1 = dl.Prompt(key='1')
-        prompt1.add_element(
-            mimetype=dl.PromptType.TEXT,
-            value=report_planner_query_writer_instructions
+        item_search_queries = self._create_prompt_item(
+            item=item,
+            prompt_text=report_planner_query_writer_instructions,
+            prompt_name='report_search_queries'
         )
-        prompt_item_search_queries.prompts.append(prompt1)
-        item_search_queries = item.dataset.items.upload(prompt_item_search_queries, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{item.name.replace('.json','')}/")
-
-        item.metadata.setdefault('user', {})
-        item.metadata['user']['item_search_queries'] = item_search_queries.id
-        item.update(True)
-        item_search_queries.metadata.setdefault('user', {})
-        item_search_queries.metadata['user']['main_item'] = item.id
-        item_search_queries.update(True)  
         
         return item_search_queries
     
@@ -270,24 +302,14 @@ class ReportGenerator(dl.BaseServiceRunner):
         ]
         
         Ensure your response can be parsed as valid JSON with the proper structure."""
-        prompt_item_report_planning = dl.PromptItem(name='report_planning')
-        prompt1 = dl.Prompt(key='1')
-        prompt1.add_element(
-            mimetype=dl.PromptType.TEXT,
-            value=report_planner_instructions
-        )
-        prompt_item_report_planning.prompts.append(prompt1)
-        
 
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
-        item_report_planning = item.dataset.items.upload(prompt_item_report_planning, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name.replace('.json','')}/")
-        main_item.metadata['user']['item_report_planning'] = item_report_planning.id
-        main_item.update(True)
-        
-
-        item_report_planning.metadata.setdefault('user', {})
-        item_report_planning.metadata['user']['main_item'] = main_item.id
-        item_report_planning.update(True)
+        item_report_planning = self._create_prompt_item(
+            item=item,
+            prompt_text=report_planner_instructions,
+            prompt_name='report_planning',
+            main_item=main_item
+        )
         return item_report_planning
     
     def report_sections(self, item: dl.Item):
@@ -354,7 +376,7 @@ class ReportGenerator(dl.BaseServiceRunner):
             for name, description in section_patterns:
                 # Default research to true for content sections, false for intro/conclusion
                 research = True
-                if name.lower() in ['Introduction', 'Conclusion']:
+                if name.lower() in ['introduction', 'conclusion']:
                     research = False
                 
                 sections.append({
@@ -365,7 +387,6 @@ class ReportGenerator(dl.BaseServiceRunner):
                 })
 
         research_sections_prompt_items = []
-        non_research_sections_prompt_items = []
 
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         main_item.metadata.setdefault('user', {})
@@ -399,21 +420,13 @@ class ReportGenerator(dl.BaseServiceRunner):
                 Important:
                 Each line should be a search query and nothing else."""
 
-                prompt_item_research = dl.PromptItem(name=f'section_{i}')
-                prompt1 = dl.Prompt(key='1')
-                prompt1.add_element(
-                    mimetype=dl.PromptType.TEXT,
-                    value=query_writer_instructions
+                item_research = self._create_prompt_item(
+                    item=item,
+                    prompt_text=query_writer_instructions,
+                    prompt_name=f'section_{i}',
+                    main_item=main_item
                 )
-                prompt_item_research.prompts.append(prompt1)
-                item_research = item.dataset.items.upload(prompt_item_research, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name.replace('.json','')}/")
-
-                main_item.metadata.setdefault('user', {})
-                main_item.metadata['user'][f'section_item_{i}'] = item_research.id
-                main_item.update(True)
-                item_research.metadata.setdefault('user', {})
-                item_research.metadata['user']['main_item'] = main_item.id
-                item_research.update(True)
+                
                 research_sections_prompt_items.append(item_research)
         
         return research_sections_prompt_items
@@ -496,23 +509,12 @@ class ReportGenerator(dl.BaseServiceRunner):
         Important:
         Generate a report section based on the provided content."""
         
-        prompt_item_research = dl.PromptItem(name=f"research_section_{section_number}")
-        prompt1 = dl.Prompt(key='1')
-        prompt1.add_element(
-            mimetype=dl.PromptType.TEXT,
-            value=section_writer_instructions
+        item_research = self._create_prompt_item(
+            item=item,
+            prompt_text=section_writer_instructions,
+            prompt_name=f"research_section_{section_number}",
+            main_item=main_item
         )
-        prompt_item_research.prompts.append(prompt1)
-        
-        main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
-        item_research = item.dataset.items.upload(prompt_item_research, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name.replace('.json','')}/")
-
-        main_item.metadata.setdefault('user', {})
-        main_item.metadata['user'][f'item_researches_section_{section_number}'] = item_research.id
-        main_item.update()
-        item_research.metadata.setdefault('user', {})
-        item_research.metadata['user']['main_item'] = main_item.id
-        item_research.update()
         return item_research
     
     def write_non_research_sections(self, item: dl.Item):
@@ -584,21 +586,12 @@ class ReportGenerator(dl.BaseServiceRunner):
                 Important:
                 Generate a report section based on the provided content."""
 
-                prompt_item_non_research = dl.PromptItem(name=f'section_{i}')
-                prompt1 = dl.Prompt(key='1')
-                prompt1.add_element(
-                    mimetype=dl.PromptType.TEXT,
-                    value=final_section_writer_instructions
-                ) 
-                prompt_item_non_research.prompts.append(prompt1)
-                item_non_research = item.dataset.items.upload(prompt_item_non_research, overwrite=True, remote_path=f"/.dataloop/temp_prompts_{main_item.name.replace('.json','')}/")
-                
-                main_item.metadata.setdefault('user', {})
-                main_item.metadata['user'][f'section_item_{i}'] = item_non_research.id
-                main_item.update(True)
-                item_non_research.metadata.setdefault('user', {})
-                item_non_research.metadata['user']['main_item'] = main_item.id
-                item_non_research.update(True)
+                item_non_research = self._create_prompt_item(
+                    item=item,
+                    prompt_text=final_section_writer_instructions,
+                    prompt_name=f'section_{i}',
+                    main_item=main_item
+                )
                 non_research_sections_prompt_items.append(item_non_research)
         
         return non_research_sections_prompt_items
