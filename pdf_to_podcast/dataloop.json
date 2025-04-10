@@ -2,8 +2,8 @@
     "name": "pdf-to-podcast-demo",
     "displayName": "PDF to Podcast Demo", 
     "description": "Generate a podcast based on a given PDF.",
-    "version": "0.1.0",
-    "scope": "project",
+    "version": "0.0.16",
+    "scope": "public",
     "attributes": {
         "Hub": ["Nvidia", "Dataloop"],
         "Category": ["Application", "Blueprint"],
