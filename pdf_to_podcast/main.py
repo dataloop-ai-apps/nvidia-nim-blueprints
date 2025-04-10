@@ -16,10 +16,17 @@ dotenv.load_dotenv()
 # Configure logging
 logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
 
+
 class ServiceRunner(dl.BaseServiceRunner):
     @staticmethod
     def prepare_and_summarize_pdf(
-        item: dl.Item, progress: dl.Progress, context: dl.Context, monologue: bool, focus: str = None, duration: int = 10
+            item: dl.Item,
+            progress: dl.Progress,
+            context: dl.Context,
+            monologue: bool,
+            focus: Optional[str] = None,
+            with_references: Optional[bool] = False,
+            duration: Optional[int] = None,
     ):
         """
         Prepare the PDF text for the summary
@@ -35,7 +42,9 @@ class ServiceRunner(dl.BaseServiceRunner):
         Returns:
             str: Prompt for the summary
         """
-        return SharedServiceRunner.prepare_and_summarize_pdf(item, monologue, progress, context, focus, duration)
+        return SharedServiceRunner.prepare_and_summarize_pdf(
+            item, progress, context, monologue, focus, with_references, duration
+        )
 
     @staticmethod
     def generate_audio(item: dl.Item, voice_mapping: dict = None, output_file: str = None):
@@ -80,8 +89,8 @@ class ServiceRunner(dl.BaseServiceRunner):
         return DialogueServiceRunner.create_convo_json(item, progress, context)
 
     @staticmethod
-    def dialogue_create_final_conversation(dir_item: dl.Item, progress: dl.Progress, context: dl.Context):
-        return DialogueServiceRunner.create_final_conversation(dir_item, progress, context)
+    def create_final_json(dir_item: dl.Item, progress: dl.Progress, context: dl.Context):
+        return SharedServiceRunner.create_final_json(dir_item, progress, context)
 
 
 if __name__ == "__main__":
@@ -89,6 +98,10 @@ if __name__ == "__main__":
     dl.setenv(env)
 
     monologue = False
+    focus = None
+    with_references = False
+    duration = None
+
     item_id = "67d05c15c3d298140be63374"
 
     progress = dl.Progress()
@@ -97,7 +110,9 @@ if __name__ == "__main__":
     # item should be a pdf file
     item = dl.items.get(item_id=item_id)
     # go through each function and test whether it works with a real item
-    processed_item = ServiceRunner.prepare_and_summarize_pdf(item, monologue, progress, context)
+    processed_item = ServiceRunner.prepare_and_summarize_pdf(
+        item, progress, context, monologue, focus, with_references, duration
+    )
     print(f"1: Successfully processed item: {processed_item.name} ({processed_item.id})")
     print(f"Link here: {processed_item.platform_url}")
 
@@ -118,18 +133,19 @@ if __name__ == "__main__":
         monologue = ServiceRunner.monologue_generate_monologue(outline, progress, context)
         print(f"3/5: Successfully prepared monologue: {monologue.name} ({monologue.id})")
         print(f"Link here: {monologue.platform_url}")
-    
+
         # wait for llama prediction on UI...
         input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
         # monologue = dl.items.get(item_id="67f514a74ccc17715c9e81ad") # TODO DEBUG DELETE
 
         # Create convo json
-        final_transcript = ServiceRunner.monologue_create_convo_json(monologue, progress, context)
-        print(f"4/5: Successfully prepared final conversation: {final_transcript.name} ({final_transcript.id})")
-        print(f"Link here: {final_transcript.platform_url}")
+        convo_json = ServiceRunner.monologue_create_convo_json(monologue, progress, context)
+        print(f"4/5: Successfully prepared final conversation: {convo_json.name} ({convo_json.id})")
+        print(f"Link here: {convo_json.platform_url}")
 
-    else:       
-    # if monologue is False:
+
+    else:
+        # if monologue is False:
         # Generate raw outline
         outline = ServiceRunner.dialogue_generate_raw_outline(processed_item, progress, context)
         print(f"2/9: Successfully prepared raw outline: {outline.name} ({outline.id})")
@@ -147,7 +163,7 @@ if __name__ == "__main__":
         input("Please get llama json prediction via UI. Once it's finished, press Enter to continue...")
 
         # Process segments
-        segments = ServiceRunner.dialogue_process_segments(processed_item, structured_outline, progress, context)
+        segments = ServiceRunner.dialogue_process_segments(structured_outline, progress, context)
         print(f"4/9: Successfully processed segments: {segments.name} ({segments.id})")
         print(f"Link here: {segments.platform_url}")
 
@@ -155,7 +171,7 @@ if __name__ == "__main__":
         input("Please get llama iteration prediction via UI. Once it's finished, press Enter to continue...")
 
         # Generate dialogue
-        dialogue = ServiceRunner.dialogue_generate_dialogue(segments, structured_outline)
+        dialogue = ServiceRunner.dialogue_generate_dialogue(segments, progress, context)
         print(f"5/9: Successfully prepared dialogue: {dialogue.name} ({dialogue.id})")
         print(f"Link here: {dialogue.platform_url}")
 
@@ -163,33 +179,32 @@ if __name__ == "__main__":
         input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
 
         # Combine dialogues
-        combined_dialogue = ServiceRunner.dialogue_combine_dialogues(dialogue, structured_outline)
+        combined_dialogue = ServiceRunner.dialogue_combine_dialogues(dialogue, progress, context)
         print(f"6/9: Successfully combined dialogues: {combined_dialogue.name} ({combined_dialogue.id})")
         print(f"Link here: {combined_dialogue.platform_url}")
         # wait for llama prediction on UI...
         input("Please get llama iteration prediction via UI. Once it's finished, press Enter to continue...")
 
         # Create convo json
-        convo_json = ServiceRunner.dialogue_create_convo_json(combined_dialogue, structured_outline)
+        convo_json = ServiceRunner.dialogue_create_convo_json(combined_dialogue, progress, context)
         print(f"7/9: Successfully prepared convo json: {convo_json.name} ({convo_json.id})")
         print(f"Link here: {convo_json.platform_url}")
         # wait for llama prediction on UI...
         input("Please get llama json prediction via UI. Once it's finished, press Enter to continue...")
 
-        # Create final conversation
-        final_transcript = ServiceRunner.dialogue_create_final_conversation(convo_json, combined_dialogue)
-        print(f"8/9: Successfully prepared final conversation: {final_transcript.name} ({final_transcript.id})")
-        print(f"Link here: {final_transcript.platform_url}")
-
     # wait for llama prediction on UI...
     input("Please get llama json prediction via UI. Once it's finished, press Enter to continue...")
-    # final_transcript = dl.items.get(item_id="67f518c029b36b76373dfaca") # TODO DEBUG DELETE, monologue results
-    
+
     # Generate audio
     try:
-        output_podcast = ServiceRunner.generate_audio(final_transcript)
+        # Create final conversation
+        final_transcript = ServiceRunner.create_final_json(convo_json, progress, context)
+        print(f"n-1/n: Successfully prepared final conversation: {final_transcript.name} ({final_transcript.id})")
+        print(f"Link here: {final_transcript.platform_url}")
+
+        output_podcast = SharedServiceRunner.generate_audio(final_transcript, progress, context)
         print(f"End: Successfully prepared audio file: {output_podcast.name} ({output_podcast.id})")
         print(f"Link here: {output_podcast.platform_url}")
-    except Exception as e:    
+    except Exception as e:
         print(f"Error generating audio: {e}")
         raise

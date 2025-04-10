@@ -63,6 +63,10 @@
                   "type": "String"
                 },
                 {
+                  "name": "with_references",
+                  "type": "Boolean"
+                },
+                {
                   "name": "duration",
                   "type": "Integer"
                 }
@@ -88,6 +92,10 @@
                 },
                 {
                   "name": "voice_mapping",
+                  "type": "Dict"
+                },
+                {
+                  "name": "output_file",
                   "type": "String"
                 }
               ],
@@ -244,7 +252,7 @@
                 "displayName": "Dialogue Create Convo JSON"
             },
             {
-                "name": "dialogue_create_final_conversation",
+                "name": "create_final_json",
                 "input": [
                     {
                         "name": "item",
@@ -257,7 +265,7 @@
                         "type": "Item"
                     }
                 ],
-                "displayName": "Dialogue Create Final Conversation"
+                "displayName": "Create Final Transcript JSON"
             }
           ] 
         }
@@ -305,7 +313,7 @@
             "type": "function",
             "namespace": "pdf2podcast-compute-config.pdf2podcast-module.monologue_create_convo_json"
           },
-              "categories": ["Podcast Generation"],
+          "categories": ["Podcast Generation"],
           "scope": "project"
         },
         {
@@ -363,10 +371,10 @@
           "scope": "project"
         },
         {
-          "name": "dialogue-create-final-conversation",
+          "name": "create-final-json",
           "invoke": {
             "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_create_final_conversation"
+            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.create_final_json"
           },
           "categories": ["Podcast Generation"],
           "scope": "project"

@@ -12,6 +12,7 @@ from elevenlabs.client import ElevenLabs
 
 from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
 from pdf_to_podcast.podcast_prompts import PodcastPrompts
+from pdf_to_podcast.podcast_types import PodcastOutline
 
 # Load environment variables from .env file
 dotenv.load_dotenv('.env')
@@ -181,8 +182,8 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
         )
 
-        new_item_metadata = {"user": item.metadata.get("user", {})}
-        new_item_metadata['user'].update(
+        new_item_metadata = item.metadata.get("user", {})
+        new_item_metadata.update(
             {
                 "podcast": {
                     "pdf_id": item.id,
@@ -194,32 +195,75 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             }
         )
         if duration is not None:
-            new_item_metadata['user']['podcast']['duration'] = duration
+            new_item_metadata['podcast']['duration'] = duration
         new_item = item.dataset.items.upload(prompt_item, 
                                              remote_name=new_name, 
                                              remote_path=item.dir, 
                                              overwrite=True, 
-                                             item_metadata=new_item_metadata)
-
+                                             item_metadata={"user": new_item_metadata})
+        
         logger.info(f"Successfully created prompt item for {item.name} in new item {new_item.id}")
 
         actions = ['monologue', 'dialogue']
-        if monologue is True:
-            progress.update(action=actions[0])
-        else:
-            progress.update(action=actions[1])
+        progress.update(action=actions[0] if monologue is True else actions[1])
 
         return new_item
 
     @staticmethod
-    def generate_audio(item: dl.Item, voice_mapping: dict = None, output_file: str = None):
+    def create_final_json(item: dl.Item, progress: dl.Progress, context: dl.Context) -> dl.Item:
+        """
+        Check the final conversation JSON and make sure all strings are unescaped
+
+        Args:
+            item (dl.Item): Dataloop item containing the dialogue
+
+        Returns:
+            new_item (dl.Item): Dataloop item containing the structured conversation JSON
+        """
+        logger.info("Formatting final conversation")
+
+        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
+        pdf_name = podcast_metadata.get("pdf_name", None)
+
+        conversation_json_str = SharedServiceRunner._get_last_message(item=item)
+        if conversation_json_str is None:
+            raise ValueError(f"No conversation JSON found in the conversation segment item {item.id}.")
+
+        # Convert string to JSON if needed
+        if isinstance(conversation_json_str, str):
+            conversation_json = json.loads(conversation_json_str)
+        else:
+            conversation_json = conversation_json_str
+
+        # Ensure all strings are unescaped
+        if "dialogue" in conversation_json:
+            for entry in conversation_json["dialogue"]:
+                if "text" in entry:
+                    entry["text"] = SharedServiceRunner._unescape_unicode_string(entry["text"])
+                    
+        # upload the final conversation
+        new_name = f"{Path(pdf_name).stem}_final_transcript.json"
+        json_path = Path.cwd() / new_name
+        with open(json_path, "w", encoding='utf-8') as f:
+            json_file = json.dumps(conversation_json, indent=2)
+            f.write(json_file)
+
+        new_item = item.dataset.items.upload(
+            local_path=str(json_path),
+            remote_name=new_name,
+            remote_path=item.dir,
+            overwrite=True,
+        )
+        return new_item
+
+
+    @staticmethod
+    def generate_audio(item: dl.Item, progress, context, voice_mapping: dict = None, output_file: str = None):
         """
         Generate audio from the conversation JSON file
 
         Args:
-            item (dl.Item): Dataloop item containing the conversation JSON
-            output_file (str): Output MP3 file path (defaults to output/output.mp3)
-            voice_mapping (dict): Optional mapping of speakers to voice IDs
+            item (dl.Item): Dataloop JSON item containing the conversation 
 
         Returns:
             str: Path to the generated audio file
@@ -278,6 +322,59 @@ class SharedServiceRunner(dl.BaseServiceRunner):
                                              item_metadata=item.metadata)
         logger.info(f"Successfully uploaded audio file: {mp3_item.id}")
         return mp3_item
+
+    @staticmethod
+    def _get_last_message(item: dl.Item) -> str:
+        """
+        Get the last message from the item.
+
+        Args:
+            item (dl.Item): Dataloop item containing the last message
+
+        Returns:
+            str: The last message from the item
+
+        Converts the item to a prompt item and gets the last message.
+        """
+        prompt_item = dl.PromptItem.from_item(item)
+        messages = prompt_item.to_messages()
+        try:
+            last_message = messages[-1]
+            text = last_message.get("content", [])[0].get("text", None)
+        except Exception as e:
+            logger.error(f"Error getting last message from item {item.id}: {e}")
+            text = None
+        return text
+
+    @staticmethod
+    def _get_summary_text(summary_item_id: str) -> str:
+        """
+        Get the summary text from the summary item.
+        """
+        summary_item = dl.items.get(item_id=summary_item_id)
+        if summary_item is None:
+            raise ValueError(f"Summary item not found for id: {summary_item_id}")
+        if "text" not in summary_item.mimetype:
+            raise ValueError(f"Summary item is not a text file for id: {summary_item_id}")
+        text = summary_item.download(save_locally=False).decode('utf-8')
+        return text
+
+    @staticmethod
+    def _get_outline_dict(outline_item: dl.Item) -> PodcastOutline:
+        """
+        Get the PodcastOutline from an outline item.
+        """
+        prompt_outline_item = dl.PromptItem.from_item(outline_item)
+        messages = prompt_outline_item.to_messages()
+        last_message = messages[-1]
+        outline_dict = last_message.get("content", [])[0].get("text", None)
+        if outline_dict is None:
+            raise ValueError(f"No outline found in item {outline_item.id} metadata.")
+        if isinstance(outline_dict, str):
+            outline_dict = json.loads(outline_dict)
+        outline = PodcastOutline.model_validate_json(outline_dict)
+        return outline
+
 
     @staticmethod
     def _unescape_unicode_string(s: str) -> str:
