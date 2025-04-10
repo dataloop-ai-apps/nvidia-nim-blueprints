@@ -88,30 +88,25 @@
         ],
         "variables": [
           {
-            "name": "retriever_dataset",
-            "type": "Dataset",
-            "description": "Insert Retriever Dataset ID."
-          },
-          {
             "name": "prompts_dataset",
             "type": "Dataset",
             "description": "Insert Prompts Dataset ID."
+          },
+          {
+            "name": "retrieval_dataset",
+            "type": "Dataset",
+            "description": "Insert Retrieval Dataset ID."
+          },
+          {
+            "name": "retrieval_embed_model",
+            "type": "Model",
+            "description": "Embedding model, that was used for embedding the retrival dataset items."
           },
           {
             "name": "k_nearest_items",
             "type": "Integer",
             "description": "K nearest items - The number of closest items to retrieve. Default set to 30.",
             "value": 30
-          },
-          {
-            "name": "genModel",
-            "type": "Model",
-            "description": "Generative model that generate the response."
-          },
-          {
-            "name": "embedModel",
-            "type": "Model",
-            "description": "Embedding model, used for embedding the user prompt questions."
           }
         ],
         "description": "NVIDIA blueprint RAG pipeline.",
@@ -165,7 +160,6 @@
               },
               "componentGroupName": "models",
               "repeatable": true,
-              "variableModel": "embedModel",
               "pipelineNodeName": "nv-embedqa-e5v5",
               "mlType": "embeddings"
             }
@@ -187,7 +181,7 @@
                 "type": "Model",
                 "name": "embedder",
                 "displayName": "embedder",
-                "variableName": "embedModel",
+                "variableName": "retrieval_embed_model",
                 "io": "input"
               },
               {
@@ -196,7 +190,7 @@
                 "type": "Dataset",
                 "name": "dataset",
                 "displayName": "dataset",
-                "variableName": "retriever_dataset",
+                "variableName": "retrieval_dataset",
                 "io": "input"
               },
               {
@@ -313,7 +307,6 @@
               },
               "componentGroupName": "models",
               "repeatable": true,
-              "variableModel": "genModel",
               "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
               "mlType": "genAi"
             }
