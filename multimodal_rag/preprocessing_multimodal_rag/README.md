@@ -4,7 +4,12 @@
 
 The "Preprocessing Multimodal PDF RAG" is an NVIDIA blueprint designed to facilitate the preprocessing stage of a multimodal PDF Retrieval-Augmented Generation (RAG) pipeline. This pipeline is capable of handling both text and image data, making it suitable for a variety of applications that require the extraction and processing of information from PDF documents.
 
-For more details, visit the [NVIDIA blueprint page](https://build.nvidia.com/nvidia/multimodal-pdf-data-extraction-for-enterprise-rag/blueprintcard).
+For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipeline](https://build.nvidia.com/nvidia/build-an-enterprise-rag-pipeline).
+And look for: `Etraction Pipeline`.
+
+## Prerequisites
+
+- This blueprint is designed to be used in conjunction with `Retrival Pipeline` in [NVIDIA RAG Pipeline](../nvidia_rag_pipeline/README.md).
 
 ## Features
 

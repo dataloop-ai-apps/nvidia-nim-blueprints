@@ -4,14 +4,15 @@
 
 The NVIDIA RAG pipeline is a blueprint designed to enhance the Retrieval-Augmented Generation (RAG) process. It efficiently interacts with models using Dataloop's AI playground and leveraging NIM models for generating embeddings and responses. The pipeline incorporates a retriever service to fetch relevant documents from the source dataset. The model's responses are stored in the prompts dataset and are subsequently sent to a labeling task, enabling human-in-the-loop validation and refinement.
 
-For more details, visit the [NVIDIA blueprint page](https://build.nvidia.com/nvidia/multimodal-pdf-data-extraction-for-enterprise-rag/blueprintcard).
+For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipeline](https://build.nvidia.com/nvidia/build-an-enterprise-rag-pipeline).
+And look for: `Retrival Pipeline`.
 
 ## Prerequisites
 
-- **Retrival Dataset** with extracted embeddings from an Embedding Model.
-- **Retrival Embedding Model** that generated embeddings on the Retrival Dataset.
-- **Prompts Dataset** to store the model's responses, and move them to a Labeling Task.
-- 
+- Run the `Extraction Pipeline` in [Preprocessing Multimodal PDF RAG Blueprint](../preprocessing_multimodal_rag/README.md),
+  and use the Final Embeddings Dataset and Model as inputs for this pipeline **Retrival Dataset** and **Retrival Embedding Model**.
+- **Prompts Dataset** that contains the prompts to be sent for the LLM model.
+
 ## Features
 
 - **Efficient Model Interaction**: Utilizes Dataloop's AI Playground for seamless model communication.
@@ -56,7 +57,7 @@ For more details, visit the [NVIDIA blueprint page](https://build.nvidia.com/nvi
 1. **Install the Blueprint**: Install the pipeline from Dataloop Marketplace.
 
 2. **Set up the Pipeline**: Choose the appropriate **Retrival Dataset** and **Embedding Model** for the **Retriever Prompt** Service,
-   and choose the **Prompts Dataset** that will store the model's responses for the Labeling Task.
+   and choose the **Prompts Dataset** that will store prompts for the LLM model.
 
 3. **Run the Pipeline**: Make sure you have inserted your nim api key to the models services and run the pipeline.
 
