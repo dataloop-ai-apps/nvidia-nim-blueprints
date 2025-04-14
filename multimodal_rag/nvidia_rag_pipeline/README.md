@@ -6,6 +6,12 @@ The NVIDIA RAG pipeline is a blueprint designed to enhance the Retrieval-Augment
 
 For more details, visit the [NVIDIA blueprint page](https://build.nvidia.com/nvidia/multimodal-pdf-data-extraction-for-enterprise-rag/blueprintcard).
 
+## Prerequisites
+
+- **Retrival Dataset** with extracted embeddings from an Embedding Model.
+- **Retrival Embedding Model** that generated embeddings on the Retrival Dataset.
+- **Prompts Dataset** to store the model's responses, and move them to a Labeling Task.
+- 
 ## Features
 
 - **Efficient Model Interaction**: Utilizes Dataloop's AI Playground for seamless model communication.
@@ -49,7 +55,10 @@ For more details, visit the [NVIDIA blueprint page](https://build.nvidia.com/nvi
 
 1. **Install the Blueprint**: Install the pipeline from Dataloop Marketplace.
 
-2. **Run the Pipeline**: Choose your dataset, insert your nim api key to the models services and run the pipeline.
+2. **Set up the Pipeline**: Choose the appropriate **Retrival Dataset** and **Embedding Model** for the **Retriever Prompt** Service,
+   and choose the **Prompts Dataset** that will store the model's responses for the Labeling Task.
+
+3. **Run the Pipeline**: Make sure you have inserted your nim api key to the models services and run the pipeline.
 
 ## Contributing
 
