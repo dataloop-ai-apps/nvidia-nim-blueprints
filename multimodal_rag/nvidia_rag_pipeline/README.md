@@ -46,12 +46,6 @@ And look for: `Retrival Pipeline`.
 - **Package**: nim-api-llama3-1-405b-instruct-meta
 - **Description**: Generates responses using the Llama model.
 
-### 5. Labeling Task
-- **Type**: Task
-- **Function**: `move_to_task`
-- **Service Name**: pipeline-utils
-- **Description**: Sends responses to a labeling task for human validation.
-
 ## Usage
 
 1. **Install the Blueprint**: Install the pipeline from Dataloop Marketplace.
@@ -64,4 +58,3 @@ And look for: `Retrival Pipeline`.
 ## Contributing
 
 We welcome contributions! Please see our [contributing guidelines] for more information on how to get involved.
-

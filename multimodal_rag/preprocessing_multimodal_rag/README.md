@@ -61,8 +61,6 @@ And look for: `Etraction Pipeline`.
 2. **Run the Pipeline**: Choose your dataset, insert your nim api key to the models services and run the pipeline.
 
 
-## Contributions, Bugs and Issues
+## Contributing
 
-We welcome anyone to help us improve this app.  
-[Here](CONTRIBUTING.md) are detailed instructions to help you report a bug or submit a feature request.
- 
+We welcome contributions! Please see our [contributing guidelines] for more information on how to get involved.
