@@ -3,7 +3,7 @@ import logging
 import dtlpy as dl
 
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 from pdf_to_podcast.shared_functions import SharedServiceRunner
 from pdf_to_podcast.podcast_prompts import PodcastPrompts
 from pdf_to_podcast.podcast_types import PodcastOutline, Conversation, PodcastSegment
@@ -210,7 +210,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         # Update metadata with segment information
         new_metadata = podcast_metadata.copy()
-        new_metadata.update(
+        new_metadata["user"]["podcast"].update(
             {
                 "focus": focus,
                 "duration": duration,
@@ -228,7 +228,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         else:
             new_dir = f"{item.dir}segments/{pdf_name}"
         new_item = item.dataset.items.upload(
-            prompt_item, remote_name=new_name, remote_path=new_dir, overwrite=True, item_metadata=new_metadata
+            prompt_item, remote_name=new_name, remote_path=new_dir, overwrite=True, item_metadata={"user": {"podcast": new_metadata}}
         )
         return new_item
 
@@ -335,47 +335,119 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         return new_item
 
     @staticmethod
-    def combine_dialogues(item: dl.Item, progress: dl.Progress, context: dl.Context) -> dl.Item:
+    def _extend_dialogue(item: dl.Item, model:dl.Model) -> dl.Item:
+        """
+        Extend the dialogue for the current segment.
+
+            Args:
+            item (dl.Item): Dataloop item containing the outline segment to be converted to dialogue
+            model (dl.Model): Dataloop model entity
+
+        Returns:
+            new_item (dl.Item): Dataloop item containing the extended dialogue
+        """
+        # get the dialogue from the item
+        dialogue = SharedServiceRunner._get_last_message(item=item)
+        if dialogue is None:
+            raise ValueError(f"No dialogue found in item {item.id}.")
+
+        # create a new prompt item for the extended dialogue
+
+
+    @staticmethod
+    def combine_dialogues(item: dl.Item, model: dl.Model, progress: dl.Progress, context: dl.Context) -> dl.Item:
         """
         Combine all dialogue segments into one cohesive conversation.
 
+        Function should only receive a list that is at least 2 items long, and dialogue item is passed after the first iteration.
+        List is sorted by segment index in ascending order.
+        
         Args:
-            item (dl.Item): Dataloop item containing the original structure outline
+            item (dl.Item): Dataloop item containing the outline segment to be converted to dialogue
+            model (dl.Model): Dataloop model entity
+            progress (dl.Progress): Dataloop progress object
+            context (dl.Context): Dataloop context object
 
         Returns:
             new_item (dl.Item): Dataloop item containing the combined dialogue
         """
+        # get all segment items
+        filters = dl.Filters()
+        filters.add(field="dir", values=f"/segments/{item.metadata['user']['podcast']['pdf_name']}")
+        filters.sort_by(field="filename")
+        segment_items = item.dataset.items.list(filters=filters)
+        if len(segment_items) < 2:
+            raise ValueError("Insufficient segments for a podcast. At least 2 segments are required to combine dialogues.")
+        
+        # load podcast params and outline
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
         pdf_name = podcast_metadata.get("pdf_name", None)
-
+        outline_item_id = podcast_metadata.get("outline_item_id", None)
+        if outline_item_id is None:
+            raise ValueError(f"No outline item id found in item {item.id}.")
+        outline = SharedServiceRunner._get_outline_dict(outline_item=outline_item_id)
+        
         logger.info("Combining dialogue segments")
 
-        # search for all the segment dialogues
-        if item.dir == "/":
-            segments_dir = f"/segments/{pdf_name}"
-        else:
-            segments_dir = f"{item.dir}/segments/{pdf_name}"
-        filters = dl.Filters()
-        filters.add(field='dir', values=segments_dir)
-        # filters.add(field='metadata.user.podcast.pdf_name', values=pdf_name)
-        segment_items = item.dataset.items.list(filters=filters).all()
-
-        # combine the segment dialogues
-        combined_dialogue = ""
-        for segment_item in segment_items:
-            segment_text = SharedServiceRunner._get_last_message(item=segment_item)
-            if segment_text is None:
-                raise ValueError(f"No segment text found in item {segment_item.id}.")
-            combined_dialogue += segment_text
-
         # create a new prompt item for the combined dialogue
-        new_name = f"{Path(pdf_name).stem}_prompt6_combined_dialogue"
-        prompt_item = dl.PromptItem(name=new_name)
-        prompt_item.add(
-            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": combined_dialogue}]}  # role default is user
-        )
-        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=item.metadata)
+        new_name = f"{Path(pdf_name).stem}_prompt6_combined_dialogue.json"
+        # create a dictionary that indexes the dialogue from each enumerated segment
+        dialogue_dict = {}
+        for idx, segment_item in enumerate(segment_items):
+            dialogue_dict[idx] = SharedServiceRunner._get_last_message(item=segment_item)
+
+        # create a list that pairs each segment item with the next one, and the segment index
+        segment_pairs = list(zip(segment_items[:-1], segment_items[1:], range(len(segment_items))))
+        current_dialogue = dialogue_dict[0]
+
+        model_services = list(model.services.list().all())
+        service = dl.services.get(service_id=model_services[0].id)
+
+        for idx in range(1, len(segment_pairs)):
+            if idx != 1:
+                current_dialogue = SharedServiceRunner._get_last_message(item=new_item)
+            next_section = dialogue_dict[idx]
+            current_section = outline.segments[segment_pairs[idx][2]].section
+
+            template = PodcastPrompts.get_template("podcast_combine_dialogues_prompt")
+            prompt = template.render(
+                outline=outline.model_dump_json(),
+                dialogue_transcript=current_dialogue,
+                next_section=next_section,
+                current_section=current_section,
+            )
+
+            prompt_item = dl.PromptItem(name=new_name)
+            prompt_item.add(
+                message={"content": [{"mimetype": dl.PromptType.TEXT, "value": prompt}]}  # role default is user
+            )
+            new_item = item.dataset.items.upload(prompt_item, 
+                                                            remote_name=new_name, 
+                                                            remote_path=item.dir, 
+                                                            overwrite=True, 
+                                                            item_metadata=item.metadata)
+            
+            ex = service.execute(execution_input={"item": new_item})
+            ex.wait()
+
+        import dtlpy as dl
+        model = dl.models.get(model_id="67ed3672f41fe30fd8d2c3e1")
         return new_item
+
+    @staticmethod
+    def check_dialogue(items: List[dl.Item], progress: dl.Progress, context: dl.Context) -> List[dl.Item]:
+        """
+        Check the dialogue for the first two items
+        """
+        actions = ['continue', 'iterate']
+        # check that the list only has one item left
+        if len(items) < 2:
+            progress.update(action=actions[0])
+        else:
+            progress.update(action=actions[1])
+
+        return items
+
 
     @staticmethod
     def create_convo_json(item: dl.Item, progress: dl.Progress, context: dl.Context) -> dl.Item:

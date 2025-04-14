@@ -2,8 +2,8 @@
     "name": "pdf-to-podcast-demo",
     "displayName": "PDF to Podcast Demo", 
     "description": "Generate a podcast based on a given PDF.",
-    "version": "0.0.16",
-    "scope": "public",
+    "version": "0.1.2",
+    "scope": "project",
     "attributes": {
         "Hub": ["Nvidia", "Dataloop"],
         "Category": ["Application", "Blueprint"],
@@ -77,6 +77,7 @@
                 {
                   "name": "speaker_2_name",
                   "type": "String"
+                }
               ],
               "output": [
                 {
@@ -230,14 +231,22 @@
                 "name": "dialogue_combine_dialogues",
                 "input": [
                     {
-                        "name": "item",
-                        "type": "Item"
+                        "name": "segment_items",
+                        "type": "Item[]"
+                    },
+                    {
+                        "name": "model",
+                        "type": "Model"
                     }
                 ],
                 "output": [
                     {
                         "name": "new_item",
                         "type": "Item"
+                    },
+                    {
+                        "name": "segment_items",
+                        "type": "Item[]"
                     }
                 ],
                 "displayName": "Dialogue Combine Dialogues"
@@ -257,6 +266,26 @@
                     }
                 ],
                 "displayName": "Dialogue Create Convo JSON"
+            },
+            {
+                "name": "dialogue_check_dialogue",
+                "input": [
+                    {
+                        "name": "items",
+                        "type": "Item[]"
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "items",
+                        "type": "Item[]",
+                        "actions": [
+                          "continue",
+                          "iterate"
+                        ]
+                    }
+                ],
+                "displayName": "Dialogue Check Dialogue"
             },
             {
                 "name": "create_final_json",
@@ -378,6 +407,15 @@
           "scope": "project"
         },
         {
+          "name": "dialogue-check-dialogue",
+          "invoke": {
+            "type": "function",
+            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_check_dialogue"
+          },
+          "categories": ["Podcast Generation"],
+          "scope": "project"
+        },
+        {
           "name": "create-final-json",
           "invoke": {
             "type": "function",
@@ -387,5 +425,5 @@
           "scope": "project"
         }
       ]
-    } 
-  }
+    }
+}
