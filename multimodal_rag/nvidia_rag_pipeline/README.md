@@ -10,7 +10,7 @@ And look for: `Retrival Pipeline`.
 ## Prerequisites
 
 - Run the `Extraction Pipeline` in [Preprocessing Multimodal PDF RAG Blueprint](../preprocessing_multimodal_rag/README.md),
-  and use the Final Embeddings Dataset and Model as inputs for this pipeline **Retrival Dataset** and **Retrival Embedding Model**.
+  and use the final embeddings Dataset and Model as inputs for this pipeline **Retrival Dataset** and **Retrival Embedding Model**.
 - **Prompts Dataset** that contains the prompts to be sent for the LLM model.
 
 ## Features
