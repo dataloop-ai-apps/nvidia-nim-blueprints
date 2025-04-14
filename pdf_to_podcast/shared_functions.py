@@ -109,31 +109,6 @@ class TTSConverter:
 
 class SharedServiceRunner(dl.BaseServiceRunner):
     @staticmethod
-    def _collect_text_items(item: dl.Item) -> str:   
-        """
-        Collect the text from the PDF file
-
-        Child items are found in the dataset by searching for the item id in the metadata
-
-        Args:
-            item (dl.Item): The oroginal PDF file to be processed
-
-        Returns:
-            str: The text from the PDF file
-        """
-        filters = dl.Filters()
-        filters.add(field="metadata.user.original_item_id", values=item.id)
-        filters.sort_by(field="name", value=dl.FiltersOrderByDirection.ASCENDING)
-        items = item.dataset.items.list(filters=filters).all()
-        
-        pdf_text = ""
-        for child_item in items:
-            if "text" in child_item.mimetype:
-                buffer = child_item.download(save_locally=False)
-                pdf_text += buffer.read().decode('utf-8')
-        return pdf_text
-
-    @staticmethod
     def prepare_and_summarize_pdf(
         item: dl.Item,
         progress: dl.Progress,
@@ -142,6 +117,8 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         focus: str = None,
         with_references: bool = False,
         duration: int = None,
+        speaker_1_name: str = DEFAULT_SPEAKER_1_NAME,
+        speaker_2_name: str = DEFAULT_SPEAKER_2_NAME,
     ):
         """
         Prepare the PDF file into a prompt item with the text to be processed
@@ -159,16 +136,17 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             dl.Item: The prompt item with the text to be processed
         """
 
-        pdf_text = SharedServiceRunner._collect_text_items(item)
+        pdf_text = SharedServiceRunner._collect_text_items(item)    
+        pdf_name = Path(item.name).stem
         # upload text to dataloop item
-        text_filename = Path(item.name).stem + "_text.txt"
+        text_filename = f"{pdf_name}_text.txt"
         with open(text_filename, "w", encoding='utf-8') as f: 
             f.write(pdf_text)
         text_item = item.dataset.items.upload(local_path=text_filename, 
                                               remote_name=text_filename, 
                                               remote_path=item.dir, # same dir as pdf 
                                               overwrite=True, 
-                                              item_metadata={"user": {"podcast": {"original_item_name": item.name}}})
+                                              item_metadata={"user": {"podcast": {"original_item_name": pdf_name}}})
 
         if monologue is True:
             template = FinancialSummaryPrompts.get_template("monologue_summary_prompt")
@@ -176,7 +154,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             template = PodcastPrompts.get_template("podcast_summary_prompt")
         llm_prompt = template.render(text=pdf_text)
 
-        new_name = f"{Path(item.name).stem}_{'monologue_' if monologue is True else 'podcast_'}prompt1_summary.json"
+        new_name = f"{pdf_name}_{'monologue_' if monologue is True else 'podcast_'}prompt1_summary.json"
         prompt_item = dl.PromptItem(name=new_name)
         prompt_item.add(
             message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
@@ -187,10 +165,12 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             {
                 "podcast": {
                     "pdf_id": item.id,
-                    "pdf_name": item.name,
+                    "pdf_name": pdf_name,
                     "focus": focus,
                     "monologue": monologue,
                     "with_references": with_references,
+                    "speaker_1_name": speaker_1_name,
+                    "speaker_2_name": speaker_2_name,
                 }
             }
         )
@@ -202,7 +182,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
                                              overwrite=True, 
                                              item_metadata={"user": new_item_metadata})
         
-        logger.info(f"Successfully created prompt item for {item.name} in new item {new_item.id}")
+        logger.info(f"Successfully created prompt item for {pdf_name} in new item {new_item.id}")
 
         actions = ['monologue', 'dialogue']
         progress.update(action=actions[0] if monologue is True else actions[1])
@@ -253,9 +233,9 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             remote_name=new_name,
             remote_path=item.dir,
             overwrite=True,
+            item_metadata=item.metadata
         )
         return new_item
-
 
     @staticmethod
     def generate_audio(item: dl.Item, progress, context, voice_mapping: dict = None, output_file: str = None):
@@ -290,10 +270,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         converter = TTSConverter(api_key=api_key)
 
         # Download and process the conversation JSON from the last response
-        prompt_item = dl.PromptItem.from_item(item)
-        messages = prompt_item.to_messages()
-        last_message = messages[-1]
-        conversation_json = last_message.get("content", [])[0].get("text", None)
+        conversation_json = item.download(save_locally=False).read().decode('utf-8')
         if conversation_json is None:
             raise ValueError("No conversation JSON found in the prompt item.")
 
@@ -322,6 +299,31 @@ class SharedServiceRunner(dl.BaseServiceRunner):
                                              item_metadata=item.metadata)
         logger.info(f"Successfully uploaded audio file: {mp3_item.id}")
         return mp3_item
+
+    @staticmethod
+    def _collect_text_items(item: dl.Item) -> str:   
+        """
+        Collect the text from the PDF file
+
+        Child items are found in the dataset by searching for the item id in the metadata
+
+        Args:
+            item (dl.Item): The oroginal PDF file to be processed
+
+        Returns:
+            str: The text from the PDF file
+        """
+        filters = dl.Filters()
+        filters.add(field="metadata.user.original_item_id", values=item.id)
+        filters.sort_by(field="name", value=dl.FiltersOrderByDirection.ASCENDING)
+        items = item.dataset.items.list(filters=filters).all()
+        
+        pdf_text = ""
+        for child_item in items:
+            if "text" in child_item.mimetype:
+                buffer = child_item.download(save_locally=False)
+                pdf_text += buffer.read().decode('utf-8')
+        return pdf_text
 
     @staticmethod
     def _get_last_message(item: dl.Item) -> str:
@@ -370,15 +372,10 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         outline_dict = last_message.get("content", [])[0].get("text", None)
         if outline_dict is None:
             raise ValueError(f"No outline found in item {outline_item.id} metadata.")
-        try:
-            if isinstance(outline_dict, str):
-                outline_dict = json.loads(outline_dict)
-            outline = PodcastOutline.model_validate_json(outline_dict)
-        except json.decoder.JSONDecodeError as e:
-            # check text is a valid json and fixes it if not with pydantic
-            outline_dict = PodcastOutline.model_validate_json(outline_dict)
+        if isinstance(outline_dict, dict):
+            outline_dict = json.dumps(outline_dict)
+        outline = PodcastOutline.model_validate_json(outline_dict)
         return outline
-
 
     @staticmethod
     def _unescape_unicode_string(s: str) -> str:

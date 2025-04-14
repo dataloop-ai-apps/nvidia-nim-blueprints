@@ -181,9 +181,8 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         pdf_name = podcast_metadata.get("pdf_name", None)
 
         # Get the PDF content
-        text_content = []
         # TODO support multiple documents
-        text_content = [f"Document: {item.name}\n{summary}"]
+        text_content = [f"Document: {pdf_name}\n{summary}"]
 
         # Choose template based on whether we have references
         template_name = "podcast_prompt_with_references" if text_content else "podcast_prompt_no_references"
@@ -197,13 +196,13 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         }
 
         # Add text content if we have references
-        if text_content:
+        if text_content != []:
             llm_prompt_params["text"] = "\n\n".join(text_content)
 
         llm_prompt = template.render(**llm_prompt_params)
 
         # Create a new prompt item
-        new_name = f"{Path(item.name).stem}_prompt4_segment_{idx}"
+        new_name = f"{Path(pdf_name).stem}_prompt4_segment_{idx}"
         prompt_item = dl.PromptItem(name=new_name)
         prompt_item.add(
             message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
@@ -220,11 +219,14 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
                 "segment_idx": idx,
                 "total_segments": total_segments,
                 "topics": [topic.title for topic in segment.topics],
-                "references": [reference.filename for reference in segment.references],
+                # "references": [reference.filename for reference in segment.references], # TODO
             }
         )
         new_name = f"{Path(pdf_name).stem}_prompt4_segment_{idx}"
-        new_dir = f"{item.dir}/.dataloop/{pdf_name}"
+        if item.dir == "/":
+            new_dir = f"/segments/{pdf_name}"
+        else:
+            new_dir = f"{item.dir}segments/{pdf_name}"
         new_item = item.dataset.items.upload(
             prompt_item, remote_name=new_name, remote_path=new_dir, overwrite=True, item_metadata=new_metadata
         )
@@ -280,6 +282,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             dl.Item: Dataloop item containing the generated dialogue
         """
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
+        pdf_name = podcast_metadata.get("pdf_name", None)
         speaker_1_name = podcast_metadata.get("speaker_1_name", "Alice")
         speaker_2_name = podcast_metadata.get("speaker_2_name", "Will")
         segment_idx = podcast_metadata.get("segment_idx", None)
@@ -319,25 +322,15 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         )
 
         # Create new prompt item for the dialogue
-        new_name = f"{Path(item.name).stem}_prompt5_dialogue"
+        new_name = f"{Path(pdf_name).stem}_prompt5_segment_{segment_idx:02d}_dialogue"
         prompt_item = dl.PromptItem(name=new_name)
         prompt_item.add(
             message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
         )
 
-        # Update metadata with segment information
-        new_metadata = item.metadata.copy()
-        new_metadata.update(
-            {
-                "segment": outline.segments[segment_idx].section,
-                "segment_idx": segment_idx,
-                "total_segments": total_segments,
-            }
-        )
-
         # Upload the new prompt item
         new_item = item.dataset.items.upload(
-            prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=new_metadata
+            prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=item.metadata
         )
         return new_item
 
@@ -358,10 +351,13 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         logger.info("Combining dialogue segments")
 
         # search for all the segment dialogues
-        segments_dir = f"{item.dir}/.dataloop/{pdf_name}"
+        if item.dir == "/":
+            segments_dir = f"/segments/{pdf_name}"
+        else:
+            segments_dir = f"{item.dir}/segments/{pdf_name}"
         filters = dl.Filters()
         filters.add(field='dir', values=segments_dir)
-        filters.add(field='metadata.system.mimetype', values='*json*')
+        # filters.add(field='metadata.user.podcast.pdf_name', values=pdf_name)
         segment_items = item.dataset.items.list(filters=filters).all()
 
         # combine the segment dialogues
@@ -373,12 +369,12 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             combined_dialogue += segment_text
 
         # create a new prompt item for the combined dialogue
-        new_name = f"{Path(item.name).stem}_prompt6_combined_dialogue"
+        new_name = f"{Path(pdf_name).stem}_prompt6_combined_dialogue"
         prompt_item = dl.PromptItem(name=new_name)
         prompt_item.add(
             message={"content": [{"mimetype": dl.PromptType.TEXT, "value": combined_dialogue}]}  # role default is user
         )
-        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True)
+        new_item = item.dataset.items.upload(prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=item.metadata)
         return new_item
 
     @staticmethod
@@ -400,6 +396,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         logger.info("Formatting final conversation")
 
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
+        pdf_name = podcast_metadata.get("pdf_name", None)
         speaker_1_name = podcast_metadata.get("speaker_1_name", "Alice")
         speaker_2_name = podcast_metadata.get("speaker_2_name", "Will")
 
@@ -416,12 +413,12 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             schema=json.dumps(schema, indent=2),
         )
 
-        prompt_item = dl.PromptItem(name=f"{Path(item.name).stem}_prompt_json")
+        new_name = f"{Path(pdf_name).stem}_prompt7_convo_json"
+        prompt_item = dl.PromptItem(name=new_name)
         prompt_item.add(
             message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
         )
 
-        new_name = f"{Path(item.name).stem}_prompt7_convo_json"
         new_item = item.dataset.items.upload(
             prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=item.metadata
         )

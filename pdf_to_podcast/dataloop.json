@@ -69,7 +69,14 @@
                 {
                   "name": "duration",
                   "type": "Integer"
-                }
+                },
+                {
+                  "name": "speaker_1_name",
+                  "type": "String"
+                },
+                {
+                  "name": "speaker_2_name",
+                  "type": "String"
               ],
               "output": [
                 {

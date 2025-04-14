@@ -2,9 +2,7 @@ import dotenv
 import logging
 import dtlpy as dl
 
-from pydantic import BaseModel
 from typing import Optional
-from elevenlabs.client import ElevenLabs
 
 from pdf_to_podcast.shared_functions import SharedServiceRunner
 from pdf_to_podcast.monologue_flow import MonologueServiceRunner
@@ -108,17 +106,18 @@ if __name__ == "__main__":
     context = dl.Context()
 
     # item should be a pdf file
-    item = dl.items.get(item_id=item_id)
+    # item = dl.items.get(item_id=item_id)
     # go through each function and test whether it works with a real item
-    processed_item = ServiceRunner.prepare_and_summarize_pdf(
-        item, progress, context, monologue, focus, with_references, duration
-    )
-    print(f"1: Successfully processed item: {processed_item.name} ({processed_item.id})")
-    print(f"Link here: {processed_item.platform_url}")
+    # processed_item = ServiceRunner.prepare_and_summarize_pdf(
+    #     item, progress, context, monologue, focus, with_references, duration
+    # )
+    # print(f"1: Successfully processed item: {processed_item.name} ({processed_item.id})")
+    # print(f"Link here: {processed_item.platform_url}")
+    # processed_item = dl.items.get(item_id="67f7bd4a17f2118afa100545") # TODO DEBUG DELETE
 
-    # wait for llama prediction on UI...
-    input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
-    # outline = dl.items.get(item_id="67f765bb9d79af79958872d9") # TODO DEBUG DELETE
+    # # wait for llama prediction on UI...
+    # input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
+    # # outline = dl.items.get(item_id="67f765bb9d79af79958872d9") # TODO DEBUG DELETE
 
     if monologue is True:
         outline = ServiceRunner.monologue_generate_outline(processed_item, progress, context)
@@ -145,46 +144,55 @@ if __name__ == "__main__":
 
 
     else:
-        # if monologue is False:
-        # Generate raw outline
-        outline = ServiceRunner.dialogue_generate_raw_outline(processed_item, progress, context)
-        print(f"2/9: Successfully prepared raw outline: {outline.name} ({outline.id})")
-        print(f"Link here: {outline.platform_url}")
+        # # if monologue is False:
+        # # Generate raw outline
+        # outline = ServiceRunner.dialogue_generate_raw_outline(processed_item, progress, context)
+        # print(f"2/9: Successfully prepared raw outline: {outline.name} ({outline.id})")
+        # print(f"Link here: {outline.platform_url}")
+
+        # # wait for llama prediction on UI...
+        # input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
+
+        # # Generate structured outline
+        # structured_outline = ServiceRunner.dialogue_generate_structured_outline(outline, progress, context)
+        # print(f"3/9: Successfully prepared structured outline: {structured_outline.name} ({structured_outline.id})")
+        # print(f"Link here: {structured_outline.platform_url}")
 
         # wait for llama prediction on UI...
-        input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
+        # input("Please get llama json podcast prediction via UI. Once it's finished, press Enter to continue...")
+        structured_outline = dl.items.get(item_id="67f7beb017f211494010069c") # TODO DEBUG DELETE
 
-        # Generate structured outline
-        structured_outline = ServiceRunner.dialogue_generate_structured_outline(outline, progress, context)
-        print(f"3/9: Successfully prepared structured outline: {structured_outline.name} ({structured_outline.id})")
-        print(f"Link here: {structured_outline.platform_url}")
+        # # Process segments
+        # segments = ServiceRunner.dialogue_process_segments(structured_outline, progress, context)
+        # print(f"4/9: Successfully processed segments: [{', '.join([segment.name for segment in segments])}]")
+        # # print(f"Link here: {segments.platform_url}")
 
-        # wait for llama prediction on UI...
-        input("Please get llama json prediction via UI. Once it's finished, press Enter to continue...")
-        # structured_outline = dl.items.get(item_id="67f7684f9d79af8b368874d6") # TODO DEBUG DELETE
+        # # wait for llama prediction on UI...
+        # # input("Please get llama iteration prediction via UI. Once it's finished, press Enter to continue...")
+        # filters = dl.Filters()
+        # filters.add(field="dir", values=f"/segments/{structured_outline.metadata['user']['podcast']['pdf_name']}", operator=dl.FiltersOperations.EQUAL)
+        # segments = structured_outline.dataset.items.list(filters=filters)
+        # segments.print()
+        # print(f"4/9: Successfully processed {segments.items_count} segments")
 
-        # Process segments
-        segments = ServiceRunner.dialogue_process_segments(structured_outline, progress, context)
-        print(f"4/9: Successfully processed segments: {segments.name} ({segments.id})")
-        print(f"Link here: {segments.platform_url}")
+        # # Generate dialogue
+        # for segment in segments:
+        #     dialogue = ServiceRunner.dialogue_generate_dialogue(segment, progress, context)
+        # print(f"5/9: Successfully prepared dialogue: {dialogue.name} ({dialogue.id})")
+        # print(f"Link here: {dialogue.platform_url}")
 
-        # wait for llama prediction on UI...
-        input("Please get llama iteration prediction via UI. Once it's finished, press Enter to continue...")
-
-        # Generate dialogue
-        dialogue = ServiceRunner.dialogue_generate_dialogue(segments, progress, context)
-        print(f"5/9: Successfully prepared dialogue: {dialogue.name} ({dialogue.id})")
-        print(f"Link here: {dialogue.platform_url}")
-
-        # wait for llama prediction on UI...
-        input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
+        # # wait for llama prediction on UI...
+        # input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
+        structured_outline = dl.items.get(item_id="67f7beb017f211494010069c") # TODO DEBUG DELETE
 
         # Combine dialogues
-        combined_dialogue = ServiceRunner.dialogue_combine_dialogues(dialogue, progress, context)
+        combined_dialogue = ServiceRunner.dialogue_combine_dialogues(structured_outline, progress, context)
         print(f"6/9: Successfully combined dialogues: {combined_dialogue.name} ({combined_dialogue.id})")
         print(f"Link here: {combined_dialogue.platform_url}")
+
         # wait for llama prediction on UI...
         input("Please get llama iteration prediction via UI. Once it's finished, press Enter to continue...")
+        # combined_dialogue = dl.items.get(item_id="67f7cd4f4ccc174d3aa15afd") # TODO DEBUG DELETE
 
         # Create convo json
         convo_json = ServiceRunner.dialogue_create_convo_json(combined_dialogue, progress, context)
@@ -192,13 +200,13 @@ if __name__ == "__main__":
         print(f"Link here: {convo_json.platform_url}")
 
     # wait for llama prediction on UI...
-    input("Please get llama json prediction via UI. Once it's finished, press Enter to continue...")
-
+    input("Please get llama json convo prediction via UI. Once it's finished, press Enter to continue...")
+    # convo_json = dl.items.get(item_id="67f7ce449d79afd4298926de") # TODO DEBUG DELETE
     # Generate audio
     try:
         # Create final conversation
         final_transcript = ServiceRunner.create_final_json(convo_json, progress, context)
-        print(f"n-1/n: Successfully prepared final conversation: {final_transcript.name} ({final_transcript.id})")
+        print(f"end-1: Successfully prepared final conversation: {final_transcript.name} ({final_transcript.id})")
         print(f"Link here: {final_transcript.platform_url}")
 
         output_podcast = SharedServiceRunner.generate_audio(final_transcript, progress, context)
