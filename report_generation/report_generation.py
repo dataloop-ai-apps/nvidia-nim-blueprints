@@ -512,7 +512,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         item_research = self._create_prompt_item(
             item=item,
             prompt_text=section_writer_instructions,
-            prompt_name=f"research_section_{section_number}",
+            prompt_name=f"researches_section_{section_number}",
             main_item=main_item
         )
         return item_research
