@@ -376,7 +376,7 @@ class ReportGenerator(dl.BaseServiceRunner):
             for name, description in section_patterns:
                 # Default research to true for content sections, false for intro/conclusion
                 research = True
-                if name.lower() in ['introduction', 'conclusion']:
+                if name in ['Introduction', 'Conclusion']:
                     research = False
                 
                 sections.append({
