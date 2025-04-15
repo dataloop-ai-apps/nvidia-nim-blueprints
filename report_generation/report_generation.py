@@ -6,6 +6,7 @@ from tavily import TavilyClient, AsyncTavilyClient
 import logging
 import json
 import re
+import time
 
 logger = logging.getLogger('[ReportGeneration]')
 
@@ -153,6 +154,48 @@ class ReportGenerator(dl.BaseServiceRunner):
         
         return params
     
+    def _create_prompt_item(self, item, prompt_text, prompt_name, main_item=None):
+        """
+        Utility function to create and upload a prompt item
+        
+        Args:
+            item: The parent Dataloop item
+            prompt_text: The text content for the prompt
+            prompt_name: Name for the new prompt item
+            main_item: Optional main item to link to (defaults to item if None)
+            
+        Returns:
+            item_prompt: The created prompt item
+        """
+        if main_item is None:
+            main_item = item
+            
+        prompt_item = dl.PromptItem(name=prompt_name)
+        prompt1 = dl.Prompt(key='1')
+        prompt1.add_element(
+            mimetype=dl.PromptType.TEXT,
+            value=prompt_text
+        )
+        prompt_item.prompts.append(prompt1)
+        
+        # Upload the prompt item
+        item_prompt = item.dataset.items.upload(
+            prompt_item, 
+            overwrite=True, 
+            remote_path=f"/.dataloop/temp_prompts_{main_item.name.replace('.json','')}/",
+            item_metadata={
+                "user":{
+                    "main_item": main_item.id
+                }
+            })
+        
+        # Update metadata on main item
+        main_item.metadata.setdefault('user', {})
+        main_item.metadata['user'][f'item_{prompt_name}'] = item_prompt.id
+        main_item.update()
+        
+        return item_prompt
+    
     def report_search_queries(self, item: dl.Item):
         """
         First node in the pipeline - Extract parameters and generate report plan queries
@@ -195,21 +238,11 @@ class ReportGenerator(dl.BaseServiceRunner):
         Important:
         Each line should be a search query and nothing else."""
         
-        prompt_item_search_queries = dl.PromptItem(name='report_search_queries')
-        prompt1 = dl.Prompt(key='1')
-        prompt1.add_element(
-            mimetype=dl.PromptType.TEXT,
-            value=report_planner_query_writer_instructions
+        item_search_queries = self._create_prompt_item(
+            item=item,
+            prompt_text=report_planner_query_writer_instructions,
+            prompt_name='report_search_queries'
         )
-        prompt_item_search_queries.prompts.append(prompt1)
-        item_search_queries = item.dataset.items.upload(prompt_item_search_queries, overwrite=True, remote_path="/.dataloop")
-
-        item.metadata.setdefault('user', {})
-        item.metadata['user']['item_search_queries'] = item_search_queries.id
-        item.update(True)
-        item_search_queries.metadata.setdefault('user', {})
-        item_search_queries.metadata['user']['main_item'] = item.id
-        item_search_queries.update(True)  
         
         return item_search_queries
     
@@ -269,22 +302,14 @@ class ReportGenerator(dl.BaseServiceRunner):
         ]
         
         Ensure your response can be parsed as valid JSON with the proper structure."""
-        prompt_item_report_planning = dl.PromptItem(name='report_planning')
-        prompt1 = dl.Prompt(key='1')
-        prompt1.add_element(
-            mimetype=dl.PromptType.TEXT,
-            value=report_planner_instructions
-        )
-        prompt_item_report_planning.prompts.append(prompt1)
-        item_report_planning = item.dataset.items.upload(prompt_item_report_planning, overwrite=True, remote_path="/.dataloop")
 
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
-        main_item.metadata['user']['item_report_planning'] = item_report_planning.id
-        main_item.update(True)
-
-        item_report_planning.metadata.setdefault('user', {})
-        item_report_planning.metadata['user']['main_item'] = main_item.id
-        item_report_planning.update(True)
+        item_report_planning = self._create_prompt_item(
+            item=item,
+            prompt_text=report_planner_instructions,
+            prompt_name='report_planning',
+            main_item=main_item
+        )
         return item_report_planning
     
     def report_sections(self, item: dl.Item):
@@ -351,7 +376,7 @@ class ReportGenerator(dl.BaseServiceRunner):
             for name, description in section_patterns:
                 # Default research to true for content sections, false for intro/conclusion
                 research = True
-                if name.lower() in ['introduction', 'conclusion', 'summary']:
+                if name in ['Introduction', 'Conclusion']:
                     research = False
                 
                 sections.append({
@@ -362,7 +387,6 @@ class ReportGenerator(dl.BaseServiceRunner):
                 })
 
         research_sections_prompt_items = []
-        non_research_sections_prompt_items = []
 
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         main_item.metadata.setdefault('user', {})
@@ -380,7 +404,7 @@ class ReportGenerator(dl.BaseServiceRunner):
                 Description:
                 {section['description']}
 
-                When generating 2 search queries, ensure they:
+                When generating {self.params['number_of_queries']} search queries, ensure they:
                 1. Cover different aspects of the topic (e.g., core features, real-world applications, technical architecture)
                 2. Include specific technical terms related to the topic
                 3. Target recent information by including year markers where relevant (e.g., "2023")
@@ -396,91 +420,16 @@ class ReportGenerator(dl.BaseServiceRunner):
                 Important:
                 Each line should be a search query and nothing else."""
 
-                prompt_item_research = dl.PromptItem(name=f'section_{i}')
-                prompt1 = dl.Prompt(key='1')
-                prompt1.add_element(
-                    mimetype=dl.PromptType.TEXT,
-                    value=query_writer_instructions
+                item_research = self._create_prompt_item(
+                    item=item,
+                    prompt_text=query_writer_instructions,
+                    prompt_name=f'section_{i}',
+                    main_item=main_item
                 )
-                prompt_item_research.prompts.append(prompt1)
-                item_research = item.dataset.items.upload(prompt_item_research, overwrite=True, remote_path="/.dataloop")
-
-                main_item.metadata.setdefault('user', {})
-                main_item.metadata['user'][f'section_item_{i}'] = item_research.id
-                main_item.update(True)
-                item_research.metadata.setdefault('user', {})
-                item_research.metadata['user']['main_item'] = main_item.id
-                item_research.update(True)
+                
                 research_sections_prompt_items.append(item_research)
-            else:
-                final_section_writer_instructions = f"""You are an expert technical writer crafting a section that synthesizes information from the rest of the report.
-
-                Section to write: 
-                {section['name']}
-
-                Available report content:
-                {section['description']}
-
-                1. Section-Specific Approach:
-
-                For Introduction:
-                - Use # for report title (Markdown format)
-                - 50-100 word limit
-                - Write in simple and clear language
-                - Focus on the core motivation for the report in 1-2 paragraphs
-                - Use a clear narrative arc to introduce the report
-                - Include NO structural elements (no lists or tables)
-                - No sources section needed
-
-                For Conclusion/Summary:
-                - Use ## for section title (Markdown format)
-                - 100-150 word limit
-                - For comparative reports:
-                    * Must include a focused comparison table using Markdown table syntax
-                    * Table should distill insights from the report
-                    * Keep table entries clear and concise
-                - For non-comparative reports: 
-                    * Only use ONE structural element IF it helps distill the points made in the report:
-                    * Either a focused table comparing items present in the report (using Markdown table syntax)
-                    * Or a short list using proper Markdown list syntax:
-                    - Use `*` or `-` for unordered lists
-                    - Use `1.` for ordered lists
-                    - Ensure proper indentation and spacing
-                - End with specific next steps or implications
-                - No sources section needed
-
-                3. Writing Approach:
-                - Use concrete details over general statements
-                - Make every word count
-                - Focus on your single most important point
-
-                4. Quality Checks:
-                - For introduction: 50-100 word limit, # for report title, no structural elements, no sources section
-                - For conclusion: 100-150 word limit, ## for section title, only ONE structural element at most, no sources section
-                - Markdown format
-                - Do not include word count or any preamble in your response
-                
-                Important:
-                Generate a report section based on the provided content."""
-
-                prompt_item_non_research = dl.PromptItem(name=f'section_{i}')
-                prompt1 = dl.Prompt(key='1')
-                prompt1.add_element(
-                    mimetype=dl.PromptType.TEXT,
-                    value=final_section_writer_instructions
-                ) 
-                prompt_item_non_research.prompts.append(prompt1)
-                item_non_research = item.dataset.items.upload(prompt_item_non_research, overwrite=True, remote_path="/.dataloop")
-                
-                main_item.metadata.setdefault('user', {})
-                main_item.metadata['user'][f'section_item_{i}'] = item_non_research.id
-                main_item.update(True)
-                item_non_research.metadata.setdefault('user', {})
-                item_non_research.metadata['user']['main_item'] = main_item.id
-                item_non_research.update(True)
-                non_research_sections_prompt_items.append(item_non_research)
         
-        return research_sections_prompt_items, non_research_sections_prompt_items
+        return research_sections_prompt_items
         
     def write_final_section_research(self, item: dl.Item, source_str: str):
         """
@@ -560,23 +509,93 @@ class ReportGenerator(dl.BaseServiceRunner):
         Important:
         Generate a report section based on the provided content."""
         
-        prompt_item_research = dl.PromptItem(name=f'research_section_{item.name}')
-        prompt1 = dl.Prompt(key='1')
-        prompt1.add_element(
-            mimetype=dl.PromptType.TEXT,
-            value=section_writer_instructions
+        item_research = self._create_prompt_item(
+            item=item,
+            prompt_text=section_writer_instructions,
+            prompt_name=f"researches_section_{section_number}",
+            main_item=main_item
         )
-        prompt_item_research.prompts.append(prompt1)
-        item_research = item.dataset.items.upload(prompt_item_research, overwrite=True, remote_path="/.dataloop")
-
-        main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
-        main_item.metadata.setdefault('user', {})
-        main_item.metadata['user'][f'item_research_{item.name.strip(".json")}'] = item_research.id
-        main_item.update()
-        item_research.metadata.setdefault('user', {})
-        item_research.metadata['user']['main_item'] = main_item.id
-        item_research.update()
         return item_research
+    
+    def write_non_research_sections(self, item: dl.Item):
+        """
+        Process and write sections that don't require research after research sections are completed
+        """
+        main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
+        sections = main_item.metadata['user']['sections']
+        non_research_sections_prompt_items = []
+        
+        # Get all completed research sections to provide context
+        completed_sections_context = ""
+        for section_name, section_text in self.all_completed_sections.items():
+            completed_sections_context += f"\n\n{section_name}:\n{section_text}"
+        
+        # Process sections that don't require research
+        for i, section in enumerate(sections):
+            if not section.get('research', False):
+                final_section_writer_instructions = f"""You are an expert technical writer crafting a section that synthesizes information from the rest of the report.
+
+                Section to write: 
+                {section['name']}
+
+                Description:
+                {section['description']}
+
+                Available report content from other sections:
+                {completed_sections_context}
+
+                1. Section-Specific Approach:
+
+                For Introduction:
+                - Use # for report title (Markdown format)
+                - 50-100 word limit
+                - Write in simple and clear language
+                - Focus on the core motivation for the report in 1-2 paragraphs
+                - Use a clear narrative arc to introduce the report
+                - Include NO structural elements (no lists or tables)
+                - No sources section needed
+
+                For Conclusion/Summary:
+                - Use ## for section title (Markdown format)
+                - 100-150 word limit
+                - For comparative reports:
+                    * Must include a focused comparison table using Markdown table syntax
+                    * Table should distill insights from the report
+                    * Keep table entries clear and concise
+                - For non-comparative reports: 
+                    * Only use ONE structural element IF it helps distill the points made in the report:
+                    * Either a focused table comparing items present in the report (using Markdown table syntax)
+                    * Or a short list using proper Markdown list syntax:
+                    - Use `*` or `-` for unordered lists
+                    - Use `1.` for ordered lists
+                    - Ensure proper indentation and spacing
+                - End with specific next steps or implications
+                - No sources section needed
+
+                2. Writing Approach:
+                - Use concrete details over general statements
+                - Make every word count
+                - Focus on your single most important point
+
+                3. Quality Checks:
+                - For introduction: 50-100 word limit, # for report title, no structural elements, no sources section
+                - For conclusion: 100-150 word limit, ## for section title, only ONE structural element at most, no sources section
+                - Markdown format
+                - Do not include word count or any preamble in your response
+                
+                Important:
+                Generate a report section based on the provided content."""
+
+                item_non_research = self._create_prompt_item(
+                    item=item,
+                    prompt_text=final_section_writer_instructions,
+                    prompt_name=f'section_{i}',
+                    main_item=main_item
+                )
+                non_research_sections_prompt_items.append(item_non_research)
+        
+        return non_research_sections_prompt_items
+
     
     def gather_sections(self, item: dl.Item):
         # Get section name and description from the item metadata
@@ -600,7 +619,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         self.all_completed_sections[section_name] = section_text
         
         return item
-    
+
     def write_final_report(self, item: dl.Item):
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         # Maintain original order
