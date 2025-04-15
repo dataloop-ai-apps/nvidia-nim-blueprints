@@ -10,8 +10,7 @@ And look for: `Retrival Pipeline`.
 ## Prerequisites
 
 - Run the `Extraction Pipeline` in [Preprocessing Multimodal PDF RAG Blueprint](../preprocessing_multimodal_rag/README.md),
-  and use the final embeddings Dataset and Model as inputs for this pipeline **Retrival Dataset** and **Retrival Embedding Model**.
-- **Prompts Dataset** that contains the prompts to be sent for the LLM model.
+  and use the final embeddings Dataset and Model as inputs for this `Retrival Pipeline` **Retrival Dataset** and **Retrival Embedding Model**.
 
 ## Features
 
@@ -24,9 +23,9 @@ And look for: `Retrival Pipeline`.
 
 ### 1. Dataset
 - **Type**: Storage
-- **Function**: `dataset_handler`
+- **Function**: `clone_item`
 - **Service Name**: pipeline-utils
-- **Description**: Manages dataset storage and retrieval.
+- **Description**: Manages dataset storage for prompt items.
 
 ### 2. Embedding Model
 - **Type**: ML
@@ -51,7 +50,7 @@ And look for: `Retrival Pipeline`.
 1. **Install the Blueprint**: Install the pipeline from Dataloop Marketplace.
 
 2. **Set up the Pipeline**: Choose the appropriate **Retrival Dataset** and **Embedding Model** for the **Retriever Prompt** Service,
-   and choose the **Prompts Dataset** that will store prompts for the LLM model.
+   and choose the dataset that will store prompts for the LLM model.
 
 3. **Run the Pipeline**: Make sure you have inserted your nim api key to the models services and run the pipeline.
 

@@ -322,8 +322,7 @@
                 "z": 0
               },
               "componentGroupName": "data",
-              "repeatable": true,
-              "variableDataset": "prompts_dataset"
+              "repeatable": true
             }
           }
         ],
@@ -340,11 +339,6 @@
             "type": "Model",
             "description": "Generative model that generate the response.",
             "value": "$var(gen_ai_model__model)"
-          },
-          {
-            "name": "prompts_dataset",
-            "type": "Dataset",
-            "description": "Insert Prompts Dataset ID."
           },
           {
             "name": "retrieval_dataset",

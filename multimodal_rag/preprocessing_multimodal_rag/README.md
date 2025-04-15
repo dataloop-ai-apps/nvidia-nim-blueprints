@@ -9,7 +9,9 @@ And look for: `Etraction Pipeline`.
 
 ## Prerequisites
 
-- This blueprint is designed to be used in conjunction with `Retrival Pipeline` in [NVIDIA RAG Pipeline](../nvidia_rag_pipeline/README.md).
+- This blueprint is designed to be used in conjunction with `Retrival Pipeline` in [NVIDIA RAG Pipeline](../nvidia_rag_pipeline/README.md). \
+  Please run this `Extraction Pipeline` first and use the final embeddings Dataset and Model as inputs for the 
+  `Retrival Pipeline` **Retrival Dataset** and **Retrival Embedding Model**.
 
 ## Features
 
@@ -58,7 +60,11 @@ And look for: `Etraction Pipeline`.
 
 1. **Install the Blueprint**: Install the pipeline from Dataloop Marketplace.
 
-2. **Run the Pipeline**: Choose your dataset, insert your nim api key to the models services and run the pipeline.
+2. **Set up the Pipeline**: Choose the 2 datasets:
+   - **Source Dataset**: The dataset containing the PDF documents to be processed.
+   - **Target Dataset**: The dataset containing the extracted chunks with the embeddings.
+
+3. **Run the Pipeline**: Make sure you have inserted your nim api key to the models services and run the pipeline.
 
 
 ## Contributing
