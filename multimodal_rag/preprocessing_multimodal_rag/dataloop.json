@@ -2,11 +2,17 @@
   "name": "preprocessing-multimodal-rag-blueprint",
   "version": "0.0.20",
   "attributes": {
-    "Category": ["Pipeline", "Blueprint"],
+    "Category": [
+      "Pipeline",
+      "Blueprint"
+    ],
     "Pipeline Type": "GenAI",
     "Provider": "NVIDIA",
     "Developed By": "Dataloop",
-    "Hub": ["Nvidia", "Dataloop"],
+    "Hub": [
+      "Nvidia",
+      "Dataloop"
+    ],
     "Media Type": [
       "Text",
       "Image"
