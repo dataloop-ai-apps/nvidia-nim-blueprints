@@ -620,35 +620,62 @@ class ReportGenerator(dl.BaseServiceRunner):
         
         return item
     
+    # def write_final_report(self, item: dl.Item):
+    #     main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
+    #     sections = main_item.metadata['user']['sections']
+        
+    #     max_retries = 30 
+    #     retry_interval = 10
+        
+    #     for attempt in range(max_retries):
+    #         all_sections_completed = True
+    #         missing_sections = []
+            
+    #         for section in sections:
+    #             if section['name'] not in self.all_completed_sections:
+    #                 all_sections_completed = False
+    #                 missing_sections.append(section['name'])
+            
+    #         if all_sections_completed:
+    #             logger.info("All sections have been completed. Generating final report.")
+    #             break
+            
+    #         if attempt < max_retries - 1:
+    #             logger.info(f"Waiting for sections to complete. Missing: {', '.join(missing_sections)}. Retry {attempt+1}/{max_retries}")
+    #             time.sleep(retry_interval)
+        
+    #     if not all_sections_completed:
+    #         logger.warning(f"Timed out waiting for all sections to complete. Missing: {', '.join(missing_sections)}")
+    #         return item 
+
+    #     ordered_sections = [self.all_completed_sections[section['name']] for section in sections]
+        
+    #     final_report = "\n\n".join([section_text for section_text in ordered_sections])
+        
+    #     prompt_item = dl.PromptItem.from_item(main_item)
+    #     prompt_item.add(
+    #         prompt_key='1', 
+    #         message={
+    #             "role": "assistant",
+    #             "content": [{
+    #                 "mimetype": dl.PromptType.TEXT,
+    #                 "value": final_report
+    #             }]
+    #         },
+    #         model_info={
+    #             'name': 'llama_3.3_70b_instruct',
+    #             'confidence': 1.0,
+    #             'model_id': 'llama_3.3_70b_instruct-1'
+    #         }
+    #     )
+    #     return main_item
+
     def write_final_report(self, item: dl.Item):
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
-        sections = main_item.metadata['user']['sections']
-        max_retries = 30 
-        retry_interval = 10
+        # Maintain original order
+        ordered_sections = [self.all_completed_sections[section['name']] for section in main_item.metadata['user']['sections']]
         
-        for attempt in range(max_retries):
-            all_sections_completed = True
-            missing_sections = []
-            
-            for section in sections:
-                if section['name'] not in self.all_completed_sections:
-                    all_sections_completed = False
-                    missing_sections.append(section['name'])
-            
-            if all_sections_completed:
-                logger.info("All sections have been completed. Generating final report.")
-                break
-            
-            if attempt < max_retries - 1:
-                logger.info(f"Waiting for sections to complete. Missing: {', '.join(missing_sections)}. Retry {attempt+1}/{max_retries}")
-                time.sleep(retry_interval)
-        
-        if not all_sections_completed:
-            logger.warning(f"Timed out waiting for all sections to complete. Missing: {', '.join(missing_sections)}")
-            return item 
-
-        ordered_sections = [self.all_completed_sections[section['name']] for section in sections]
-        
+        # Compile final report
         final_report = "\n\n".join([section_text for section_text in ordered_sections])
         
         prompt_item = dl.PromptItem.from_item(main_item)
