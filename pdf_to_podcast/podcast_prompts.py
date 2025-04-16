@@ -237,18 +237,19 @@ You should keep all analogies, stories, examples, and quotes from the transcript
 
 # Template for combining multiple dialogue sections
 PODCAST_COMBINE_DIALOGUES_PROMPT_STR = """You are revising a podcast transcript to make it more engaging while preserving its content and structure. You have access to three key elements:
+the podcast outline, the current dialogue transcript, and the next section to be integrated.
 
-1. The podcast outline
+1. THE PODCAST OUTLINE
 <outline>
 {{ outline }}
 </outline>
 
-2. The current dialogue transcript
+2. THE CURRENT DIALOGUE TRANSCRIPT
 <dialogue>
 {{ dialogue_transcript }}
 </dialogue>
 
-3. The next section to be integrated
+3. THE NEXT SECTION TO BE INTEGRATED
 <next_section>
 {{ next_section }}
 </next_section>

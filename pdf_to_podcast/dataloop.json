@@ -2,7 +2,7 @@
     "name": "pdf-to-podcast-demo",
     "displayName": "PDF to Podcast Demo", 
     "description": "Generate a podcast based on a given PDF.",
-    "version": "0.1.2",
+    "version": "0.1.5",
     "scope": "project",
     "attributes": {
         "Hub": ["Nvidia", "Dataloop"],
@@ -43,7 +43,6 @@
           "entryPoint": "pdf_to_podcast/main.py",
           "className": "ServiceRunner",
           "integrations": [
-            "dl-ngc-api-key",
             "dl-elevenlabs-api-key"
           ],
           "functions": [
@@ -90,30 +89,6 @@
                 }
               ],
               "displayName": "Prepare and Summarize PDF"
-            },
-            {
-              "name": "generate_audio",
-              "input": [
-                {
-                  "name": "item",
-                  "type": "Item"
-                },
-                {
-                  "name": "voice_mapping",
-                  "type": "Json"
-                },
-                {
-                  "name": "output_file",
-                  "type": "String"
-                }
-              ],
-              "output": [
-                {
-                  "name": "new_item",
-                  "type": "Item"
-                }
-              ],
-              "displayName": "ElevenLabs Generate Audio"
             },
             {
                 "name": "monologue_generate_outline",
@@ -231,8 +206,8 @@
                 "name": "dialogue_combine_dialogues",
                 "input": [
                     {
-                        "name": "segment_items",
-                        "type": "Item[]"
+                        "name": "item",
+                        "type": "Item"
                     },
                     {
                         "name": "model",
@@ -243,10 +218,6 @@
                     {
                         "name": "new_item",
                         "type": "Item"
-                    },
-                    {
-                        "name": "segment_items",
-                        "type": "Item[]"
                     }
                 ],
                 "displayName": "Dialogue Combine Dialogues"
@@ -268,26 +239,6 @@
                 "displayName": "Dialogue Create Convo JSON"
             },
             {
-                "name": "dialogue_check_dialogue",
-                "input": [
-                    {
-                        "name": "items",
-                        "type": "Item[]"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "items",
-                        "type": "Item[]",
-                        "actions": [
-                          "continue",
-                          "iterate"
-                        ]
-                    }
-                ],
-                "displayName": "Dialogue Check Dialogue"
-            },
-            {
                 "name": "create_final_json",
                 "input": [
                     {
@@ -302,6 +253,30 @@
                     }
                 ],
                 "displayName": "Create Final Transcript JSON"
+            },
+            {
+              "name": "generate_audio",
+              "input": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                },
+                {
+                  "name": "voice_mapping",
+                  "type": "Json"
+                },
+                {
+                  "name": "output_file",
+                  "type": "String"
+                }
+              ],
+              "output": [
+                {
+                  "name": "new_item",
+                  "type": "Item"
+                }
+              ],
+              "displayName": "ElevenLabs Generate Audio"
             }
           ] 
         }
@@ -402,15 +377,6 @@
           "invoke": {
             "type": "function",
             "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_create_convo_json"
-          },
-          "categories": ["Podcast Generation"],
-          "scope": "project"
-        },
-        {
-          "name": "dialogue-check-dialogue",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_check_dialogue"
           },
           "categories": ["Podcast Generation"],
           "scope": "project"
