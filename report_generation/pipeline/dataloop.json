@@ -521,21 +521,28 @@
                 "io": "output"
               }
             ],
-            "name": "Wait",
-            "type": "custom",
-            "namespace": {
-              "functionName": "wait_for_cycle",
-              "serviceName": "wait-node",
-              "moduleName": "wait-node",
-              "packageName": "wait-node"
-            },
-            "appName": "Wait Node",
-            "dpkName": "wait-node",
             "metadata": {
               "position": {
                 "x": 13368.227028740775,
                 "y": 10272.379657321506,
                 "z": 0
+              },
+              "serviceConfig": {
+                "initParams": {},
+                "name": "wait-node",
+                "moduleName": "wait-node",
+                "runtime": {
+                  "podType": "regular-xs",
+                  "runnerImage": "dataloopai/dtlpy-agent:cpu.py3.8.opencv4.7",
+                  "concurrency": 1,
+                  "autoscaler": {
+                    "minReplicas": 0,
+                    "maxReplicas": 1,
+                    "queueLength": 10
+                  }
+                },
+                "operation": "none",
+                "packageRevision": "0.1.5"
               },
               "componentGroupName": "data",
               "customNodeConfig": {
@@ -548,7 +555,17 @@
               },
               "repeatable": true,
               "pipelineNodeName": "Wait Node"
-            }
+            },
+            "name": "Wait",
+            "type": "custom",
+            "namespace": {
+              "functionName": "wait_for_cycle",
+              "serviceName": "wait-node",
+              "moduleName": "wait-node",
+              "packageName": "wait-node"
+            },
+            "appName": "Wait Node",
+            "dpkName": "wait-node"
           },
           {
             "id": "31859ff4-82a7-4522-9bb7-bc67969da79e",
