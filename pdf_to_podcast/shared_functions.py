@@ -21,11 +21,11 @@ dotenv.load_dotenv('.env')
 logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
 
 # Default voices configuration
-DEFAULT_VOICE_1 = os.getenv("DEFAULT_VOICE_1", "EXAVITQu4vr4xnSDxMaL")
-DEFAULT_VOICE_2 = os.getenv("DEFAULT_VOICE_2", "bIHbv24MWmeRgasZH58o")
+DEFAULT_VOICE_1 = "EXAVITQu4vr4xnSDxMaL"
+DEFAULT_VOICE_2 = "bIHbv24MWmeRgasZH58o"
 DEFAULT_VOICE_MAPPING = {"speaker-1": DEFAULT_VOICE_1, "speaker-2": DEFAULT_VOICE_2}
-DEFAULT_SPEAKER_1_NAME = os.getenv("DEFAULT_SPEAKER_1_NAME", "Alice")
-DEFAULT_SPEAKER_2_NAME = os.getenv("DEFAULT_SPEAKER_2_NAME", "Will")
+DEFAULT_SPEAKER_1_NAME = "Alice"
+DEFAULT_SPEAKER_2_NAME = "Will"
 
 
 class DialogueEntry(BaseModel):

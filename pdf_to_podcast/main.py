@@ -25,7 +25,9 @@ class ServiceRunner(dl.BaseServiceRunner):
             focus: Optional[str] = None,
             with_references: Optional[bool] = False,
             duration: Optional[int] = None,
-    ):
+            speaker_1_name: Optional[str] = None,
+            speaker_2_name: Optional[str] = None,
+    ):  
         """
         Prepare the PDF text for the summary
 
@@ -41,7 +43,8 @@ class ServiceRunner(dl.BaseServiceRunner):
             str: Prompt for the summary
         """
         return SharedServiceRunner.prepare_and_summarize_pdf(
-            item, progress, context, monologue, focus, with_references, duration
+            item, progress, context, monologue, focus, with_references, duration,
+            speaker_1_name, speaker_2_name
         )
 
     @staticmethod
