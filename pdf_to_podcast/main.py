@@ -107,7 +107,7 @@ if __name__ == "__main__":
     with_references = False
     duration = None
 
-    item_id = "67d05c15c3d298140be63374"
+    item_id = "67d05c15c3d298140be63374" # this is the original pdf item
 
     progress = dl.Progress()
     context = dl.Context()
@@ -116,6 +116,10 @@ if __name__ == "__main__":
 
     # item should be a pdf file
     item = dl.items.get(item_id=item_id)
+
+    # pdf2txt_service = dl.services.get(service_id=pdf2txt_service_id)
+    # pdf2txt_service.execute()
+
     # go through each function and test whether it works with a real item
     processed_item = ServiceRunner.prepare_and_summarize_pdf(
         item, progress, context, monologue, focus, with_references, duration

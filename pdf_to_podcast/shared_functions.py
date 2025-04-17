@@ -12,7 +12,7 @@ from elevenlabs.client import ElevenLabs
 
 from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
 from pdf_to_podcast.podcast_prompts import PodcastPrompts
-from pdf_to_podcast.podcast_types import PodcastOutline
+from pdf_to_podcast.podcast_types import Conversation, PodcastOutline
 
 # Load environment variables from .env file
 dotenv.load_dotenv(".env")
@@ -121,10 +121,10 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         context: dl.Context,
         monologue: bool,
         focus: str = None,
-        with_references: bool = False,
+        with_references: bool = None,
         duration: int = None,
-        speaker_1_name: str = DEFAULT_SPEAKER_1_NAME,
-        speaker_2_name: str = DEFAULT_SPEAKER_2_NAME,
+        speaker_1_name: str = None,
+        speaker_2_name: str = None,
     ):
         """
         Prepare the PDF file into a prompt item with the text to be processed
@@ -157,6 +157,14 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         # gather all text together
         pdf_text = SharedServiceRunner._collect_text_items(parent_item)
         pdf_name = Path(parent_item.name).stem
+
+        if speaker_1_name is None:
+            speaker_1_name = DEFAULT_SPEAKER_1_NAME
+        if speaker_2_name is None:
+            speaker_2_name = DEFAULT_SPEAKER_2_NAME
+        if with_references is None:
+            with_references = False
+
         # upload text to dataloop item
         text_filename = f"{pdf_name}_text.txt"
         with open(text_filename, "w", encoding="utf-8") as f:
@@ -246,25 +254,33 @@ class SharedServiceRunner(dl.BaseServiceRunner):
                 f"No conversation JSON found in the conversation segment item {item.id}."
             )
 
-        # Convert string to JSON if needed
         if isinstance(conversation_json_str, str):
+            # First decode the string safely
             conversation_json = json.loads(conversation_json_str)
         else:
             conversation_json = conversation_json_str
 
-        # Ensure all strings are unescaped
+        # Remove unnecessary escaping from dialogue text entries
         if "dialogue" in conversation_json:
             for entry in conversation_json["dialogue"]:
-                if "text" in entry:
+                if "text" in entry and isinstance(entry["text"], str):
+                    # First, handle escaped quotes
+                    entry["text"] = entry["text"].replace('\\"', '"')
+                    # Then handle any remaining escaped slashes
+                    entry["text"] = entry["text"].replace("\\\\", "\\")
+                    # Finally, handle any remaining single slashes
+                    entry["text"] = entry["text"].replace("\\", "")
+                    # Clean up any remaining unicode escapes
                     entry["text"] = SharedServiceRunner._unescape_unicode_string(
                         entry["text"]
                     )
+        final_conversation = Conversation.model_validate(conversation_json)
 
         # upload the final conversation
         new_name = f"{Path(pdf_name).stem}_final_transcript.json"
         json_path = Path.cwd() / new_name
         with open(json_path, "w", encoding="utf-8") as f:
-            json_file = json.dumps(conversation_json, indent=2)
+            json_file = final_conversation.model_dump_json(indent=2)
             f.write(json_file)
 
         new_item = item.dataset.items.upload(
@@ -448,20 +464,17 @@ class SharedServiceRunner(dl.BaseServiceRunner):
 
 
 if __name__ == "__main__":
-    item = dl.items.get(item_id="67ffb06a180762951a5bf328")
+    item = dl.items.get(item_id="")
 
     progress = dl.Progress()
     context = dl.Context()
 
-    p_item = SharedServiceRunner.prepare_and_summarize_pdf(
+    p_item = SharedServiceRunner.create_final_json(
         item=item,
         progress=progress,
         context=context,
-        monologue=False,
-        focus="",
-        with_references=False,
-        duration=None,
     )
 
     print(p_item)
+    print(p_item.platform_url)
     print()

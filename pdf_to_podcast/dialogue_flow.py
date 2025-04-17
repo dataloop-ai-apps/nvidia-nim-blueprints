@@ -11,6 +11,8 @@ from pdf_to_podcast.podcast_types import PodcastOutline, Conversation, PodcastSe
 # Configure logging
 logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
 
+DEFAULT_SPEAKER_1_NAME = "Alice"
+DEFAULT_SPEAKER_2_NAME = "Will"
 
 class DialogueServiceRunner(dl.BaseServiceRunner):
     @staticmethod
@@ -338,8 +340,8 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
         pdf_name = podcast_metadata.get("pdf_name", None)
-        speaker_1_name = podcast_metadata.get("speaker_1_name", "Alice")
-        speaker_2_name = podcast_metadata.get("speaker_2_name", "Will")
+        speaker_1_name = podcast_metadata.get("speaker_1_name", DEFAULT_SPEAKER_1_NAME)
+        speaker_2_name = podcast_metadata.get("speaker_2_name", DEFAULT_SPEAKER_2_NAME)
         segment_idx = podcast_metadata.get("segment_idx", None)
         total_segments = podcast_metadata.get("total_segments", None)
         if segment_idx is None or total_segments is None:
@@ -535,6 +537,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         dialogue = SharedServiceRunner._get_last_message(item=item)
         if dialogue is None:
             raise ValueError(f"No dialogue found in item {item.id}.")
+        dialogue += "Do not include titles in unscaped quotes."
 
         schema = Conversation.model_json_schema()
         template = PodcastPrompts.get_template("podcast_dialogue_prompt")

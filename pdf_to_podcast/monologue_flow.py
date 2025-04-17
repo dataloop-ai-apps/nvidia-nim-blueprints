@@ -10,6 +10,7 @@ from pdf_to_podcast.shared_functions import SharedServiceRunner
 # Configure logging
 logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
 
+SPEAKER_1_NAME = "Alex"
 
 class MonologueServiceRunner(dl.BaseServiceRunner):
     @staticmethod
@@ -103,7 +104,7 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
 
         focus = podcast_metadata.get("focus", None)
         pdf_name = podcast_metadata.get("pdf_name", None)
-        speaker_1_name = podcast_metadata.get("speaker_1_name", None)
+        speaker_1_name = podcast_metadata.get("speaker_1_name", SPEAKER_1_NAME)
 
         # get the summary from the summary item
         summary_item_id = podcast_metadata.get("summary_item_id", None)
@@ -159,7 +160,7 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         """
         podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
         pdf_name = podcast_metadata.get("pdf_name", None)
-        speaker_1_name = podcast_metadata.get("speaker_1_name", "Alex")
+        speaker_1_name = podcast_metadata.get("speaker_1_name", SPEAKER_1_NAME)
 
         # prep prompt item to get the monologue
         prompt_item = dl.PromptItem.from_item(item)
