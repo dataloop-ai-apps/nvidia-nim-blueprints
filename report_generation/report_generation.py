@@ -19,6 +19,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         self.tavily_client = TavilyClient(api_key=self.tavily_api_key)
 
         self.all_completed_sections = {}
+        self.params = {}
 
     # Utility functions
     def deduplicate_and_format_sources(self, search_response, max_tokens_per_source, include_raw_content=True):
@@ -208,7 +209,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         """            
         # Extract parameters from the prompt
         prompt_item = dl.PromptItem.from_item(item)
-        prompt_text = prompt_item.to_json()['prompts']['1'][0]['value']
+        prompt_text = prompt_item.to_json()['prompts'][list(prompt_item.to_json()['prompts'].keys())[0]][0]['value']
         self.params = self._extract_parameters_from_prompt(prompt_text)
 
         # Validate parameters
@@ -316,6 +317,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         """
         Process the LLM's search queries and generate report sections
         """
+        self.all_completed_sections = {}
         sections_str = item.annotations.list()[0].coordinates
         sections = []
 
@@ -391,6 +393,10 @@ class ReportGenerator(dl.BaseServiceRunner):
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         main_item.metadata.setdefault('user', {})
         main_item.metadata['user']['sections'] = sections
+
+        prompt_main_item = dl.PromptItem.from_item(main_item)
+        prompt_text = prompt_main_item.to_json()['prompts'][list(prompt_main_item.to_json()['prompts'].keys())[0]][0]['value']
+        self.params = self._extract_parameters_from_prompt(prompt_text)
         
         # Process sections that require research
         for i, section in enumerate(sections):
