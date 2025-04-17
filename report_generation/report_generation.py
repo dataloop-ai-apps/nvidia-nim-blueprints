@@ -209,7 +209,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         """            
         # Extract parameters from the prompt
         prompt_item = dl.PromptItem.from_item(item)
-        prompt_text = prompt_item.to_json()['prompts']['1'][0]['value']
+        prompt_text = prompt_item.to_json()['prompts'][list(prompt_item.to_json()['prompts'].keys())[0]][0]['value']
         self.params = self._extract_parameters_from_prompt(prompt_text)
 
         # Validate parameters
@@ -394,7 +394,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         main_item.metadata['user']['sections'] = sections
 
         prompt_main_item = dl.PromptItem.from_item(main_item)
-        prompt_text = prompt_main_item.to_json()['prompts']['1'][0]['value']
+        prompt_text = prompt_main_item.to_json()['prompts'][list(prompt_main_item.to_json()['prompts'].keys())[0]][0]['value']
         self.params = self._extract_parameters_from_prompt(prompt_text)
         
         # Process sections that require research
