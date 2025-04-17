@@ -19,6 +19,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         self.tavily_client = TavilyClient(api_key=self.tavily_api_key)
 
         self.all_completed_sections = {}
+        self.params = {}
 
     # Utility functions
     def deduplicate_and_format_sources(self, search_response, max_tokens_per_source, include_raw_content=True):
