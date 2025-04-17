@@ -317,6 +317,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         """
         Process the LLM's search queries and generate report sections
         """
+        self.all_completed_sections = {}
         sections_str = item.annotations.list()[0].coordinates
         sections = []
 
