@@ -2,7 +2,7 @@
     "name": "report-generation",
     "displayName": "Report Generation", 
     "description": "Generate a report based on a given topic and report structure.",
-    "version": "0.0.16",
+    "version": "0.0.22",
     "scope": "public",
     "attributes": {
         "Hub": ["Nvidia", "Dataloop"],
@@ -14,7 +14,7 @@
     "codebase": {
       "type": "git",
       "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
-      "gitTag": "0.0.16"
+      "gitTag": "0.0.22"
     },
     "components": {
       "computeConfigs": [
@@ -34,10 +34,10 @@
       ],
       "pipelineNodes": [
         {
-          "name": "report-planning-node",
+          "name": "report-search-queries-node",
           "invoke": {
             "type": "function",
-            "namespace": "report-generation-compute-config.report-generation-module.report_planning"
+            "namespace": "report-generation-compute-config.report-generation-module.report_search_queries"
           },
           "categories": ["Report Generation"],
           "scope": "project"
@@ -52,6 +52,15 @@
           "scope": "project"
         },
         {
+          "name": "report-planning-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.report_planning"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
           "name": "report-sections-node",
           "invoke": {
             "type": "function",
@@ -61,19 +70,37 @@
           "scope": "project"
         },
         {
-          "name": "research-agents-node",
+          "name": "write-final-section-research-node",
           "invoke": {
             "type": "function",
-            "namespace": "report-generation-compute-config.report-generation-module.research_agents"
+            "namespace": "report-generation-compute-config.report-generation-module.write_final_section_research"
           },
           "categories": ["Report Generation"],
           "scope": "project"
         },
         {
-          "name": "report-writing-node",
+          "name": "gather-sections-node",
           "invoke": {
             "type": "function",
-            "namespace": "report-generation-compute-config.report-generation-module.report_writing"
+            "namespace": "report-generation-compute-config.report-generation-module.gather_sections"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "write-non-research-sections-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.write_non_research_sections"
+          },
+          "categories": ["Report Generation"],
+          "scope": "project"
+        },
+        {
+          "name": "write-final-report-node",
+          "invoke": {
+            "type": "function",
+            "namespace": "report-generation-compute-config.report-generation-module.write_final_report"
           },
           "categories": ["Report Generation"],
           "scope": "project"
@@ -86,12 +113,11 @@
           "entryPoint": "report_generation/report_generation.py",
           "className": "ReportGenerator",
           "integrations": [
-            "dl-ngc-api-key",
             "dl-tavily-api-key"
           ],
           "functions": [
             {
-              "name": "report_planning",
+              "name": "report_search_queries",
               "input": [
                 {
                   "name": "item",
@@ -104,95 +130,131 @@
                   "type": "Item"
                 }
               ],
+              "displayName": "Report Search Queries"
+            },
+            {
+              "name": "search_tavily",
+              "input": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "output": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                },
+                {
+                  "name": "source_str",
+                  "type": "String"
+                }
+              ],
+              "displayName": "Search Tavily"
+            },
+            {
+              "name": "report_planning",
+              "input": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                },
+                {
+                  "name": "source_str",
+                  "type": "String"
+                }
+              ],
+              "output": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
               "displayName": "Report Planning"
             },
             {
-                "name": "search_tavily",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Search Tavily"
+              "name": "report_sections",
+              "input": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "output": [
+                {
+                  "name": "research_sections_prompt_items",
+                  "type": "Item[]"
+                }
+              ],
+              "displayName": "Report Sections"
             },
             {
-                "name": "report_sections",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    },
-                    {
-                        "name": "intro",
-                        "type": "Item"
-                    },
-                    {
-                        "name": "body",
-                        "type": "Item"
-                    },
-                    {
-                        "name": "conclusion",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Report Sections"
+              "name": "write_final_section_research",
+              "input": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                },
+                {
+                  "name": "source_str",
+                  "type": "String"
+                }
+              ],
+              "output": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "displayName": "Write Final Section Research"
             },
             {
-                "name": "research_agents",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Research Agents"
+              "name": "gather_sections",
+              "input": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "output": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "displayName": "Gather Sections"
             },
             {
-                "name": "report_writing",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    },
-                    {
-                        "name": "intro",
-                        "type": "Item"
-                    },
-                    {
-                        "name": "body",
-                        "type": "Item"
-                    },
-                    {
-                        "name": "conclusion",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Report Writing"
+              "name": "write_non_research_sections",
+              "input": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "output": [
+                {
+                  "name": "non_research_sections_prompt_items",
+                  "type": "Item[]"
+                }
+              ],
+              "displayName": "Write Non Research Sections"
+            },
+            {
+              "name": "write_final_report",
+              "input": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "output": [
+                {
+                  "name": "item",
+                  "type": "Item"
+                }
+              ],
+              "displayName": "Write Final Report"
             }
           ]
         }
