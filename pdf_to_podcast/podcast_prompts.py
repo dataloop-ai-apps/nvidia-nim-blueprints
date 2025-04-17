@@ -239,17 +239,17 @@ You should keep all analogies, stories, examples, and quotes from the transcript
 PODCAST_COMBINE_DIALOGUES_PROMPT_STR = """You are revising a podcast transcript to make it more engaging while preserving its content and structure. You have access to three key elements:
 the podcast outline, the current dialogue transcript, and the next section to be integrated.
 
-1. THE PODCAST OUTLINE
+1. The podcast outline
 <outline>
 {{ outline }}
 </outline>
 
-2. THE CURRENT DIALOGUE TRANSCRIPT
+2. The current dialogue transcript
 <dialogue>
 {{ dialogue_transcript }}
 </dialogue>
 
-3. THE NEXT SECTION TO BE INTEGRATED
+3. The next section to be integrated
 <next_section>
 {{ next_section }}
 </next_section>

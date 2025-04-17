@@ -461,8 +461,6 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         for idx in range(1, len(segment_pairs)):
             if idx != 1:
                 current_dialogue = SharedServiceRunner._get_last_message(item=new_item)
-                print(f"Current dialogue: {current_dialogue}")  # TODO DEBUG DELETE
-                print(f"New item: {new_item.name} ({new_item.id})")  # TODO DEBUG DELETE
             next_section = dialogue_dict[idx]
             current_section = outline.segments[idx].section
 
