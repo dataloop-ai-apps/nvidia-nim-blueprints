@@ -392,6 +392,10 @@ class ReportGenerator(dl.BaseServiceRunner):
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         main_item.metadata.setdefault('user', {})
         main_item.metadata['user']['sections'] = sections
+
+        prompt_main_item = dl.PromptItem.from_item(main_item)
+        prompt_text = prompt_main_item.to_json()['prompts']['1'][0]['value']
+        self.params = self._extract_parameters_from_prompt(prompt_text)
         
         # Process sections that require research
         for i, section in enumerate(sections):
