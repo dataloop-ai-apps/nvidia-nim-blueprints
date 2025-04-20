@@ -42,7 +42,3 @@ The PDF to Podcast blueprint is designed to transform PDF documents into audio c
 
 - NVIDIA NGC API Key
 - ElevenLabs API Key
-
-## Contributing
-
-We welcome contributions! Please see our [contributing guidelines] for more information on how to get involved.

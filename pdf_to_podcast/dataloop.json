@@ -35,342 +35,386 @@
             }
           }
         }
-      ],
-      "modules": [
-        {
-          "name": "pdf2podcast-module",
-          "computeConfig": "pdf2podcast-compute-config",
-          "entryPoint": "pdf_to_podcast/main.py",
-          "className": "ServiceRunner",
-          "integrations": [
-            "dl-ngc-api-key",
-            "dl-elevenlabs-api-key"
-          ],
-          "functions": [
-            {
-              "name": "prepare_and_summarize_pdf",
-              "input": [
-                {
-                  "name": "item",
-                  "type": "Item"
-                },
-                {
-                  "name": "monologue",
-                  "type": "Boolean"
-                },
-                {
-                  "name": "focus",
-                  "type": "String"
-                },
-                {
-                  "name": "duration",
-                  "type": "Integer"
-                }
-              ],
-              "output": [
-                {
-                  "name": "item",
-                  "type": "Item",
-                  "actions": [
-                    "monologue",
-                    "dialogue"
-                  ]  
-                }
-              ],
-              "displayName": "Prepare and Summarize PDF"
-            },
-            {
-              "name": "generate_audio",
-              "input": [
-                {
-                  "name": "item",
-                  "type": "Item"
-                },
-                {
-                  "name": "voice_mapping",
-                  "type": "String"
-                }
-              ],
-              "output": [
-                {
-                  "name": "item",
-                  "type": "Item"
-                }
-              ],
-              "displayName": "ElevenLabs Generate Audio"
-            },
-            {
-                "name": "monologue_generate_outline",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Monologue Generate Outline"
-            },
-            { 
-                "name": "monologue_generate_monologue",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Monologue Generate Monologue"
-            },
-            {
-                "name": "monologue_create_convo_json",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Monologue Create Convo JSON"
-            },
-            {
-                "name": "dialogue_generate_raw_outline",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Dialogue Generate Raw Outline"
-            },
-            {
-                "name": "dialogue_generate_structured_outline",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Dialogue Generate Structured Outline"
-            },
-            {
-                "name": "dialogue_process_segments",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Dialogue Process Segments"
-            },
-            {
-                "name": "dialogue_generate_dialogue",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Dialogue Generate Dialogue"
-            },
-            {
-                "name": "dialogue_combine_dialogues",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Dialogue Combine Dialogues"
-            },
-            {
-                "name": "dialogue_create_convo_json",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Dialogue Create Convo JSON"
-            },
-            {
-                "name": "dialogue_create_final_conversation",
-                "input": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "output": [
-                    {
-                        "name": "item",
-                        "type": "Item"
-                    }
-                ],
-                "displayName": "Dialogue Create Final Conversation"
-            }
-          ] 
-        }
-      ],
-      "pipelineNodes": [
-        {
-          "name": "prepare-and-summarize-pdf",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.prepare_and_summarize_pdf"
+      }
+    ],
+    "modules": [
+      {
+        "name": "pdf2podcast-module",
+        "computeConfig": "pdf2podcast-compute-config",
+        "entryPoint": "pdf_to_podcast/main.py",
+        "className": "ServiceRunner",
+        "integrations": [
+          "dl-elevenlabs-api-key"
+        ],
+        "functions": [
+          {
+            "name": "prepare_and_summarize_pdf",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              },
+              {
+                "name": "monologue",
+                "type": "Boolean"
+              },
+              {
+                "name": "focus",
+                "type": "String"
+              },
+              {
+                "name": "with_references",
+                "type": "Boolean"
+              },
+              {
+                "name": "duration",
+                "type": "Integer"
+              },
+              {
+                "name": "speaker_1_name",
+                "type": "String"
+              },
+              {
+                "name": "speaker_2_name",
+                "type": "String"
+              }
+            ],
+            "output": [
+              {
+                "name": "new_item",
+                "type": "Item",
+                "actions": [
+                  "monologue",
+                  "dialogue"
+                ]
+              }
+            ],
+            "displayName": "Prepare and Summarize PDF"
           },
-          "categories": ["Podcast Generation"],
-          "scope": "project"
+          {
+            "name": "monologue_generate_outline",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "new_item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Monologue Generate Outline"
+          },
+          {
+            "name": "monologue_generate_monologue",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "new_item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Monologue Generate Monologue"
+          },
+          {
+            "name": "monologue_create_convo_json",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "new_item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Monologue Create Convo JSON"
+          },
+          {
+            "name": "dialogue_generate_raw_outline",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "new_item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Dialogue Generate Raw Outline"
+          },
+          {
+            "name": "dialogue_generate_structured_outline",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "new_item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Dialogue Generate Structured Outline"
+          },
+          {
+            "name": "dialogue_process_segments",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "segment_items",
+                "type": "Item[]"
+              }
+            ],
+            "displayName": "Dialogue Process Segments"
+          },
+          {
+            "name": "dialogue_generate_dialogue",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "new_item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Dialogue Generate Dialogue"
+          },
+          {
+            "name": "dialogue_combine_dialogues",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              },
+              {
+                "name": "model",
+                "type": "Model"
+              }
+            ],
+            "output": [
+              {
+                "name": "new_item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Dialogue Combine Dialogues"
+          },
+          {
+            "name": "dialogue_create_convo_json",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "new_item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Dialogue Create Convo JSON"
+          },
+          {
+            "name": "create_final_json",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "new_item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Create Final Transcript JSON"
+          },
+          {
+            "name": "generate_audio",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              },
+              {
+                "name": "voice_mapping",
+                "type": "Json"
+              },
+              {
+                "name": "output_file",
+                "type": "String"
+              }
+            ],
+            "output": [
+              {
+                "name": "new_item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "ElevenLabs Generate Audio"
+          }
+        ]
+      }
+    ],
+    "pipelineNodes": [
+      {
+        "name": "prepare-and-summarize-pdf",
+        "invoke": {
+          "type": "function",
+          "namespace": "pdf2podcast-compute-config.pdf2podcast-module.prepare_and_summarize_pdf"
         },
-        {
-          "name": "generate-audio",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.generate_audio"
-          },
-          "categories": ["Podcast Generation"],
-          "scope": "project"
+        "categories": [
+          "Podcast Generation"
+        ],
+        "scope": "project"
+      },
+      {
+        "name": "generate-audio",
+        "invoke": {
+          "type": "function",
+          "namespace": "pdf2podcast-compute-config.pdf2podcast-module.generate_audio"
         },
-        {
-          "name": "monologue-generate-outline",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.monologue_generate_outline"
-          },
-          "categories": ["Podcast Generation"],
-          "scope": "project"
+        "categories": [
+          "Podcast Generation"
+        ],
+        "scope": "project"
+      },
+      {
+        "name": "monologue-generate-outline",
+        "invoke": {
+          "type": "function",
+          "namespace": "pdf2podcast-compute-config.pdf2podcast-module.monologue_generate_outline"
         },
-        {
-          "name": "monologue-generate-monologue",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.monologue_generate_monologue"
-          },
-          "categories": ["Podcast Generation"],
-          "scope": "project"
+        "categories": [
+          "Podcast Generation"
+        ],
+        "scope": "project"
+      },
+      {
+        "name": "monologue-generate-monologue",
+        "invoke": {
+          "type": "function",
+          "namespace": "pdf2podcast-compute-config.pdf2podcast-module.monologue_generate_monologue"
         },
-        {
-          "name": "monologue-create-convo-json",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.monologue_create_convo_json"
-          },
-              "categories": ["Podcast Generation"],
-          "scope": "project"
+        "categories": [
+          "Podcast Generation"
+        ],
+        "scope": "project"
+      },
+      {
+        "name": "monologue-create-convo-json",
+        "invoke": {
+          "type": "function",
+          "namespace": "pdf2podcast-compute-config.pdf2podcast-module.monologue_create_convo_json"
         },
-        {
-          "name": "dialogue-generate-raw-outline",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_raw_outline"
-          },
-          "categories": ["Podcast Generation"],
-          "scope": "project"
+        "categories": [
+          "Podcast Generation"
+        ],
+        "scope": "project"
+      },
+      {
+        "name": "dialogue-generate-raw-outline",
+        "invoke": {
+          "type": "function",
+          "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_raw_outline"
         },
-        {
-          "name": "dialogue-generate-structured-outline",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_structured_outline"
-          },
-          "categories": ["Podcast Generation"],
-          "scope": "project"
+        "categories": [
+          "Podcast Generation"
+        ],
+        "scope": "project"
+      },
+      {
+        "name": "dialogue-generate-structured-outline",
+        "invoke": {
+          "type": "function",
+          "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_structured_outline"
         },
-        {
-          "name": "dialogue-process-segments",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_process_segments"
-          },
-          "categories": ["Podcast Generation"],
-          "scope": "project"
+        "categories": [
+          "Podcast Generation"
+        ],
+        "scope": "project"
+      },
+      {
+        "name": "dialogue-process-segments",
+        "invoke": {
+          "type": "function",
+          "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_process_segments"
         },
-        {
-          "name": "dialogue-generate-dialogue",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_dialogue"
-          },
-          "categories": ["Podcast Generation"],
-          "scope": "project"
+        "categories": [
+          "Podcast Generation"
+        ],
+        "scope": "project"
+      },
+      {
+        "name": "dialogue-generate-dialogue",
+        "invoke": {
+          "type": "function",
+          "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_dialogue"
         },
-        {
-          "name": "dialogue-combine-dialogues",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_combine_dialogues"
-          },
-          "categories": ["Podcast Generation"],
-          "scope": "project"
+        "categories": [
+          "Podcast Generation"
+        ],
+        "scope": "project"
+      },
+      {
+        "name": "dialogue-combine-dialogues",
+        "invoke": {
+          "type": "function",
+          "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_combine_dialogues"
         },
-        {
-          "name": "dialogue-create-convo-json",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_create_convo_json"
-          },
-          "categories": ["Podcast Generation"],
-          "scope": "project"
+        "categories": [
+          "Podcast Generation"
+        ],
+        "scope": "project"
+      },
+      {
+        "name": "dialogue-create-convo-json",
+        "invoke": {
+          "type": "function",
+          "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_create_convo_json"
         },
-        {
-          "name": "dialogue-create-final-conversation",
-          "invoke": {
-            "type": "function",
-            "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_create_final_conversation"
-          },
-          "categories": ["Podcast Generation"],
-          "scope": "project"
-        }
-      ]
-    } 
+        "categories": [
+          "Podcast Generation"
+        ],
+        "scope": "project"
+      },
+      {
+        "name": "create-final-json",
+        "invoke": {
+          "type": "function",
+          "namespace": "pdf2podcast-compute-config.pdf2podcast-module.create_final_json"
+        },
+        "categories": [
+          "Podcast Generation"
+        ],
+        "scope": "project"
+      }
+    ]
   }
+}
