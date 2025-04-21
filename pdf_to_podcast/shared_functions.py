@@ -189,7 +189,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             template = PodcastPrompts.get_template("podcast_summary_prompt")
         llm_prompt = template.render(text=pdf_text)
 
-        new_name = f"{pdf_name}_{'monologue_' if monologue is True else 'podcast_'}prompt1_summary.json"
+        new_name = f"{pdf_name}_{'monologue_' if monologue is True else 'podcast_'}prompt1_summary"
         prompt_item = dl.PromptItem(name=new_name)
         prompt_item.add(
             message={
@@ -277,7 +277,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         final_conversation = Conversation.model_validate(conversation_json)
 
         # upload the final conversation
-        new_name = f"{Path(pdf_name).stem}_final_transcript.json"
+        new_name = f"{Path(pdf_name).stem}_final_transcript"
         json_path = Path.cwd() / new_name
         with open(json_path, "w", encoding="utf-8") as f:
             json_file = final_conversation.model_dump_json(indent=2)
@@ -414,7 +414,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         return text
 
     @staticmethod
-    def _get_summary_text(summary_item_id: str) -> str:
+    def _get_summary_from_id(summary_item_id: str) -> str:
         """
         Get the summary text from the summary item id.
         """
@@ -426,6 +426,10 @@ class SharedServiceRunner(dl.BaseServiceRunner):
                 f"Summary item is not a text file for id: {summary_item_id}"
             )
         text = summary_item.download(save_locally=False).read().decode("utf-8")
+        if text is None:
+            raise ValueError(
+                f"No text found in summary item {summary_item_id}. Please check that the item was prepared correctly."
+            )
         return text
 
     @staticmethod
@@ -443,6 +447,72 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             outline_dict = json.dumps(outline_dict)
         outline = PodcastOutline.model_validate_json(outline_dict)
         return outline
+
+    @staticmethod
+    def _get_podcast_metadata(item: dl.Item) -> Dict:
+        """
+        Get the metadata from the item.
+        """
+        metadata = item.metadata.get("user", {}).get("podcast", None)
+        if metadata is None:
+            raise ValueError(
+                f"No podcast metadata found in the prompt item. Please check that item was prepared correctly."
+            )
+        if metadata.get("pdf_name") is None:
+            raise ValueError(
+                f"No pdf_name found in the prompt item. Please check that item was prepared correctly."
+            )
+
+        # take all the metadata fields and check whether they exist, if not set default values
+        podcast_metadata = {
+            "pdf_name": metadata.get("pdf_name"),
+            "monologue": metadata.get("monologue", False),
+            "focus": metadata.get("focus", None),
+            "with_references": metadata.get("with_references", False),
+            "speaker_1_name": metadata.get("speaker_1_name", DEFAULT_SPEAKER_1_NAME),
+            "speaker_2_name": metadata.get("speaker_2_name", DEFAULT_SPEAKER_2_NAME),
+            "duration": metadata.get("duration", 10),
+            "references": metadata.get("references", None),
+            "summary_item_id": metadata.get("summary_item_id", None),
+            "outline_item_id": metadata.get("outline_item_id", None),
+            "segment_idx": metadata.get("segment_idx", None),
+            "total_segments": metadata.get("total_segments", None),
+        }
+
+        return podcast_metadata
+
+    @staticmethod
+    def _get_dataloop_dir(item: dl.Item) -> str:
+        if item.dir == "/":
+            hidden_dir = f"/.dataloop"
+        else:
+            hidden_dir = f"{item.dir}/.dataloop"
+        return hidden_dir
+
+    @staticmethod
+    def _create_and_upload_prompt_item(
+        dataset: dl.Dataset,
+        item_name: str,
+        prompt: str,
+        remote_dir: str,
+        item_metadata: dict,
+        overwrite: bool = True,
+    ) -> dl.Item:
+        """
+        Create a prompt item and upload it to the item.
+        """
+        prompt_item = dl.PromptItem(name=item_name)
+        prompt_item.add(
+            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": prompt}]}
+        )
+        prompt_item = dataset.items.upload(
+            prompt_item,
+            remote_name=item_name,
+            remote_path=remote_dir,
+            overwrite=overwrite,
+            item_metadata=item_metadata,
+        )
+        return prompt_item
 
     @staticmethod
     def _unescape_unicode_string(s: str) -> str:

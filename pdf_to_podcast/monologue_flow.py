@@ -3,14 +3,15 @@ import logging
 import dtlpy as dl
 
 from pathlib import Path
-from pdf_to_podcast.podcast_types import Conversation  # Podcast conversation data structures
+from pdf_to_podcast.podcast_types import (
+    Conversation,
+)  # Podcast conversation data structures
 from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
 from pdf_to_podcast.shared_functions import SharedServiceRunner
 
 # Configure logging
 logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
 
-SPEAKER_1_NAME = "Alex"
 
 class MonologueServiceRunner(dl.BaseServiceRunner):
     @staticmethod
@@ -27,33 +28,25 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
             item (dl.Item): the prompt item
         """
         # get the podcast metadata from the item
-        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
-        if podcast_metadata is None:
-            raise ValueError("No podcast metadata found in the prompt item. Try running the previous step again.")
-        focus = podcast_metadata.get("focus", None)
-        pdf_name = podcast_metadata.get("pdf_name", None)
-
+        podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
+        focus = podcast_metadata["focus"]
+        pdf_name = podcast_metadata["pdf_name"]
         # get the summary from the last prompt annotation
-        prompt_item = dl.PromptItem.from_item(item)
-        messages = prompt_item.to_messages()
-        last_message = messages[-1]
-        summary = last_message.get("content", [])[0].get("text", None)
-        if summary is None:
-            raise ValueError("No text summary found in the prompt item. Try running the previous step again.")
+        summary = SharedServiceRunner._get_summary_from_id(item.id)
 
         logger.info("Preparing to generate outline")
 
         # create summary file
         summary_filename = f"{Path(pdf_name).stem}_summary.txt"
-        with open(summary_filename, "w", encoding='utf-8') as f:
+        with open(summary_filename, "w", encoding="utf-8") as f:
             f.write(summary)
 
         summary_item = item.dataset.items.upload(
             local_path=summary_filename,
             remote_name=summary_filename,
-            remote_path=item.dir,
+            remote_path=SharedServiceRunner._get_dataloop_dir(item=item),
             overwrite=True,
-            item_metadata={"user": item.metadata['user']},
+            item_metadata={"user": item.metadata["user"]},
         )
         logger.info(f"Saved PDF summary as text item {summary_item.id}")
 
@@ -63,24 +56,28 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         else:
             documents = [f"Document: {item.filename}\n{summary}"]
             # TODO support multiple documents as context
-            # # get all documents 
+            # # get all documents
             # reference_docs = MonologueServiceRunner._get_references(item)
             # documents = [f"Document: {item.filename}\n{summary}" for doc in reference_docs]
 
-        template = FinancialSummaryPrompts.get_template("monologue_multi_doc_synthesis_prompt")
+        template = FinancialSummaryPrompts.get_template(
+            "monologue_multi_doc_synthesis_prompt"
+        )
         llm_prompt = template.render(
-            focus_instructions=focus if focus is not None else None, documents="\n\n".join(documents)
+            focus_instructions=focus if focus is not None else None,
+            documents="\n\n".join(documents),
         )
 
         new_name = f"{Path(pdf_name).stem}_prompt2_summary_to_outline"
-        prompt_item = dl.PromptItem(name=new_name)
-        prompt_item.add(
-            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
-        )
         new_metadata = item.metadata
         new_metadata["user"]["podcast"]["summary_item_id"] = summary_item.id
-        new_item = item.dataset.items.upload(
-            prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=new_metadata
+
+        new_item = SharedServiceRunner._create_and_upload_prompt_item(
+            dataset=item.dataset,
+            item_name=new_name,
+            prompt=llm_prompt,
+            remote_dir=SharedServiceRunner._get_dataloop_dir(item=item),
+            item_metadata=new_metadata,
         )
         return new_item
 
@@ -98,50 +95,44 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
             item (dl.Item): the prompt item
         """
         # prep prompt item to get the outline
-        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
-        if podcast_metadata is None:
-            raise ValueError("No podcast metadata found in the prompt item. Try running the previous step again.")
-
-        focus = podcast_metadata.get("focus", None)
-        pdf_name = podcast_metadata.get("pdf_name", None)
-        speaker_1_name = podcast_metadata.get("speaker_1_name", SPEAKER_1_NAME)
-
+        podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
+        focus = podcast_metadata["focus"]
+        pdf_name = podcast_metadata["pdf_name"]
+        speaker_1_name = podcast_metadata["speaker_1_name"]
         # get the summary from the summary item
-        summary_item_id = podcast_metadata.get("summary_item_id", None)
-        try:
-            summary = SharedServiceRunner._get_summary_text(summary_item_id)
-        except ValueError as e:
-            raise ValueError(f"Error getting summary text: {e} for item {item.id}")
+        summary = SharedServiceRunner._get_summary_from_id(
+            podcast_metadata["summary_item_id"]
+        )
 
         logger.info("Preparing to generate monologue")
 
         # get the outline from the last respoinse
-        prompt_item = dl.PromptItem.from_item(item)
-        messages = prompt_item.to_messages()
-        last_message = messages[-1]
-        outline = last_message.get("content", [])[0].get("text", None)
+        outline = SharedServiceRunner._get_last_message(item)
         if outline is None:
             raise ValueError("No outline found in the prompt item.")
 
-        documents = [f"Document: {item.filename}\n{summary}"]
+        documents = [
+            f"Document: {item.filename}\n{summary}"
+        ]  # TODO support multiple documents as context
 
         template = FinancialSummaryPrompts.get_template("monologue_transcript_prompt")
         llm_prompt = template.render(
             raw_outline=outline,
             documents=documents,
-            focus=focus if focus else "key financial metrics and performance indicators",
+            focus=(
+                focus if focus else "key financial metrics and performance indicators"
+            ),
             speaker_1_name=speaker_1_name,
         )
 
         # add the prompt to the prompt item
         new_name = f"{Path(pdf_name).stem}_prompt3_outline_to_monologue"
-        prompt_item = dl.PromptItem(name=new_name)
-        prompt_item.add(
-            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
-        )
-
-        new_item = item.dataset.items.upload(
-            prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=item.metadata
+        new_item = SharedServiceRunner._create_and_upload_prompt_item(
+            dataset=item.dataset,
+            item_name=new_name,
+            prompt=llm_prompt,
+            remote_dir=SharedServiceRunner._get_dataloop_dir(item=item),
+            item_metadata=item.metadata,
         )
         return new_item
 
@@ -158,52 +149,34 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         Returns:
             item (dl.Item): the prompt item
         """
-        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
-        pdf_name = podcast_metadata.get("pdf_name", None)
-        speaker_1_name = podcast_metadata.get("speaker_1_name", SPEAKER_1_NAME)
+        podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
+        pdf_name = podcast_metadata["pdf_name"]
+        speaker_1_name = podcast_metadata["speaker_1_name"]
 
         # prep prompt item to get the monologue
-        prompt_item = dl.PromptItem.from_item(item)
-
-        # get the monologue from the last prompt
-        messages = prompt_item.to_messages()
-        last_message = messages[-1]
-        monologue = last_message.get("content", [])[0].get("text", None)
+        monologue = SharedServiceRunner._get_last_message(item)
         if monologue is None:
-            raise ValueError("No monologue found in the prompt item. Try running the previous step again.")
+            raise ValueError(
+                "No monologue found in the prompt item. Try running the previous step again."
+            )
 
         logger.info("Preparing to generate final monologue transcript JSON")
 
         # create the final conversation in JSON format
         schema = Conversation.model_json_schema()
         template = FinancialSummaryPrompts.get_template("monologue_dialogue_prompt")
-        llm_prompt = template.render(speaker_1_name=speaker_1_name, text=monologue, schema=json.dumps(schema, indent=2))
+        llm_prompt = template.render(
+            speaker_1_name=speaker_1_name,
+            text=monologue,
+            schema=json.dumps(schema, indent=2),
+        )
 
         new_name = f"{Path(pdf_name).stem}_prompt4_monologue_to_convo_json"
-        prompt_item = dl.PromptItem(name=new_name)
-        prompt_item.add(
-            message={"content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]}  # role default is user
-        )
-
-        new_item = item.dataset.items.upload(
-            prompt_item, remote_name=new_name, remote_path=item.dir, overwrite=True, item_metadata=item.metadata
+        new_item = SharedServiceRunner._create_and_upload_prompt_item(
+            dataset=item.dataset,
+            item_name=new_name,
+            prompt=llm_prompt,
+            remote_dir=SharedServiceRunner._get_dataloop_dir(item=item),
+            item_metadata=item.metadata,
         )
         return new_item
-
-
-if __name__ == "__main__":
-    env = "prod"
-
-    dl.setenv(env)
-    progress = dl.Progress()
-    context = dl.Context()
-
-    # test one function
-    # processed_item = dl.items.get(item_id="67f39b649d79af1780847add")  #prompt item for db-context pdf
-
-    # outline = MonologueServiceRunner.generate_outline(processed_item, progress, context)
-    # print(f"2/5: Successfully generated outline: {outline.name} ({outline.id})")
-    # print(f"Link here: {outline.url}")
-
-    outline_item = dl.items.get(item_id="67f3d39c17f211184f0beced")
-    MonologueServiceRunner.create_convo_json(outline_item, progress, context)

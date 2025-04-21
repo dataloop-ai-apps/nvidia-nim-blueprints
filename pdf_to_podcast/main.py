@@ -179,7 +179,7 @@ if __name__ == "__main__":
         input("Please get llama iteration prediction via UI. Once it's finished, press Enter to continue...")
         # get segment items
         filters = dl.Filters()
-        filters.add(field="dir", values=f"/segments/{structured_outline.metadata['user']['podcast']['pdf_name']}")
+        filters.add(field="dir", values=f"/.dataloop/{structured_outline.metadata['user']['podcast']['pdf_name']}")
         filters.sort_by(field="filename")
         segments = structured_outline.dataset.items.list(filters=filters)
         segment_items = list(segments.all())
