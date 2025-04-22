@@ -339,52 +339,28 @@
         ],
         "variables": [
           {
-            "id": "67fead73767b0a1d1baed7a9",
             "name": "reasoning LLM",
-            "reference": "67fea93d66a72041a5b496fc",
-            "creator": "yaya.t@dataloop.ai",
             "type": "Model",
             "description": null,
-            "createdAt": "2025-04-15T19:03:15.027Z",
-            "updatedAt": "2025-04-16T07:08:27.160Z",
-            "value": "67ed3672f41fe3426dd2c3e0",
-            "_id": "67fead73767b0a1d1baed7a9"
+            "value": ""
           },
           {
-            "id": "67fead73767b0a93c5aed7aa",
             "name": "iterative LLM",
-            "reference": "67fea93d66a72041a5b496fc",
-            "creator": "yaya.t@dataloop.ai",
             "type": "Model",
             "description": null,
-            "createdAt": "2025-04-15T19:03:15.027Z",
-            "updatedAt": "2025-04-16T07:08:27.160Z",
-            "value": "67ed3672f41fe30fd8d2c3e1",
-            "_id": "67fead73767b0a93c5aed7aa"
+            "value": ""
           },
           {
-            "id": "67fead73767b0a1c4aaed7ab",
             "name": "json podcast LLM",
-            "reference": "67fea93d66a72041a5b496fc",
-            "creator": "yaya.t@dataloop.ai",
             "type": "Model",
             "description": null,
-            "createdAt": "2025-04-15T19:03:15.027Z",
-            "updatedAt": "2025-04-16T07:08:27.160Z",
-            "value": "67ed36731b494016ca41d700",
-            "_id": "67fead73767b0a1c4aaed7ab"
+            "value": ""
           },
           {
-            "id": "67fead73767b0a4c76aed7ac",
             "name": "json convo LLM",
-            "reference": "67fea93d66a72041a5b496fc",
-            "creator": "yaya.t@dataloop.ai",
             "type": "Model",
             "description": null,
-            "createdAt": "2025-04-15T19:03:15.027Z",
-            "updatedAt": "2025-04-16T07:08:27.160Z",
-            "value": "67f7b2a9f41fe30fb2d2c424",
-            "_id": "67fead73767b0a4c76aed7ac"
+            "value": ""
           }
         ],
         "description": "",
@@ -706,7 +682,6 @@
             "type": "custom",
             "namespace": {
               "functionName": "monologue_create_convo_json",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
@@ -750,7 +725,6 @@
             "type": "custom",
             "namespace": {
               "functionName": "create_final_json",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
@@ -1108,7 +1082,6 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_generate_structured_outline",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
@@ -1152,7 +1125,6 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_generate_dialogue",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
@@ -1204,7 +1176,6 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "projectName": "Model mgmt demo",
               "serviceName": "predict-67ed36731b494016ca41d7-b055",
               "moduleName": "",
               "packageName": "nim-api-llama3-1-8b-instruct-meta"
@@ -1258,7 +1229,6 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "projectName": "Model mgmt demo",
               "serviceName": "predict-67ed3672f41fe30fd8d2c3-8zlh",
               "moduleName": "",
               "packageName": "nim-api-llama3-1-70b-instruct-meta"
@@ -1312,7 +1282,6 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "projectName": "Model mgmt demo",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
@@ -1362,7 +1331,6 @@
             "type": "custom",
             "namespace": {
               "functionName": "wait_for_cycle",
-              "projectName": "Model mgmt demo",
               "serviceName": "wait-node",
               "moduleName": "wait-node",
               "packageName": "wait-node"
@@ -1423,7 +1391,6 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_combine_dialogues",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
@@ -1467,7 +1434,6 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_create_convo_json",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
@@ -1519,7 +1485,6 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "projectName": "Model mgmt demo",
               "serviceName": "predict-67f7b2a9f41fe30fb2d2c4-59tg",
               "moduleName": "",
               "packageName": "nim-api-llama3-1-8b-instruct-meta"
@@ -1573,7 +1538,6 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "projectName": "Model mgmt demo",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
@@ -1635,7 +1599,6 @@
             "type": "custom",
             "namespace": {
               "functionName": "generate_audio",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
