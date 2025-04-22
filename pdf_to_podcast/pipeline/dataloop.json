@@ -417,12 +417,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "pdf_extraction",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf-to-txt-v2",
               "moduleName": "pdf_to_txt_v2",
               "packageName": "pdf_to_txt"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Txt",
             "dpkName": "pdf_to_txt",
             "metadata": {
@@ -475,12 +473,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "wait_for_cycle",
-              "projectName": "Model mgmt demo",
               "serviceName": "wait-node",
               "moduleName": "wait-node",
               "packageName": "wait-node"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "Wait Node",
             "dpkName": "wait-node",
             "metadata": {
@@ -581,12 +577,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "prepare_and_summarize_pdf",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -626,12 +620,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "monologue_generate_outline",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -671,12 +663,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "monologue_generate_monologue",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -721,7 +711,6 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -766,7 +755,6 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -819,7 +807,6 @@
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "llama-3.1-405b-instruct",
             "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
@@ -874,7 +861,6 @@
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "llama-3.1-405b-instruct",
             "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
@@ -929,7 +915,6 @@
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "llama-3.1-405b-instruct",
             "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
@@ -984,7 +969,6 @@
               "moduleName": "",
               "packageName": "nim-api-llama3-1-8b-instruct-meta"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "llama-3.1-8b-instruct",
             "dpkName": "nim-api-llama3-1-8b-instruct-meta",
             "metadata": {
@@ -1039,7 +1023,6 @@
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "llama-3.1-405b-instruct",
             "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
@@ -1086,7 +1069,6 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1131,7 +1113,6 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1176,7 +1157,6 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1229,7 +1209,6 @@
               "moduleName": "",
               "packageName": "nim-api-llama3-1-8b-instruct-meta"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "llama-3.1-8b-instruct",
             "dpkName": "nim-api-llama3-1-8b-instruct-meta",
             "metadata": {
@@ -1284,7 +1263,6 @@
               "moduleName": "",
               "packageName": "nim-api-llama3-1-70b-instruct-meta"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "llama-3.1-70b-instruct",
             "dpkName": "nim-api-llama3-1-70b-instruct-meta",
             "metadata": {
@@ -1339,7 +1317,6 @@
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "llama-3.1-405b-instruct",
             "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
@@ -1390,7 +1367,6 @@
               "moduleName": "wait-node",
               "packageName": "wait-node"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "Wait Node",
             "dpkName": "wait-node",
             "metadata": {
@@ -1452,7 +1428,6 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1497,7 +1472,6 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1550,7 +1524,6 @@
               "moduleName": "",
               "packageName": "nim-api-llama3-1-8b-instruct-meta"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "llama-3.1-8b-instruct",
             "dpkName": "nim-api-llama3-1-8b-instruct-meta",
             "metadata": {
@@ -1605,7 +1578,6 @@
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "llama-3.1-405b-instruct",
             "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
@@ -1668,7 +1640,6 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
@@ -1708,12 +1679,10 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_process_segments",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "projectId": "0ebbf673-17a7-469c-bcb2-f00fdaedfc8b",
             "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
