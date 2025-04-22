@@ -16,15 +16,22 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
     @staticmethod
     def generate_raw_outline(item: dl.Item, progress: dl.Progress, context: dl.Context):
         """
-            Generate initial raw outline from summarized PDFs.
+        Generate initial raw outline from summarized PDFs.
 
-        def run(self) -> dl.Item:
+        Args:
+            item (dl.Item): the original PDF item
+            progress (dl.Progress): Dataloop progress object from pipelines
+            context (dl.Context): Dataloop context object from pipelines
+
+        Returns:
+            dl.Item: Dataloop prompt item containing the initial raw outline in the hidden directory
         """
         # get the podcast metadata from the item
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
         focus = podcast_metadata.get("focus")
         duration = podcast_metadata.get("duration")
         pdf_name = podcast_metadata.get("pdf_name")
+        working_dir = SharedServiceRunner._get_hidden_dir(item=item)
 
         # get the summary from the last prompt annotation
         summary = SharedServiceRunner._get_last_message(item)
@@ -42,7 +49,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         summary_item = item.dataset.items.upload(
             local_path=summary_filename,
             remote_name=summary_filename,
-            remote_path=SharedServiceRunner._get_dataloop_dir(item=item),
+            remote_path=working_dir,
             overwrite=True,
             item_metadata={"user": item.metadata["user"]},
         )
@@ -83,7 +90,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             dataset=item.dataset,
             item_name=new_name,
             prompt=llm_prompt,
-            remote_dir=SharedServiceRunner._get_dataloop_dir(item=item),
+            remote_dir=working_dir,
             overwrite=True,
             item_metadata={"user": new_metadata},
         )
@@ -100,7 +107,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         and only references valid PDF filenames.
 
         Args:
-            item (dl.Item): Dataloop item containing the raw outline
+            item (dl.Item): Dataloop item containing the raw outline in the hidden directory
             progress (dl.Progress): Dataloop progress object
             context (dl.Context): Dataloop context object
             prompt_focus (str): Focus instructions guide for the prompt
@@ -145,7 +152,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             dataset=item.dataset,
             item_name=new_name,
             prompt=llm_prompt,
-            remote_dir=SharedServiceRunner._get_dataloop_dir(item=item),
+            remote_dir=item.dir,
             overwrite=True,
             item_metadata=item.metadata,
         )
@@ -208,9 +215,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         # Create a new prompt item
         new_name = f"{Path(pdf_name).stem}_prompt4_segment_{idx:02d}"
-        new_dir = (
-            f"{SharedServiceRunner._get_dataloop_dir(item=item)}/{pdf_name}/prompt4"
-        )
+        new_dir = f"{SharedServiceRunner._get_hidden_dir(item=item)}/{pdf_name}/prompt4"
         new_metadata = podcast_metadata.copy()
         new_metadata.update(
             {
@@ -248,9 +253,9 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             List[dl.Item]: List of segment items for compatibility with the workflow
         """
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
-        focus = podcast_metadata.get("focus")
-        duration = podcast_metadata.get("duration")
-        summary = SharedServiceRunner._get_summary_from_id(podcast_metadata.get("summary_item_id"))
+        summary = SharedServiceRunner._get_summary_from_id(
+            podcast_metadata.get("summary_item_id")
+        )
 
         # get the outline from item
         outline = SharedServiceRunner._get_outline_dict(outline_item=item)
@@ -264,7 +269,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
                 f"Processing segment {idx + 1}/{total_segments}: {segment.section}"
             )
             segment_item = DialogueServiceRunner._process_segment(
-                item, segment, idx, total_segments, focus, duration, summary
+                item, segment, idx, total_segments, summary
             )
             segment_items.append(segment_item)
 
@@ -334,7 +339,9 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         # Create new prompt item for the dialogue
         new_name = f"{Path(pdf_name).stem}_prompt5_segment_{segment_idx:02d}_dialogue"
-        new_dir = SharedServiceRunner._get_dataloop_dir.replace("prompt4", "prompt5")
+        new_dir = SharedServiceRunner._get_hidden_dir(item=item).replace(
+            "prompt4", "prompt5"
+        )
         new_item = SharedServiceRunner._create_and_upload_prompt_item(
             dataset=item.dataset,
             item_name=new_name,
@@ -355,7 +362,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         List is sorted by segment index in ascending order.
 
         Args:
-            item (dl.Item): Dataloop item containing the outline segment to be converted to dialogue
+            item (dl.Item): last segment to be processed by LLM
             model (dl.Model): Dataloop model entity
             progress (dl.Progress): Dataloop progress object
             context (dl.Context): Dataloop context object
@@ -368,13 +375,14 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         pdf_name = podcast_metadata.get("pdf_name")
         # item is the original structured outline prompt item
         outline = SharedServiceRunner._get_outline_dict(outline_item=item)
-        dataloop_dir = SharedServiceRunner._get_dataloop_dir(item=item)
+        working_dir = SharedServiceRunner._get_hidden_dir(item=item)
 
         # get all segment items
         filters = dl.Filters()
+        filters.add(field='hidden', values=True)
         filters.add(
             field="dir",
-            values=f"{dataloop_dir}/{pdf_name}/prompt5",
+            values=f"{working_dir}/{pdf_name}/prompt5",
         )
         filters.sort_by(field="filename")
         segment_items = list(item.dataset.items.list(filters=filters).all())
@@ -418,7 +426,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
                 dataset=item.dataset,
                 item_name=new_name,
                 prompt=llm_prompt,
-                remote_dir=dataloop_dir,
+                remote_dir=working_dir,
                 overwrite=True,
                 item_metadata=item.metadata,
             )
@@ -429,7 +437,6 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             if ex.latest_status["status"] not in ["success"]:
                 raise ValueError(f"Execution failed. ex id: {ex.id}")
         return new_item
-
 
     @staticmethod
     def create_convo_json(
@@ -475,8 +482,20 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             dataset=item.dataset,
             item_name=new_name,
             prompt=llm_prompt,
-            remote_dir=SharedServiceRunner._get_dataloop_dir(item=item),
+            remote_dir=SharedServiceRunner._get_hidden_dir(item=item),
             overwrite=True,
             item_metadata=item.metadata,
         )
         return new_item
+
+
+if __name__ == "__main__":
+    item = dl.items.get(item_id="68064d5289d1cf34433fb28a")
+    progress = dl.Progress()
+    context = dl.Context()
+    DialogueServiceRunner.combine_dialogues(
+        item=item,
+        model=dl.models.get(model_id="67ed3672f41fe3426dd2c3e0"),
+        progress=progress,
+        context=context,
+    )

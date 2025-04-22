@@ -172,7 +172,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         text_item = parent_item.dataset.items.upload(
             local_path=text_filename,
             remote_name=text_filename,
-            remote_path=parent_item.dir,  # same dir as pdf
+            remote_path=SharedServiceRunner._get_hidden_dir(item=parent_item),
             overwrite=True,
             item_metadata={
                 "user": {
@@ -190,13 +190,6 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         llm_prompt = template.render(text=pdf_text)
 
         new_name = f"{pdf_name}_{'monologue_' if monologue is True else 'podcast_'}prompt1_summary"
-        prompt_item = dl.PromptItem(name=new_name)
-        prompt_item.add(
-            message={
-                "content": [{"mimetype": dl.PromptType.TEXT, "value": llm_prompt}]
-            }  # role default is user
-        )
-
         new_item_metadata = item.metadata.get("user", {})
         new_item_metadata.update(
             {
@@ -213,11 +206,11 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         )
         if duration is not None:
             new_item_metadata["podcast"]["duration"] = duration
-        new_item = parent_item.dataset.items.upload(
-            prompt_item,
-            remote_name=new_name,
-            remote_path=parent_item.dir,
-            overwrite=True,
+        new_item = SharedServiceRunner._create_and_upload_prompt_item(
+            dataset=parent_item.dataset,
+            item_name=new_name,
+            prompt=llm_prompt,
+            remote_dir=SharedServiceRunner._get_hidden_dir(item=parent_item),
             item_metadata={"user": new_item_metadata},
         )
 
@@ -245,8 +238,8 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         """
         logger.info("Formatting final conversation")
 
-        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
-        pdf_name = podcast_metadata.get("pdf_name", None)
+        podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
+        pdf_name = podcast_metadata.get("pdf_name")
 
         conversation_json_str = SharedServiceRunner._get_last_message(item=item)
         if conversation_json_str is None:
@@ -286,7 +279,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         new_item = item.dataset.items.upload(
             local_path=str(json_path),
             remote_name=new_name,
-            remote_path=item.dir,
+            remote_path=SharedServiceRunner._get_hidden_dir(item=item),
             overwrite=True,
             item_metadata=item.metadata,
         )
@@ -309,9 +302,9 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         Returns:
             str: Path to the generated audio file
         """
-        podcast_metadata = item.metadata.get("user", {}).get("podcast", None)
-        pdf_name = podcast_metadata.get("pdf_name", None)
-        monologue = podcast_metadata.get("monologue", None)
+        podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
+        pdf_name = podcast_metadata.get("pdf_name")
+        monologue = podcast_metadata.get("monologue")
 
         if monologue is True:
             output_file_name = Path(pdf_name).stem + "_monologue.mp3"
@@ -379,13 +372,15 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             str: The text from the PDF file
         """
         filters = dl.Filters()
+        filters.add(field='hidden', values=True)
         filters.add(field="metadata.user.original_item_id", values=item.id)
         filters.sort_by(field="name", value=dl.FiltersOrderByDirection.ASCENDING)
-        items = item.dataset.items.list(filters=filters).all()
+        pages = item.dataset.items.list(filters=filters)
 
         pdf_text = ""
-        for child_item in items:
-            if "text" in child_item.mimetype:
+        for child_item in pages.all():
+            # check that the item is a text item and the end of the string isn't summary.txt
+            if "text" in child_item.mimetype and not child_item.name.endswith("summary.txt"):
                 buffer = child_item.download(save_locally=False)
                 pdf_text += buffer.read().decode("utf-8")
         return pdf_text
@@ -482,11 +477,20 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         return podcast_metadata
 
     @staticmethod
-    def _get_dataloop_dir(item: dl.Item) -> str:
+    def _get_hidden_dir(item: dl.Item) -> str:
+        """
+        Get the hidden directory for the item.
+
+        If the item is already in the hidden directory, return the item.dir.
+        Otherwise, return the hidden subdirectory.
+        """
         if item.dir == "/":
-            hidden_dir = f"/.dataloop"
+            hidden_dir = f"/.pdf2podcast"
         else:
-            hidden_dir = f"{item.dir}/.dataloop"
+            if 'pdf2podcast' in item.dir:
+                hidden_dir = item.dir
+            else:
+                hidden_dir = f"{item.dir}/.pdf2podcast"
         return hidden_dir
 
     @staticmethod

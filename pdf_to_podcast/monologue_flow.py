@@ -44,7 +44,7 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         summary_item = item.dataset.items.upload(
             local_path=summary_filename,
             remote_name=summary_filename,
-            remote_path=SharedServiceRunner._get_dataloop_dir(item=item),
+            remote_path=SharedServiceRunner._get_hidden_dir(item=item),
             overwrite=True,
             item_metadata={"user": item.metadata["user"]},
         )
@@ -76,7 +76,7 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
             dataset=item.dataset,
             item_name=new_name,
             prompt=llm_prompt,
-            remote_dir=SharedServiceRunner._get_dataloop_dir(item=item),
+            remote_dir=SharedServiceRunner._get_hidden_dir(item=item),
             item_metadata=new_metadata,
         )
         return new_item
@@ -131,7 +131,7 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
             dataset=item.dataset,
             item_name=new_name,
             prompt=llm_prompt,
-            remote_dir=SharedServiceRunner._get_dataloop_dir(item=item),
+            remote_dir=SharedServiceRunner._get_hidden_dir(item=item),
             item_metadata=item.metadata,
         )
         return new_item
@@ -176,7 +176,7 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
             dataset=item.dataset,
             item_name=new_name,
             prompt=llm_prompt,
-            remote_dir=SharedServiceRunner._get_dataloop_dir(item=item),
+            remote_dir=SharedServiceRunner._get_hidden_dir(item=item),
             item_metadata=item.metadata,
         )
         return new_item
