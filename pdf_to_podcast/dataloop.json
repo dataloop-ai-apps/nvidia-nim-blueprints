@@ -1,38 +1,37 @@
 {
-    "name": "pdf-to-podcast",
-    "displayName": "PDF to Podcast", 
-    "description": "Generate a podcast based on a given PDF.",
-    "version": "0.0.25",
-    "scope": "public",
-    "attributes": {
-        "Hub": ["Nvidia", "Dataloop"],
-        "Category": ["Application", "Blueprint"],
-        "Pipeline Type": "GenAI",
-        "Provider": "NVIDIA",
-        "Developed By": "Dataloop"
-    },
-    "components": {
-      "integrations": [
-        {
-          "key": "dl-elevenlabs-api-key",
-          "type": "key_value",
-          "env": "ELEVENLABS_API_KEY",
-          "displayName": "ElevenLabs API Key",
-          "description": "API Key for ElevenLabs generative voice AI"
-        }
-      ],
-      "computeConfigs": [
-        {
-          "name": "pdf2podcast-compute-config",
-          "runtime": {
-            "podType": "regular-xs",
-            "concurrency": 10,
-            "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints:0.0.3",
-            "autoscaler": {
-              "type": "rabbitmq",
-              "minReplicas": 0,
-              "maxReplicas": 2
-            }
+  "name": "pdf-to-podcast",
+  "displayName": "PDF to Podcast",
+  "description": "Generate a podcast based on a given PDF.",
+  "version": "0.0.24",
+  "scope": "public",
+  "attributes": {
+    "Hub": ["Nvidia", "Dataloop"],
+    "Category": ["Application", "Blueprint"],
+    "Pipeline Type": "GenAI",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop"
+  },
+  "components": {
+    "integrations": [
+      {
+        "key": "dl-elevenlabs-api-key",
+        "type": "key_value",
+        "env": "ELEVENLABS_API_KEY",
+        "displayName": "ElevenLabs API Key",
+        "description": "API Key for ElevenLabs generative voice AI"
+      }
+    ],
+    "computeConfigs": [
+      {
+        "name": "pdf2podcast-compute-config",
+        "runtime": {
+          "podType": "regular-xs",
+          "concurrency": 10,
+          "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints:0.0.3",
+          "autoscaler": {
+            "type": "rabbitmq",
+            "minReplicas": 0,
+            "maxReplicas": 2
           }
         }
       }
@@ -43,9 +42,7 @@
         "computeConfig": "pdf2podcast-compute-config",
         "entryPoint": "pdf_to_podcast/main.py",
         "className": "ServiceRunner",
-        "integrations": [
-          "dl-elevenlabs-api-key"
-        ],
+        "integrations": ["dl-elevenlabs-api-key"],
         "functions": [
           {
             "name": "prepare_and_summarize_pdf",
@@ -83,10 +80,7 @@
               {
                 "name": "new_item",
                 "type": "Item",
-                "actions": [
-                  "monologue",
-                  "dialogue"
-                ]
+                "actions": ["monologue", "dialogue"]
               }
             ],
             "displayName": "Prepare and Summarize PDF"
@@ -289,9 +283,7 @@
           "type": "function",
           "namespace": "pdf2podcast-compute-config.pdf2podcast-module.prepare_and_summarize_pdf"
         },
-        "categories": [
-          "Podcast Generation"
-        ],
+        "categories": ["Podcast Generation"],
         "scope": "project"
       },
       {
@@ -300,9 +292,7 @@
           "type": "function",
           "namespace": "pdf2podcast-compute-config.pdf2podcast-module.generate_audio"
         },
-        "categories": [
-          "Podcast Generation"
-        ],
+        "categories": ["Podcast Generation"],
         "scope": "project"
       },
       {
@@ -311,9 +301,7 @@
           "type": "function",
           "namespace": "pdf2podcast-compute-config.pdf2podcast-module.monologue_generate_outline"
         },
-        "categories": [
-          "Podcast Generation"
-        ],
+        "categories": ["Podcast Generation"],
         "scope": "project"
       },
       {
@@ -322,9 +310,7 @@
           "type": "function",
           "namespace": "pdf2podcast-compute-config.pdf2podcast-module.monologue_generate_monologue"
         },
-        "categories": [
-          "Podcast Generation"
-        ],
+        "categories": ["Podcast Generation"],
         "scope": "project"
       },
       {
@@ -333,9 +319,7 @@
           "type": "function",
           "namespace": "pdf2podcast-compute-config.pdf2podcast-module.monologue_create_convo_json"
         },
-        "categories": [
-          "Podcast Generation"
-        ],
+        "categories": ["Podcast Generation"],
         "scope": "project"
       },
       {
@@ -344,9 +328,7 @@
           "type": "function",
           "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_raw_outline"
         },
-        "categories": [
-          "Podcast Generation"
-        ],
+        "categories": ["Podcast Generation"],
         "scope": "project"
       },
       {
@@ -355,9 +337,7 @@
           "type": "function",
           "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_structured_outline"
         },
-        "categories": [
-          "Podcast Generation"
-        ],
+        "categories": ["Podcast Generation"],
         "scope": "project"
       },
       {
@@ -366,9 +346,7 @@
           "type": "function",
           "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_process_segments"
         },
-        "categories": [
-          "Podcast Generation"
-        ],
+        "categories": ["Podcast Generation"],
         "scope": "project"
       },
       {
@@ -377,9 +355,7 @@
           "type": "function",
           "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_generate_dialogue"
         },
-        "categories": [
-          "Podcast Generation"
-        ],
+        "categories": ["Podcast Generation"],
         "scope": "project"
       },
       {
@@ -388,9 +364,7 @@
           "type": "function",
           "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_combine_dialogues"
         },
-        "categories": [
-          "Podcast Generation"
-        ],
+        "categories": ["Podcast Generation"],
         "scope": "project"
       },
       {
@@ -399,9 +373,7 @@
           "type": "function",
           "namespace": "pdf2podcast-compute-config.pdf2podcast-module.dialogue_create_convo_json"
         },
-        "categories": [
-          "Podcast Generation"
-        ],
+        "categories": ["Podcast Generation"],
         "scope": "project"
       },
       {
@@ -410,9 +382,7 @@
           "type": "function",
           "namespace": "pdf2podcast-compute-config.pdf2podcast-module.create_final_json"
         },
-        "categories": [
-          "Podcast Generation"
-        ],
+        "categories": ["Podcast Generation"],
         "scope": "project"
       }
     ]

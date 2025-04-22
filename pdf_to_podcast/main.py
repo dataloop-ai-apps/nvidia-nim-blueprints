@@ -107,12 +107,12 @@ if __name__ == "__main__":
     with_references = False
     duration = None
 
-    item_id = "" # this is the original pdf item
+    item_id = "6806343380456f55256c0bae" # this is the original pdf item
 
     progress = dl.Progress()
     context = dl.Context()
 
-    model_dialogue = dl.models.get(model_id="") # 405b reasoning
+    model_dialogue = dl.models.get(model_id="67ed3672f41fe3426dd2c3e0") # 405b reasoning
 
     # item should be a pdf file
     item = dl.items.get(item_id=item_id)
@@ -146,7 +146,6 @@ if __name__ == "__main__":
         # wait for llama prediction on UI...
         input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
 
-
         # Create convo json
         convo_json = ServiceRunner.monologue_create_convo_json(monologue, progress, context)
         print(f"4/5: Successfully prepared final conversation: {convo_json.name} ({convo_json.id})")
@@ -179,7 +178,8 @@ if __name__ == "__main__":
         input("Please get llama iteration prediction via UI. Once it's finished, press Enter to continue...")
         # get segment items
         filters = dl.Filters()
-        filters.add(field="dir", values=f"/segments/{structured_outline.metadata['user']['podcast']['pdf_name']}")
+        filters.add(field='hidden', values=True)
+        filters.add(field="dir", values=f"/.pdf2podcast/{structured_outline.metadata['user']['podcast']['pdf_name']}")
         filters.sort_by(field="filename")
         segments = structured_outline.dataset.items.list(filters=filters)
         segment_items = list(segments.all())
