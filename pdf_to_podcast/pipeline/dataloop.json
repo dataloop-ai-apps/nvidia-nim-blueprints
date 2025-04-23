@@ -776,7 +776,6 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "projectName": "Model mgmt demo",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
@@ -830,7 +829,6 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "projectName": "Model mgmt demo",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
@@ -884,7 +882,6 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "projectName": "Model mgmt demo",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
@@ -938,7 +935,6 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "projectName": "Model mgmt demo",
               "serviceName": "predict-67f7b2a9f41fe30fb2d2c4-59tg",
               "moduleName": "",
               "packageName": "nim-api-llama3-1-8b-instruct-meta"
@@ -992,7 +988,6 @@
             "type": "ml",
             "namespace": {
               "functionName": "predict",
-              "projectName": "Model mgmt demo",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
               "packageName": "nim-api-llama3-1-405b-instruct-meta"
@@ -1038,7 +1033,6 @@
             "type": "custom",
             "namespace": {
               "functionName": "dialogue_generate_raw_outline",
-              "projectName": "Model mgmt demo",
               "serviceName": "pdf2podcast-compute-config",
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
