@@ -298,6 +298,8 @@ class SharedServiceRunner(dl.BaseServiceRunner):
 
         Args:
             item (dl.Item): Dataloop JSON item containing the conversation
+            voice_mapping (dict): A dictionary mapping speaker names to voice IDs
+            output_file (str): The name of the output audio file
 
         Returns:
             str: Path to the generated audio file
@@ -305,6 +307,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
         pdf_name = podcast_metadata.get("pdf_name")
         monologue = podcast_metadata.get("monologue")
+        original_item = dl.items.get(item_id=podcast_metadata.get("original_item_id"))
 
         if monologue is True:
             output_file_name = Path(pdf_name).stem + "_monologue.mp3"
@@ -351,7 +354,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         mp3_item = item.dataset.items.upload(
             output_file,
             remote_name=output_file_name,
-            remote_path=item.dir,
+            remote_path=original_item.dir,
             overwrite=True,
             item_metadata=item.metadata,
         )
