@@ -2,7 +2,7 @@
   "name": "report-generation-pipeline",
   "displayName": "Report Generation Blueprint",
   "description": "Generate a report based on a given topic and report structure.",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "scope": "public",
   "attributes": {
     "Hub": [
@@ -23,7 +23,7 @@
   "codebase": {
     "type": "git",
     "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
-    "gitTag": "0.0.28"
+    "gitTag": "0.0.29"
   },
   "dependencies": [
     {
