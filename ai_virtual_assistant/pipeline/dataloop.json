@@ -1,0 +1,1129 @@
+{
+  "name": "ai-virtual-assistant-blueprint",
+  "displayName": "AI Virtual Assistant NVIDIA Blueprint",
+  "description": "An NVIDIA based AI Virtual Assistant for customer service, built using a multi-agent system. It intelligently routes user queries to specialized agents to retrieve information from structured and unstructured data sources.",
+  "version": "0.0.28",
+  "scope": "public",
+  "attributes": {
+    "Hub": ["Dataloop", "Nvidia"],
+    "Category": ["Pipeline", "Blueprint"],
+    "Pipeline Type": "GenAI",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop",
+    "Media Type": ["Text"]
+  },
+  "codebase": {
+    "type": "git",
+    "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
+    "gitTag": "0.0.28"
+  },
+  "dependencies": [
+    {
+      "name": "ai-virtual-assistant"
+    },
+    {
+      "name": "nim-api-llama3-1-70b-instruct-meta"
+    }
+  ],
+  "components": {
+    "pipelineTemplates": [
+      {
+        "connections": [
+          {
+            "src": {
+              "nodeId": "dae021cb-c9b8-4b19-862a-d7700a9c13b1",
+              "portId": "1db7b23f-5189-436a-8a4b-c214ffc67107"
+            },
+            "tgt": {
+              "nodeId": "caf3f24b-67b8-4a85-9381-66597918065c",
+              "portId": "c1d649c9-0c6e-49e7-947c-dddc01fa7d3c"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "caf3f24b-67b8-4a85-9381-66597918065c",
+              "portId": "ba630f00-090b-4207-993c-3aa90196f04c"
+            },
+            "tgt": {
+              "nodeId": "604df534-8229-4652-a0a7-ad4fa6be4b11",
+              "portId": "98d8c7ef-9880-425e-ae7b-1c1f9c4e5e3f"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "604df534-8229-4652-a0a7-ad4fa6be4b11",
+              "portId": "2f9d11d8-4d2d-4c8b-94dd-540f4ffb5a83"
+            },
+            "tgt": {
+              "nodeId": "23c9636a-fa85-4795-8259-8b39c2d12e2f",
+              "portId": "d053f292-a219-4479-b8ab-856dd1792a76"
+            },
+            "condition": "{}",
+            "action": "other-talk-agent"
+          },
+          {
+            "src": {
+              "nodeId": "604df534-8229-4652-a0a7-ad4fa6be4b11",
+              "portId": "2f9d11d8-4d2d-4c8b-94dd-540f4ffb5a83"
+            },
+            "tgt": {
+              "nodeId": "278ea24d-442a-4b24-855e-189783fc2087",
+              "portId": "07d490ed-06da-4cfa-ac59-ca73d4500c59"
+            },
+            "condition": "{}",
+            "action": "order-agent"
+          },
+          {
+            "src": {
+              "nodeId": "278ea24d-442a-4b24-855e-189783fc2087",
+              "portId": "87568dfe-747c-460b-b1d0-462f31933a23"
+            },
+            "tgt": {
+              "nodeId": "7b321aef-07c2-4896-ae0f-77dcf2d95a1f",
+              "portId": "8bd58f53-8f09-4a6a-acb0-fb390a9f55f7"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "7b321aef-07c2-4896-ae0f-77dcf2d95a1f",
+              "portId": "2f8ab184-dec1-43d8-ac36-14a89b4400b5"
+            },
+            "tgt": {
+              "nodeId": "e81523a8-075d-48fd-8a2a-5153b7f33779",
+              "portId": "54e239ee-6681-4152-80c1-e625e0bc199b"
+            },
+            "condition": "{}",
+            "action": "get-all-orders"
+          },
+          {
+            "src": {
+              "nodeId": "7b321aef-07c2-4896-ae0f-77dcf2d95a1f",
+              "portId": "2f8ab184-dec1-43d8-ac36-14a89b4400b5"
+            },
+            "tgt": {
+              "nodeId": "39b490ae-1c7d-4929-a507-d0a2aea34337",
+              "portId": "71442a6e-5f7c-43e6-8119-5b9acd9d9f14"
+            },
+            "condition": "{}",
+            "action": "none"
+          },
+          {
+            "src": {
+              "nodeId": "e81523a8-075d-48fd-8a2a-5153b7f33779",
+              "portId": "596e6c3d-054b-4987-a03b-8975cf216839"
+            },
+            "tgt": {
+              "nodeId": "ade4dc62-bd85-417b-bed6-f4e21adae5be",
+              "portId": "441b7a7f-04ca-445f-a140-2a513586f91d"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "ade4dc62-bd85-417b-bed6-f4e21adae5be",
+              "portId": "bc394e22-9611-414d-9e51-2602b459466e"
+            },
+            "tgt": {
+              "nodeId": "39b490ae-1c7d-4929-a507-d0a2aea34337",
+              "portId": "71442a6e-5f7c-43e6-8119-5b9acd9d9f14"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "9a2d98db-ab2a-4ff1-8637-a31757f747be",
+              "portId": "a1a33c9e-517d-4da8-ad71-10f9d24be81d"
+            },
+            "tgt": {
+              "nodeId": "5b593a02-f35b-46f4-98f3-c54a3cb0a707",
+              "portId": "33a85187-78dd-4056-bbb7-2715828396ea"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "5b593a02-f35b-46f4-98f3-c54a3cb0a707",
+              "portId": "b52041dc-a62f-4748-9170-811156c0798d"
+            },
+            "tgt": {
+              "nodeId": "a250994c-e074-43b4-b722-137461be6f34",
+              "portId": "fbb91f0b-a9e5-49d3-9a1e-480db6781e34"
+            },
+            "condition": "{}",
+            "action": "get-all-products"
+          },
+          {
+            "src": {
+              "nodeId": "5b593a02-f35b-46f4-98f3-c54a3cb0a707",
+              "portId": "b52041dc-a62f-4748-9170-811156c0798d"
+            },
+            "tgt": {
+              "nodeId": "89d40671-4d83-48be-bd63-a4494ecd51c2",
+              "portId": "3a0ba226-1c83-442d-acb0-231cb84941bf"
+            },
+            "condition": "{}",
+            "action": "none"
+          },
+          {
+            "src": {
+              "nodeId": "a250994c-e074-43b4-b722-137461be6f34",
+              "portId": "f9198c89-8408-4839-b6db-d20e367da56c"
+            },
+            "tgt": {
+              "nodeId": "ab34992f-1dba-4423-858e-0c015315601e",
+              "portId": "5e002574-0b6d-40c9-bdf1-93a2fc67c5f8"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "ab34992f-1dba-4423-858e-0c015315601e",
+              "portId": "698f6058-c4e6-43d3-b9ac-789626afdea2"
+            },
+            "tgt": {
+              "nodeId": "89d40671-4d83-48be-bd63-a4494ecd51c2",
+              "portId": "3a0ba226-1c83-442d-acb0-231cb84941bf"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "23c9636a-fa85-4795-8259-8b39c2d12e2f",
+              "portId": "18215317-923b-48e6-840e-c8ff852a4e67"
+            },
+            "tgt": {
+              "nodeId": "60289451-6008-4f82-adc0-4b15de920861",
+              "portId": "10e5eba2-8ff5-413d-948a-191de49e701c"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "604df534-8229-4652-a0a7-ad4fa6be4b11",
+              "portId": "2f9d11d8-4d2d-4c8b-94dd-540f4ffb5a83"
+            },
+            "tgt": {
+              "nodeId": "9a2d98db-ab2a-4ff1-8637-a31757f747be",
+              "portId": "e3d371d5-2b1b-45f1-87fa-7c08e4c8a350"
+            },
+            "condition": "{}",
+            "action": "product-agent"
+          },
+          {
+            "src": {
+              "nodeId": "604df534-8229-4652-a0a7-ad4fa6be4b11",
+              "portId": "2f9d11d8-4d2d-4c8b-94dd-540f4ffb5a83"
+            },
+            "tgt": {
+              "nodeId": "3d64e66e-17d4-443e-8c93-735dc386a81a",
+              "portId": "8fab98ec-4b9d-4913-9809-d9be8f459f2c"
+            },
+            "condition": "{}",
+            "action": "none"
+          }
+        ],
+        "startNodes": [
+          {
+            "nodeId": "dae021cb-c9b8-4b19-862a-d7700a9c13b1",
+            "type": "root",
+            "id": "688126ea-468e-4c96-9cd6-3127b2c834f8"
+          }
+        ],
+        "description": "",
+        "name": "ai-virt-assistant-pipeline",
+        "templateKind": "org",
+        "nodes": [
+          {
+            "id": "dae021cb-c9b8-4b19-862a-d7700a9c13b1",
+            "inputs": [
+              {
+                "portId": "3831400b-6797-4676-9481-a343200372e7",
+                "nodeId": "3831400b-6797-4676-9481-a343200372e7",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "1db7b23f-5189-436a-8a4b-c214ffc67107",
+                "nodeId": "1db7b23f-5189-436a-8a4b-c214ffc67107",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Create Temporary Item",
+            "type": "custom",
+            "namespace": {
+              "functionName": "create_temp_item",
+
+              "serviceName": "ai-v-assist-compute-config",
+              "moduleName": "ai-v-assist-module",
+              "packageName": "ai-virtual-assistant"
+            },
+
+            "appName": "AI Virtual Assistant",
+            "dpkName": "ai-virtual-assistant",
+            "metadata": {
+              "position": {
+                "x": 10086,
+                "y": 10361,
+                "z": 0
+              },
+              "componentGroupName": "Virtual Assistant",
+              "repeatable": true,
+              "pipelineNodeName": "create-temporary-item"
+            }
+          },
+          {
+            "id": "caf3f24b-67b8-4a85-9381-66597918065c",
+            "inputs": [
+              {
+                "portId": "c1d649c9-0c6e-49e7-947c-dddc01fa7d3c",
+                "nodeId": "c1d649c9-0c6e-49e7-947c-dddc01fa7d3c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "ba630f00-090b-4207-993c-3aa90196f04c",
+                "nodeId": "ba630f00-090b-4207-993c-3aa90196f04c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "4cc54e1c-e757-473b-8e69-7e3c8163482b",
+                "nodeId": "4cc54e1c-e757-473b-8e69-7e3c8163482b",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "primary-agent",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+
+              "moduleName": "nim-api-module",
+              "packageName": "nim-api-llama3-1-70b-instruct-meta"
+            },
+
+            "appName": "llama-3.1-70b-instruct",
+            "dpkName": "nim-api-llama3-1-70b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 10378,
+                "y": 10361,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.1-70b-instruct",
+                "system_prompt": "You are a helpful customer service agent for NVIDIA. You are given a user's request and you need to determine which agent to hand off to based on the user's request. You will be given a list of agents and their descriptions. You will also be given a user's request. You need to determine which agent to hand off to based on the user's request. You will need to return the tool call to be made based on the user's request. You will also need to return the response to the user's request. You will need to return the tool call and the response in a JSON object. If the user's request is not related to NVIDIA, hand off to the other talk agent. If the user's request is related to NVIDIA's products, hand off to the product agent and set the tool call to product-agent. If the user's request is related to their NVIDIA orders, hand off to the order agent and set the tool call to order-agent. If the user's request is related to their NVIDIA returns, hand off to the return agent and set the tool call to return-agent. If you require clarification before handoff, ask the user for clarification before handoff and set the tool call to none. Do NOT reply to the user's request yourself, unless you require clarification before handoff. YOUR SOLE PURPOSE IS TO HAND OFF TO THE APPROPRIATE AGENT BASED ON THE USER'S REQUEST. DO NOT REPLY TO THE CUSTOMER FOR ANYTHING APART FROM ASKING THEM TO CLARIFY THEIR MESSAGE. DO NOT MAKE SMALL TALK WITH THE CUSTOMER.",
+                "max_tokens": 1024,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "seed": 0,
+                "stream": false,
+                "guided_json": {
+                  "type": "object",
+                  "properties": {
+                    "toolCall": {
+                      "type": "string",
+                      "enum": [
+                        "other-talk-agent",
+                        "product-agent",
+                        "order-agent",
+                        "none"
+                      ],
+                      "description": "The tool call to be made based on the user's request.\n\nother-talk-agent: Hand off to the other talk agent who can talk to the user about anything besides NVDIA.\nproduct-agent: Hand off to the product agent who is an expert in NVDIA products.\norder-agent: Hand off to the order agent who is an expert in NVDIA orders.\nreturn-agent: Hand off to the return agent who is an expert in NVDIA returns.\nnone: You do not need to make a tool call and need to ask the user for clarification before handoff. DO NOT MAKE SMALL TALK WITH THE USER YOURSELF, YOU MUST ONLY USE THIS TO ASK A QUESTION TO PROPERLY HANDOFF TO ANOTHER AGENT."
+                    },
+                    "response": {
+                      "type": "string",
+                      "description": "The short answer or response. If you make a none tool call, this is ask the user for clarification so you make the correct tool call. DO NOT MAKE SMALL TALK WITH THE USER YOURSELF, YOU MUST ONLY USE THIS TO ASK A QUESTION TO PROPERLY HANDOFF TO ANOTHER AGENT."
+                    }
+                  },
+                  "required": ["toolCall", "response"],
+                  "additionalProperties": false
+                }
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "pipelineNodeName": "nim-api-llama3-1-70b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "604df534-8229-4652-a0a7-ad4fa6be4b11",
+            "inputs": [
+              {
+                "portId": "98d8c7ef-9880-425e-ae7b-1c1f9c4e5e3f",
+                "nodeId": "98d8c7ef-9880-425e-ae7b-1c1f9c4e5e3f",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "2f9d11d8-4d2d-4c8b-94dd-540f4ffb5a83",
+                "nodeId": "2f9d11d8-4d2d-4c8b-94dd-540f4ffb5a83",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": [
+                  "other-talk-agent",
+                  "product-agent",
+                  "order-agent",
+                  "none"
+                ],
+                "io": "output"
+              }
+            ],
+            "name": "Primary Agent Handle Tool Call",
+            "type": "custom",
+            "namespace": {
+              "functionName": "handle_tool_call_primary",
+
+              "serviceName": "ai-v-assist-compute-config",
+              "moduleName": "ai-v-assist-module",
+              "packageName": "ai-virtual-assistant"
+            },
+
+            "appName": "AI Virtual Assistant",
+            "dpkName": "ai-virtual-assistant",
+            "metadata": {
+              "position": {
+                "x": 10663,
+                "y": 10353,
+                "z": 0
+              },
+              "componentGroupName": "Virtual Assistant",
+              "repeatable": true,
+              "pipelineNodeName": "handle-tool-call-primary"
+            }
+          },
+          {
+            "id": "23c9636a-fa85-4795-8259-8b39c2d12e2f",
+            "inputs": [
+              {
+                "portId": "d053f292-a219-4479-b8ab-856dd1792a76",
+                "nodeId": "d053f292-a219-4479-b8ab-856dd1792a76",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "18215317-923b-48e6-840e-c8ff852a4e67",
+                "nodeId": "18215317-923b-48e6-840e-c8ff852a4e67",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "0057198e-a2b7-46ad-9ef4-89c152e2ff0d",
+                "nodeId": "0057198e-a2b7-46ad-9ef4-89c152e2ff0d",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "other-agent",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+
+              "moduleName": "nim-api-module",
+              "packageName": "nim-api-llama3-1-70b-instruct-meta"
+            },
+
+            "appName": "llama-3.1-70b-instruct",
+            "dpkName": "nim-api-llama3-1-70b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 11140.695775255,
+                "y": 10115.8448580513,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.1-70b-instruct",
+                "system_prompt": "You are a helpful customer service agent for NVIDIA. You are given a user's request and must handle any conversation unrelated to NVIDIA, gently steering it back towards NVDIA conversation.",
+                "max_tokens": 1024,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "seed": 0,
+                "stream": false
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "pipelineNodeName": "nim-api-llama3-1-70b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "278ea24d-442a-4b24-855e-189783fc2087",
+            "inputs": [
+              {
+                "portId": "07d490ed-06da-4cfa-ac59-ca73d4500c59",
+                "nodeId": "07d490ed-06da-4cfa-ac59-ca73d4500c59",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "87568dfe-747c-460b-b1d0-462f31933a23",
+                "nodeId": "87568dfe-747c-460b-b1d0-462f31933a23",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "e3adc3f2-6f9c-4c14-ade1-449426810ff5",
+                "nodeId": "e3adc3f2-6f9c-4c14-ade1-449426810ff5",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "order-agent",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+
+              "moduleName": "nim-api-module",
+              "packageName": "nim-api-llama3-1-70b-instruct-meta"
+            },
+
+            "appName": "llama-3.1-70b-instruct",
+            "dpkName": "nim-api-llama3-1-70b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 11146.4674047436,
+                "y": 10587.1046240046,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.1-70b-instruct",
+                "system_prompt": "You are the virtual AI assistant built by nv engineers. You are running using NVIDIA NIMs(NVIDIA Inference Microservice) on NVIDIA GPU.\n    You are responsible for handling greetings, general conversations, and any offbeat or unusual queries.\n    If a customer greets you with \"hi,\" \"hello,\" or similar expressions, respond warmly and in a welcoming manner.\n    For off-topic or unusual queries, politely acknowledge the customer's message and gently guide the conversation back to relevant topics where you can provide assistance.\n    If you're unable to help with a particular request, empathetically explain the chatbot's limitations and offer helpful suggestions on where the customer can find more information.\n\n    Here are some key principles to follow:\n    - Respond warmly and professionally to greetings like \"hi,\" \"hello,\" or \"how are you?\"\n    - For general questions outside your scope, apologize politely and explain the limitations of your system.\n    - Gently guide the user back to topics related to their orders, returns, or products if possible.\n    - Provide helpful suggestions for getting more detailed assistance (e.g., contacting customer support).\n    - Keep your responses short.\n    - Do not make up any information that you are not sure of.\n\n\n    If needed, here are some examples of polite responses to common situations:\n    - If the user greets: \"Hello! How can I assist you today?\"\n    - If the user asks for something outside your capabilities: \"I'm here to help with queries about your orders, returns, and NVIDIA products. For other questions, I recommend contacting customer support, who can assist further.\"\n    - If the user persists in asking about topics outside your scope: \"I understand your question is important, but I'm limited to assisting with order-related matters. Please feel free to reach out to customer support for more detailed help.\"\n\n    Remember to always be polite, warm, and provide clear guidance to the customer about what you can and cannot assist with.",
+                "max_tokens": 1024,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "seed": 0,
+                "stream": false,
+                "guided_json": {
+                  "type": "object",
+                  "properties": {
+                    "toolCall": {
+                      "type": "string",
+                      "enum": ["get-all-orders", "none", null],
+                      "description": "The tool call to be made based on the user's request.\n\nget-all-orders: Get all orders in the database where your response should be empty.\nnone: You do not need to make a tool call and need to ask the user for clarification before handoff. DO NOT MAKE SMALL TALK WITH THE USER YOURSELF, YOU MUST ONLY USE THIS TO ASK A QUESTION TO PROPERLY HANDOFF TO ANOTHER AGENT."
+                    },
+                    "response": {
+                      "type": "string",
+                      "description": "The short answer or response. If you make a none tool call, this is ask the user for clarification so you make the correct tool call. If you make a tool call, this should be where it is empty if tool call is get-all-orders. DO NOT MAKE SMALL TALK WITH THE USER YOURSELF, YOU MUST ONLY USE THIS TO ASK A QUESTION TO PROPERLY HANDOFF TO ANOTHER AGENT."
+                    }
+                  },
+                  "required": ["toolCall", "response"],
+                  "additionalProperties": false
+                }
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "pipelineNodeName": "nim-api-llama3-1-70b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "7b321aef-07c2-4896-ae0f-77dcf2d95a1f",
+            "inputs": [
+              {
+                "portId": "8bd58f53-8f09-4a6a-acb0-fb390a9f55f7",
+                "nodeId": "8bd58f53-8f09-4a6a-acb0-fb390a9f55f7",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "2f8ab184-dec1-43d8-ac36-14a89b4400b5",
+                "nodeId": "2f8ab184-dec1-43d8-ac36-14a89b4400b5",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": ["get-all-orders", "none"],
+                "io": "output"
+              }
+            ],
+            "name": "Order Agent Handle Tool Call",
+            "type": "custom",
+            "namespace": {
+              "functionName": "handle_tool_call_order",
+
+              "serviceName": "ai-v-assist-compute-config",
+              "moduleName": "ai-v-assist-module",
+              "packageName": "ai-virtual-assistant"
+            },
+
+            "appName": "AI Virtual Assistant",
+            "dpkName": "ai-virtual-assistant",
+            "metadata": {
+              "position": {
+                "x": 11416.3903354292,
+                "y": 10586.7449594338,
+                "z": 0
+              },
+              "componentGroupName": "Virtual Assistant",
+              "repeatable": true,
+              "pipelineNodeName": "handle-tool-call-order"
+            }
+          },
+          {
+            "id": "e81523a8-075d-48fd-8a2a-5153b7f33779",
+            "inputs": [
+              {
+                "portId": "54e239ee-6681-4152-80c1-e625e0bc199b",
+                "nodeId": "54e239ee-6681-4152-80c1-e625e0bc199b",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "596e6c3d-054b-4987-a03b-8975cf216839",
+                "nodeId": "596e6c3d-054b-4987-a03b-8975cf216839",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Query Order Database",
+            "type": "custom",
+            "namespace": {
+              "functionName": "query_order_db",
+
+              "serviceName": "ai-v-assist-compute-config",
+              "moduleName": "ai-v-assist-module",
+              "packageName": "ai-virtual-assistant"
+            },
+
+            "appName": "AI Virtual Assistant",
+            "dpkName": "ai-virtual-assistant",
+            "metadata": {
+              "position": {
+                "x": 11804.7220598851,
+                "y": 10503.6336122911,
+                "z": 0
+              },
+              "componentGroupName": "Virtual Assistant",
+              "repeatable": true,
+              "pipelineNodeName": "query-order-database"
+            }
+          },
+          {
+            "id": "39b490ae-1c7d-4929-a507-d0a2aea34337",
+            "inputs": [
+              {
+                "portId": "71442a6e-5f7c-43e6-8119-5b9acd9d9f14",
+                "nodeId": "71442a6e-5f7c-43e6-8119-5b9acd9d9f14",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "2447d3e1-8bdb-40ca-bc98-cf1dd799d8f1",
+                "nodeId": "2447d3e1-8bdb-40ca-bc98-cf1dd799d8f1",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Consolidate Responses",
+            "type": "custom",
+            "namespace": {
+              "functionName": "consolidate_responses",
+
+              "serviceName": "ai-v-assist-compute-config",
+              "moduleName": "ai-v-assist-module",
+              "packageName": "ai-virtual-assistant"
+            },
+
+            "appName": "AI Virtual Assistant",
+            "dpkName": "ai-virtual-assistant",
+            "metadata": {
+              "position": {
+                "x": 12377.7460416146,
+                "y": 10593.5360210752,
+                "z": 0
+              },
+              "componentGroupName": "Virtual Assistant",
+              "repeatable": true,
+              "pipelineNodeName": "consolidate-responses"
+            }
+          },
+          {
+            "id": "ade4dc62-bd85-417b-bed6-f4e21adae5be",
+            "inputs": [
+              {
+                "portId": "441b7a7f-04ca-445f-a140-2a513586f91d",
+                "nodeId": "441b7a7f-04ca-445f-a140-2a513586f91d",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "bc394e22-9611-414d-9e51-2602b459466e",
+                "nodeId": "bc394e22-9611-414d-9e51-2602b459466e",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "b06afe65-29af-4eca-95f9-9690ca3cae62",
+                "nodeId": "b06afe65-29af-4eca-95f9-9690ca3cae62",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "order-agent-no-tool",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+
+              "moduleName": "nim-api-module",
+              "packageName": "nim-api-llama3-1-70b-instruct-meta"
+            },
+
+            "appName": "llama-3.1-70b-instruct",
+            "dpkName": "nim-api-llama3-1-70b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 12090.3920944253,
+                "y": 10503.006305491,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.1-70b-instruct",
+                "system_prompt": "You are the virtual AI assistant built by nv engineers. You are running using NVIDIA NIMs(NVIDIA Inference Microservice) on NVIDIA GPU.\n    You are responsible for handling greetings, general conversations, and any offbeat or unusual queries.\n    If a customer greets you with \"hi,\" \"hello,\" or similar expressions, respond warmly and in a welcoming manner.\n    For off-topic or unusual queries, politely acknowledge the customer's message and gently guide the conversation back to relevant topics where you can provide assistance.\n    If you're unable to help with a particular request, empathetically explain the chatbot's limitations and offer helpful suggestions on where the customer can find more information.\n\n    Here are some key principles to follow:\n    - Respond warmly and professionally to greetings like \"hi,\" \"hello,\" or \"how are you?\"\n    - For general questions outside your scope, apologize politely and explain the limitations of your system.\n    - Gently guide the user back to topics related to their orders, returns, or products if possible.\n    - Provide helpful suggestions for getting more detailed assistance (e.g., contacting customer support).\n    - Keep your responses short.\n    - Do not make up any information that you are not sure of.\n\n\n    If needed, here are some examples of polite responses to common situations:\n    - If the user greets: \"Hello! How can I assist you today?\"\n    - If the user asks for something outside your capabilities: \"I'm here to help with queries about your orders, returns, and NVIDIA products. For other questions, I recommend contacting customer support, who can assist further.\"\n    - If the user persists in asking about topics outside your scope: \"I understand your question is important, but I'm limited to assisting with order-related matters. Please feel free to reach out to customer support for more detailed help.\"\n\n    Remember to always be polite, warm, and provide clear guidance to the customer about what you can and cannot assist with.",
+                "max_tokens": 1024,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "seed": 0,
+                "stream": false
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "pipelineNodeName": "nim-api-llama3-1-70b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "9a2d98db-ab2a-4ff1-8637-a31757f747be",
+            "inputs": [
+              {
+                "portId": "e3d371d5-2b1b-45f1-87fa-7c08e4c8a350",
+                "nodeId": "e3d371d5-2b1b-45f1-87fa-7c08e4c8a350",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "a1a33c9e-517d-4da8-ad71-10f9d24be81d",
+                "nodeId": "a1a33c9e-517d-4da8-ad71-10f9d24be81d",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "2d95d26b-4c41-46c9-a056-520db50cf2d5",
+                "nodeId": "2d95d26b-4c41-46c9-a056-520db50cf2d5",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "product-agent",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+
+              "moduleName": "nim-api-module",
+              "packageName": "nim-api-llama3-1-70b-instruct-meta"
+            },
+
+            "appName": "llama-3.1-70b-instruct",
+            "dpkName": "nim-api-llama3-1-70b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 11148.0799841561,
+                "y": 10357.0630806396,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.1-70b-instruct",
+                "system_prompt": "You are the virtual AI assistant built by nv engineers. You are running using NVIDIA NIMs(NVIDIA Inference Microservice) on NVIDIA GPU.\n    You are responsible for handling greetings, general conversations, and any offbeat or unusual queries.\n    If a customer greets you with \"hi,\" \"hello,\" or similar expressions, respond warmly and in a welcoming manner.\n    For off-topic or unusual queries, politely acknowledge the customer's message and gently guide the conversation back to relevant topics where you can provide assistance.\n    If you're unable to help with a particular request, empathetically explain the chatbot's limitations and offer helpful suggestions on where the customer can find more information.\n\n    Here are some key principles to follow:\n    - Respond warmly and professionally to greetings like \"hi,\" \"hello,\" or \"how are you?\"\n    - For general questions outside your scope, apologize politely and explain the limitations of your system.\n    - Gently guide the user back to topics related to their products, returns, or products if possible.\n    - Provide helpful suggestions for getting more detailed assistance (e.g., contacting customer support).\n    - Keep your responses short.\n    - Do not make up any information that you are not sure of.\n\n\n    If needed, here are some examples of polite responses to common situations:\n    - If the user greets: \"Hello! How can I assist you today?\"\n    - If the user asks for something outside your capabilities: \"I'm here to help with queries about your products, returns, and NVIDIA products. For other questions, I recommend contacting customer support, who can assist further.\"\n    - If the user persists in asking about topics outside your scope: \"I understand your question is important, but I'm limited to assisting with product-related matters. Please feel free to reach out to customer support for more detailed help.\"\n\n    Remember to always be polite, warm, and provide clear guidance to the customer about what you can and cannot assist with.",
+                "max_tokens": 1024,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "seed": 0,
+                "stream": false,
+                "guided_json": {
+                  "type": "object",
+                  "properties": {
+                    "toolCall": {
+                      "type": "string",
+                      "enum": ["get-all-products", "none", null],
+                      "description": "The tool call to be made based on the user's request.\n\nget-all-products: Get all products in the database where your response should be empty.\nnone: You do not need to make a tool call and need to ask the user for clarification before handoff. DO NOT MAKE SMALL TALK WITH THE USER YOURSELF, YOU MUST ONLY USE THIS TO ASK A QUESTION TO PROPERLY HANDOFF TO ANOTHER AGENT."
+                    },
+                    "response": {
+                      "type": "string",
+                      "description": "The short answer or response. If you make a none tool call, this is ask the user for clarification so you make the correct tool call. If you make a tool call, this should be where it is empty if tool call is get-all-products. DO NOT MAKE SMALL TALK WITH THE USER YOURSELF, YOU MUST ONLY USE THIS TO ASK A QUESTION TO PROPERLY HANDOFF TO ANOTHER AGENT."
+                    }
+                  },
+                  "required": ["toolCall", "response"],
+                  "additionalProperties": false
+                }
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "pipelineNodeName": "nim-api-llama3-1-70b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "5b593a02-f35b-46f4-98f3-c54a3cb0a707",
+            "inputs": [
+              {
+                "portId": "33a85187-78dd-4056-bbb7-2715828396ea",
+                "nodeId": "33a85187-78dd-4056-bbb7-2715828396ea",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b52041dc-a62f-4748-9170-811156c0798d",
+                "nodeId": "b52041dc-a62f-4748-9170-811156c0798d",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": ["get-all-products", "none"],
+                "io": "output"
+              }
+            ],
+            "name": "Product Agent Handle Tool Call",
+            "type": "custom",
+            "namespace": {
+              "functionName": "handle_tool_call_product",
+
+              "serviceName": "ai-v-assist-compute-config",
+              "moduleName": "ai-v-assist-module",
+              "packageName": "ai-virtual-assistant"
+            },
+
+            "appName": "AI Virtual Assistant",
+            "dpkName": "ai-virtual-assistant",
+            "metadata": {
+              "position": {
+                "x": 11407.2366510552,
+                "y": 10357.0626229618,
+                "z": 0
+              },
+              "componentGroupName": "Virtual Assistant",
+              "repeatable": true,
+              "pipelineNodeName": "handle-tool-call-product"
+            }
+          },
+          {
+            "id": "a250994c-e074-43b4-b722-137461be6f34",
+            "inputs": [
+              {
+                "portId": "fbb91f0b-a9e5-49d3-9a1e-480db6781e34",
+                "nodeId": "fbb91f0b-a9e5-49d3-9a1e-480db6781e34",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "f9198c89-8408-4839-b6db-d20e367da56c",
+                "nodeId": "f9198c89-8408-4839-b6db-d20e367da56c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Query Product Database",
+            "type": "custom",
+            "namespace": {
+              "functionName": "query_product_db",
+
+              "serviceName": "ai-v-assist-compute-config",
+              "moduleName": "ai-v-assist-module",
+              "packageName": "ai-virtual-assistant"
+            },
+
+            "appName": "AI Virtual Assistant",
+            "dpkName": "ai-virtual-assistant",
+            "metadata": {
+              "position": {
+                "x": 11799.7205620129,
+                "y": 10264.1861587467,
+                "z": 0
+              },
+              "componentGroupName": "Virtual Assistant",
+              "repeatable": true,
+              "pipelineNodeName": "query-product-database"
+            }
+          },
+          {
+            "id": "89d40671-4d83-48be-bd63-a4494ecd51c2",
+            "inputs": [
+              {
+                "portId": "3a0ba226-1c83-442d-acb0-231cb84941bf",
+                "nodeId": "3a0ba226-1c83-442d-acb0-231cb84941bf",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "90cdd91f-b1bd-424c-9f31-98d4f0107957",
+                "nodeId": "90cdd91f-b1bd-424c-9f31-98d4f0107957",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Consolidate Responses",
+            "type": "custom",
+            "namespace": {
+              "functionName": "consolidate_responses",
+
+              "serviceName": "ai-v-assist-compute-config",
+              "moduleName": "ai-v-assist-module",
+              "packageName": "ai-virtual-assistant"
+            },
+
+            "appName": "AI Virtual Assistant",
+            "dpkName": "ai-virtual-assistant",
+            "metadata": {
+              "position": {
+                "x": 12377.9586475809,
+                "y": 10367.5499423029,
+                "z": 0
+              },
+              "componentGroupName": "Virtual Assistant",
+              "repeatable": true,
+              "pipelineNodeName": "consolidate-responses"
+            }
+          },
+          {
+            "id": "ab34992f-1dba-4423-858e-0c015315601e",
+            "inputs": [
+              {
+                "portId": "5e002574-0b6d-40c9-bdf1-93a2fc67c5f8",
+                "nodeId": "5e002574-0b6d-40c9-bdf1-93a2fc67c5f8",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "698f6058-c4e6-43d3-b9ac-789626afdea2",
+                "nodeId": "698f6058-c4e6-43d3-b9ac-789626afdea2",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "966c3468-7631-4a66-b628-9eae04c10af3",
+                "nodeId": "966c3468-7631-4a66-b628-9eae04c10af3",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "product-agent-no-tool",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+
+              "moduleName": "nim-api-module",
+              "packageName": "nim-api-llama3-1-70b-instruct-meta"
+            },
+
+            "appName": "llama-3.1-70b-instruct",
+            "dpkName": "nim-api-llama3-1-70b-instruct-meta",
+            "metadata": {
+              "position": {
+                "x": 12085.8439365302,
+                "y": 10261.190832481,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.1-70b-instruct",
+                "system_prompt": "You are the virtual AI assistant built by nv engineers. You are running using NVIDIA NIMs(NVIDIA Inference Microservice) on NVIDIA GPU.\n    You are responsible for handling greetings, general conversations, and any offbeat or unusual queries.\n    If a customer greets you with \"hi,\" \"hello,\" or similar expressions, respond warmly and in a welcoming manner.\n    For off-topic or unusual queries, politely acknowledge the customer's message and gently guide the conversation back to relevant topics where you can provide assistance.\n    If you're unable to help with a particular request, empathetically explain the chatbot's limitations and offer helpful suggestions on where the customer can find more information.\n\n    Here are some key principles to follow:\n    - Respond warmly and professionally to greetings like \"hi,\" \"hello,\" or \"how are you?\"\n    - For general questions outside your scope, apologize politely and explain the limitations of your system.\n    - Gently guide the user back to topics related to their products, returns, or products if possible.\n    - Provide helpful suggestions for getting more detailed assistance (e.g., contacting customer support).\n    - Keep your responses short.\n    - Do not make up any information that you are not sure of.\n\n\n    If needed, here are some examples of polite responses to common situations:\n    - If the user greets: \"Hello! How can I assist you today?\"\n    - If the user asks for something outside your capabilities: \"I'm here to help with queries about your NVIDIA products. For other questions, I recommend contacting customer support, who can assist further.\"\n    - If the user persists in asking about topics outside your scope: \"I understand your question is important, but I'm limited to assisting with product-related matters. Please feel free to reach out to customer support for more detailed help.\"\n\n    Remember to always be polite, warm, and provide clear guidance to the customer about what you can and cannot assist with.",
+                "max_tokens": 1024,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "seed": 0,
+                "stream": false
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "pipelineNodeName": "nim-api-llama3-1-70b-instruct-meta",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "60289451-6008-4f82-adc0-4b15de920861",
+            "inputs": [
+              {
+                "portId": "10e5eba2-8ff5-413d-948a-191de49e701c",
+                "nodeId": "10e5eba2-8ff5-413d-948a-191de49e701c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "6535f830-8015-4082-b9a8-aee55409f136",
+                "nodeId": "6535f830-8015-4082-b9a8-aee55409f136",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Consolidate Responses",
+            "type": "custom",
+            "namespace": {
+              "functionName": "consolidate_responses",
+
+              "serviceName": "ai-v-assist-compute-config",
+              "moduleName": "ai-v-assist-module",
+              "packageName": "ai-virtual-assistant"
+            },
+
+            "appName": "AI Virtual Assistant",
+            "dpkName": "ai-virtual-assistant",
+            "metadata": {
+              "position": {
+                "x": 11427.7724103528,
+                "y": 10111.1141924598,
+                "z": 0
+              },
+              "componentGroupName": "Virtual Assistant",
+              "repeatable": true,
+              "pipelineNodeName": "consolidate-responses"
+            }
+          },
+          {
+            "id": "3d64e66e-17d4-443e-8c93-735dc386a81a",
+            "inputs": [
+              {
+                "portId": "8fab98ec-4b9d-4913-9809-d9be8f459f2c",
+                "nodeId": "8fab98ec-4b9d-4913-9809-d9be8f459f2c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "8d92bf22-f94b-42a9-95c8-7f5b67a3d2b2",
+                "nodeId": "8d92bf22-f94b-42a9-95c8-7f5b67a3d2b2",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Consolidate Responses",
+            "type": "custom",
+            "namespace": {
+              "functionName": "consolidate_responses",
+
+              "serviceName": "ai-v-assist-compute-config",
+              "moduleName": "ai-v-assist-module",
+              "packageName": "ai-virtual-assistant"
+            },
+
+            "appName": "AI Virtual Assistant",
+            "dpkName": "ai-virtual-assistant",
+            "metadata": {
+              "position": {
+                "x": 11141.113000609,
+                "y": 10699.9385467052,
+                "z": 0
+              },
+              "componentGroupName": "Virtual Assistant",
+              "repeatable": true,
+              "pipelineNodeName": "consolidate-responses"
+            }
+          }
+        ],
+        "preview": "681b0b80d94100cbe62ee889",
+        "variables": null,
+        "_id": "681b0c8df6dea3bef1027e80"
+      }
+    ]
+  }
+}
