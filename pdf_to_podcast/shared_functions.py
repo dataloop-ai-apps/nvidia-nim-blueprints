@@ -270,7 +270,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         final_conversation = Conversation.model_validate(conversation_json)
 
         # upload the final conversation
-        new_name = f"{Path(pdf_name).stem}_final_transcript"
+        new_name = f"{Path(pdf_name).stem}_final_transcript.json"
         json_path = Path.cwd() / new_name
         with open(json_path, "w", encoding="utf-8") as f:
             json_file = final_conversation.model_dump_json(indent=2)
@@ -307,7 +307,9 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
         pdf_name = podcast_metadata.get("pdf_name")
         monologue = podcast_metadata.get("monologue")
-        original_item = dl.items.get(item_id=podcast_metadata.get("original_item_id"))
+        original_item = dl.items.get(item_id=item.metadata.get("user", {}).get("original_item_id", None))
+        if original_item is None:
+            raise ValueError(f"No original item id found in the final transcript item {item.id}. Please check that item was prepared correctly.")
 
         if monologue is True:
             output_file_name = Path(pdf_name).stem + "_monologue.mp3"
