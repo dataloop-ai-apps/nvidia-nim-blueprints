@@ -1,0 +1,258 @@
+{
+  "name": "ai-virtual-assistant",
+  "displayName": "AI Virtual Assistant",
+  "description": "An AI virtual assistant service with tool handling and database querying capabilities.",
+  "version": "0.0.28",
+  "scope": "project",
+  "attributes": {
+    "Hub": ["Nvidia", "Dataloop"],
+    "Category": ["Application", "Blueprint"],
+    "Pipeline Type": "GenAI",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop"
+  },
+  "components": {
+    "computeConfigs": [
+      {
+        "name": "ai-v-assist-compute-config",
+        "runtime": {
+          "podType": "regular-xs",
+          "concurrency": 10,
+          "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints:0.0.3",
+          "autoscaler": {
+            "type": "rabbitmq",
+            "minReplicas": 1,
+            "maxReplicas": 1
+          }
+        }
+      }
+    ],
+    "modules": [
+      {
+        "name": "ai-v-assist-module",
+        "computeConfig": "ai-v-assist-compute-config",
+        "entryPoint": "ai_virtual_assistant/service.py",
+        "className": "ServiceRunner",
+        "integrations": [],
+        "functions": [
+          {
+            "name": "create_temp_item",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Create Temporary Item"
+          },
+          {
+            "name": "handle_tool_call_primary",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item",
+                "actions": [
+                    "other-talk-agent",
+                    "product-agent",
+                    "order-agent",
+                    "none"
+                  ]
+              }
+            ],
+            "displayName": "Primary Agent Handle Tool Call"
+          },
+          {
+            "name": "handle_tool_call_order",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item",
+                "actions": [
+                    "get-all-orders",
+                    "none"
+                  ]
+              }
+            ],
+            "displayName": "Order Agent Handle Tool Call"
+          },
+          {
+            "name": "handle_tool_call_product",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item",
+                "actions": [
+                    "get-all-products",
+                    "none"
+                  ]
+              }
+            ],
+            "displayName": "Product Agent Handle Tool Call"
+          },
+          {
+            "name": "query_order_db",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Query Order Database"
+          },
+          {
+            "name": "query_product_db",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Query Product Database"
+          },
+          {
+            "name": "extract_user_prompt",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Extract User Prompt"
+          },
+          {
+            "name": "consolidate_responses",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "Consolidate Responses"
+          }
+        ]
+      }
+    ],
+    "pipelineNodes": [
+      {
+        "name": "create-temporary-item",
+        "invoke": {
+          "type": "function",
+          "namespace": "ai-v-assist-compute-config.ai-v-assist-module.create_temp_item"
+        },
+        "categories": ["Virtual Assistant"],
+        "scope": "project"
+      },
+      {
+        "name": "handle-tool-call-primary",
+        "invoke": {
+          "type": "function",
+          "namespace": "ai-v-assist-compute-config.ai-v-assist-module.handle_tool_call_primary"
+        },
+        "categories": ["Virtual Assistant"],
+        "scope": "project"
+      },
+      {
+        "name": "handle-tool-call-order",
+        "invoke": {
+          "type": "function",
+          "namespace": "ai-v-assist-compute-config.ai-v-assist-module.handle_tool_call_order"
+        },
+        "categories": ["Virtual Assistant"],
+        "scope": "project"
+      },
+      {
+        "name": "handle-tool-call-product",
+        "invoke": {
+          "type": "function",
+          "namespace": "ai-v-assist-compute-config.ai-v-assist-module.handle_tool_call_product"
+        },
+        "categories": ["Virtual Assistant"],
+        "scope": "project"
+      },
+      {
+        "name": "query-order-database",
+        "invoke": {
+          "type": "function",
+          "namespace": "ai-v-assist-compute-config.ai-v-assist-module.query_order_db"
+        },
+        "categories": ["Virtual Assistant"],
+        "scope": "project"
+      },
+      {
+        "name": "query-product-database",
+        "invoke": {
+          "type": "function",
+          "namespace": "ai-v-assist-compute-config.ai-v-assist-module.query_product_db"
+        },
+        "categories": ["Virtual Assistant"],
+        "scope": "project"
+      },
+      {
+        "name": "extract-user-prompt",
+        "invoke": {
+          "type": "function",
+          "namespace": "ai-v-assist-compute-config.ai-v-assist-module.extract_user_prompt"
+        },
+        "categories": ["Virtual Assistant"],
+        "scope": "project"
+      },
+      {
+        "name": "consolidate-responses",
+        "invoke": {
+          "type": "function",
+          "namespace": "ai-v-assist-compute-config.ai-v-assist-module.consolidate_responses"
+        },
+        "categories": ["Virtual Assistant"],
+        "scope": "project"
+      }
+    ]
+  }
+} 
