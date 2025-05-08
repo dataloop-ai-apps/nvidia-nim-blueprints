@@ -32,7 +32,7 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         focus = podcast_metadata["focus"]
         pdf_name = podcast_metadata["pdf_name"]
         # get the summary from the last prompt annotation
-        summary = SharedServiceRunner._get_summary_from_id(item.id)
+        summary = SharedServiceRunner._get_last_message(item)
 
         logger.info("Preparing to generate outline")
 
