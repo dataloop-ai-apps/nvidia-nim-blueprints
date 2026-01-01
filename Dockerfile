@@ -1,4 +1,4 @@
-FROM dataloopai/dtlpy-agent:cpu.py3.10.opencv
+FROM hub.dataloop.ai/dtlpy-runner-images/cpu:python3.10_opencv
 
 USER 1000
 ENV HOME=/tmp
