@@ -10,7 +10,7 @@ logger = logging.getLogger("image-to-prompt")
 class ServiceRunner(dl.BaseServiceRunner):
 
     def post_processing(self, item: dl.Item) -> dl.Item:
-        valid_file_types = ["application/json", "text/plain"]
+        valid_file_types = ["text/plain"]
         new_item = None
         remote_path = "/preprocessed_text_files"
 
@@ -19,8 +19,6 @@ class ServiceRunner(dl.BaseServiceRunner):
 
         if item.mimetype.startswith("image"):
             new_item = self._process_image_item(item, remote_path)
-        elif item.mimetype == "application/json":
-            new_item = self._process_prompt_item(item, remote_path)
         elif item.mimetype == "text/plain":
             new_item = item  # No processing needed
 
@@ -56,23 +54,6 @@ class ServiceRunner(dl.BaseServiceRunner):
 
         return processed_item
 
-    def _process_prompt_item(self, item: dl.Item, remote_path: str) -> dl.Item:
-        filters = dl.Filters(field="type", values="text", resource=dl.FiltersResource.ANNOTATION)
-        annotations = item.annotations.list(filters=filters)
-        lines = [ann.coordinates for ann in annotations]
-
-        processed_item = None
-        if lines != []:
-            processed_item = self._upload_temp_text_file(
-                item=item,
-                content="\n".join(lines),
-                remote_path=remote_path,
-                suffix="deplot_postprocessed",
-                user_metadata={"text_annotations_from_prompt": True},
-            )
-
-        return processed_item
-
     def _upload_temp_text_file(self, item, content: str, remote_path: str, suffix: str, user_metadata: dict) -> dl.Item:
         with tempfile.TemporaryDirectory() as temp_dir:
             filename = f"{os.path.splitext(item.name)[0]}_{suffix}.txt"
@@ -96,7 +77,5 @@ class ServiceRunner(dl.BaseServiceRunner):
 if __name__ == "__main__":
     dl.setenv("rc")
     item = dl.items.get(item_id="")
-    prompt_item = dl.items.get(item_id="")
     runner = ServiceRunner()
     runner.post_processing(item=item)
-    runner.post_processing(item=prompt_item)

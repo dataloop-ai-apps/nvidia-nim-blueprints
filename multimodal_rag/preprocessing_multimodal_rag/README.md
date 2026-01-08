@@ -18,14 +18,12 @@ And look for: `Etraction Pipeline`.
 - **PDF to Text Conversion**: Converts PDF documents into text format for further processing.
 - **Text Chunking**: Splits the extracted text into manageable chunks for efficient processing.
 - **PDF to Image Conversion**: Converts PDF pages into images for visual data extraction.
-- **Image to Prompt Conversion**: Transforms images into prompts for further analysis.
 - **Crop Annotations**: Extracts and processes annotations from images.
 
 ## Components
 
 ### 1. NIM Models
 - ***yolox-page-elements-v1***
-- ***google-deplot***
 - ***university-at-buffalo-cached***
 - ***baidu-paddleocr***
 - ***nvidia-embedqa-e5v5***
@@ -41,17 +39,12 @@ And look for: `Etraction Pipeline`.
 - **Function**: `create_chunks`
 - **Description**: Generates text chunks from the extracted text with configurable chunk size and overlap.
 
-### 4. Image to Prompt
-- **Type**: Code
-- **Function**: `run`
-- **Description**: Converts images into prompts for further processing.
-
-### 5. Crop Annotations
+### 4. Crop Annotations
 - **Type**: Function
 - **Function**: `crop_annotations`
 - **Description**: Processes and extracts annotations from images.
 
-### 6. PDF to Image
+### 5. PDF to Image
 - **Type**: Custom
 - **Function**: `pdf_item_to_images`
 - **Description**: Converts PDF documents into image format.
