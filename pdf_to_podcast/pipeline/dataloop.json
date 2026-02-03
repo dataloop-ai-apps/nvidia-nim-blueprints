@@ -21,11 +21,6 @@
       "Audio"
     ]
   },
-  "codebase": {
-    "type": "git",
-    "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
-    "gitTag": "0.0.31"
-  },
   "dependencies": [
     {
       "name": "pdf-to-podcast"
