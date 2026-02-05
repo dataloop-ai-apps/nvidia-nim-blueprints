@@ -2,7 +2,7 @@
   "name": "pdf-to-podcast-blueprint",
   "displayName": "PDF to Podcast NVIDIA Blueprint",
   "description": "The NVIDIA blueprint for the PDF to Podcast pipeline uses the ElevenLabs API to generate audio for original podcast content on provided PDFs.",
-  "version": "0.0.34",
+  "version": "0.0.32",
   "scope": "public",
   "attributes": {
     "Hub": [
@@ -32,13 +32,13 @@
       "name": "wait-node"
     },
     {
-      "name": "nim-llama-3-1-405b-instruct"
+      "name": "nim-api-llama3-1-405b-instruct-meta"
     },
     {
-      "name": "nim-llama-3-1-70b-instruct"
+      "name": "nim-api-llama3-1-70b-instruct-meta"
     },
     {
-      "name": "nim-llama-3-1-8b-instruct"
+      "name": "nim-api-llama3-1-8b-instruct-meta"
     }
   ],
   "components": {
@@ -552,7 +552,7 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "appName": "PDF to Podcast NVIDIA",
+            "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
               "position": {
@@ -595,7 +595,7 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "appName": "PDF to Podcast NVIDIA",
+            "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
               "position": {
@@ -638,7 +638,7 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "appName": "PDF to Podcast NVIDIA",
+            "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
               "position": {
@@ -681,7 +681,7 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "appName": "PDF to Podcast NVIDIA",
+            "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
               "position": {
@@ -724,7 +724,7 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "appName": "PDF to Podcast NVIDIA",
+            "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
               "position": {
@@ -773,10 +773,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "llama-3.1-405b-instruct",
+            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
               "position": {
                 "x": 11488.341355488705,
@@ -826,10 +826,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "llama-3.1-405b-instruct",
+            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
               "position": {
                 "x": 12116.814283228272,
@@ -879,10 +879,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "llama-3.1-405b-instruct",
+            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
               "position": {
                 "x": 12773.723943824945,
@@ -932,10 +932,10 @@
               "functionName": "predict",
               "serviceName": "predict-67f7b2a9f41fe30fb2d2c4-59tg",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-8b-instruct"
+              "packageName": "nim-api-llama3-1-8b-instruct-meta"
             },
-            "appName": "NIM Llama 3.1 8B Instruct",
-            "dpkName": "nim-llama-3-1-8b-instruct",
+            "appName": "llama-3.1-8b-instruct",
+            "dpkName": "nim-api-llama3-1-8b-instruct-meta",
             "metadata": {
               "position": {
                 "x": 13487.755712895085,
@@ -985,10 +985,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "llama-3.1-405b-instruct",
+            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
               "position": {
                 "x": 11484.156977396948,
@@ -1032,7 +1032,7 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "appName": "PDF to Podcast NVIDIA",
+            "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
               "position": {
@@ -1075,7 +1075,7 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "appName": "PDF to Podcast NVIDIA",
+            "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
               "position": {
@@ -1118,7 +1118,7 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "appName": "PDF to Podcast NVIDIA",
+            "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
               "position": {
@@ -1167,10 +1167,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed36731b494016ca41d7-b055",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-8b-instruct"
+              "packageName": "nim-api-llama3-1-8b-instruct-meta"
             },
-            "appName": "NIM Llama 3.1 8B Instruct",
-            "dpkName": "nim-llama-3-1-8b-instruct",
+            "appName": "llama-3.1-8b-instruct",
+            "dpkName": "nim-api-llama3-1-8b-instruct-meta",
             "metadata": {
               "position": {
                 "x": 12769.352219378163,
@@ -1220,10 +1220,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe30fd8d2c3-8zlh",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-70b-instruct"
+              "packageName": "nim-api-llama3-1-70b-instruct-meta"
             },
-            "appName": "NIM Llama 3.1 70B Instruct",
-            "dpkName": "nim-llama-3-1-70b-instruct",
+            "appName": "llama-3.1-70b-instruct",
+            "dpkName": "nim-api-llama3-1-70b-instruct-meta",
             "metadata": {
               "position": {
                 "x": 13391.820885492049,
@@ -1273,10 +1273,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "llama-3.1-405b-instruct",
+            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
               "position": {
                 "x": 14076.225628811282,
@@ -1384,7 +1384,7 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "appName": "PDF to Podcast NVIDIA",
+            "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
               "position": {
@@ -1427,7 +1427,7 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "appName": "PDF to Podcast NVIDIA",
+            "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
               "position": {
@@ -1476,10 +1476,10 @@
               "functionName": "predict",
               "serviceName": "predict-67f7b2a9f41fe30fb2d2c4-59tg",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-8b-instruct"
+              "packageName": "nim-api-llama3-1-8b-instruct-meta"
             },
-            "appName": "NIM Llama 3.1 8B Instruct",
-            "dpkName": "nim-llama-3-1-8b-instruct",
+            "appName": "llama-3.1-8b-instruct",
+            "dpkName": "nim-api-llama3-1-8b-instruct-meta",
             "metadata": {
               "position": {
                 "x": 15792.938954041872,
@@ -1529,10 +1529,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-api-llama3-1-405b-instruct-meta"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "llama-3.1-405b-instruct",
+            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
             "metadata": {
               "position": {
                 "x": 12119.012291317891,
@@ -1592,7 +1592,7 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "appName": "PDF to Podcast NVIDIA",
+            "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
               "position": {
@@ -1635,7 +1635,7 @@
               "moduleName": "pdf2podcast-module",
               "packageName": "pdf-to-podcast"
             },
-            "appName": "PDF to Podcast NVIDIA",
+            "appName": "PDF to Podcast",
             "dpkName": "pdf-to-podcast",
             "metadata": {
               "position": {
