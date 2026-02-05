@@ -4,6 +4,9 @@
   "description": "Application for modules to prepare and summarize PDFs, generate monologue or dialogue, and convert to audio with ElevenLabs.",
   "version": "0.0.35",
   "scope": "public",
+  "codebase": {
+    "type": "item"
+  },
   "attributes": {
     "Hub": ["Nvidia", "Dataloop"],
     "Category": ["Application"],

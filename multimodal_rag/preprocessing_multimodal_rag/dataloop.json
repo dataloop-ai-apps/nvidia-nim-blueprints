@@ -21,6 +21,9 @@
   "displayName": "RAG Preprocessing Multimodal PDFs NVIDIA Blueprint",
   "description": "NVIDIA blueprint for the preprocessing stage of a multimodal PDF RAG pipeline.",
   "scope": "public",
+  "codebase": {
+    "type": "item"
+  },
   "components": {
     "pipelineTemplates": [
       {
