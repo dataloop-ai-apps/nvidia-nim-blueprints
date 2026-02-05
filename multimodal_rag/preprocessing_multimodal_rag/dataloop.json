@@ -18,14 +18,9 @@
       "Image"
     ]
   },
-  "displayName": "Preprocessing Multimodal PDF RAG",
+  "displayName": "RAG Preprocessing Multimodal PDFs NVIDIA Blueprint",
   "description": "NVIDIA blueprint for the preprocessing stage of a multimodal PDF RAG pipeline.",
   "scope": "public",
-  "codebase": {
-    "type": "git",
-    "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
-    "gitTag": "0.0.34"
-  },
   "components": {
     "pipelineTemplates": [
       {
@@ -629,10 +624,10 @@
             "namespace": {
               "functionName": "embed",
               "moduleName": "nim-embeddings-module",
-              "packageName": "nv-embedqa-e5v5"
+              "packageName": "nim-nv-embedqa-e5-v5"
             },
-            "appName": "nv-embedqa-e5-v5",
-            "dpkName": "nv-embedqa-e5v5",
+            "appName": "NIM Nv Embedqa E5 V5",
+            "dpkName": "nim-nv-embedqa-e5-v5",
             "metadata": {
               "position": {
                 "x": 13237.8428864159,
@@ -809,25 +804,25 @@
           {
             "name": "university-at-buffalo-cached",
             "type": "Model",
-            "description": "university-at-buffalo-cached model",
+            "description": "Table detection and extraction model for identifying tabular data in document pages. Recommended: University at Buffalo CachedTransformer",
             "value": "$var(university-at-buffalo-cached__model)"
           },
           {
             "name": "nv-yolox-page-elements-v1",
             "type": "Model",
-            "description": "nv-yolox-page-elements-v1 model",
+            "description": "Page element detection model for identifying layout components (tables, figures, text blocks) in document pages. Recommended: NVIDIA YOLOX Page Elements v1",
             "value": "$var(nv-yolox-page-elements_v1__model)"
           },
           {
             "name": "baidu-paddleocr",
             "type": "Model",
-            "description": "baidu-paddleocr model",
+            "description": "OCR model for extracting text from document images and cropped page elements. Recommended: Baidu PaddleOCR",
             "value": "$var(baidu-paddleocr__model)"
           },
           {
             "name": "nv-embedqa-e5v5",
             "type": "Model",
-            "description": "nv-embedqa-e5v5 model",
+            "description": "Embedding model for vectorizing text chunks for retrieval. Recommended: NVIDIA NV-EmbedQA E5 v5",
             "value": "$var(nv-embedqa-e5v5__model)"
           }
         ]
@@ -845,7 +840,7 @@
       "name": "baidu-paddleocr"
     },
     {
-      "name": "nv-embedqa-e5v5"
+      "name": "nim-nv-embedqa-e5-v5"
     },
     {
       "name": "pdf_to_txt"
@@ -864,6 +859,6 @@
     "university-at-buffalo-cached__model": "university-at-buffalo-cached.models.university-at-buffalo-cached",
     "nv-yolox-page-elements_v1__model": "nv-yolox-page-elements-v1.models.nv-yolox-page-elements-v1",
     "baidu-paddleocr__model": "baidu-paddleocr.models.baidu-paddleocr",
-    "nv-embedqa-e5v5__model": "nv-embedqa-e5v5.models.nv-embedqa-e5v5"
+    "nv-embedqa-e5v5__model": "nim-nv-embedqa-e5-v5.models.nim-nv-embedqa-e5-v5"
   }
 }

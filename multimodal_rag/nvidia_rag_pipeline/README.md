@@ -2,58 +2,131 @@
 
 ## Overview
 
-The NVIDIA RAG pipeline is a blueprint designed to enhance the Retrieval-Augmented Generation (RAG) process. It efficiently interacts with models using Dataloop's AI playground and leveraging NIM models for generating embeddings and responses. The pipeline incorporates a retriever service to fetch relevant documents from the source dataset. The model's responses are stored in the prompts dataset and are subsequently sent to a labeling task, enabling human-in-the-loop validation and refinement.
+The NVIDIA RAG Pipeline is the second stage of the two-stage RAG system. It accepts user queries, retrieves relevant document chunks using vector similarity search, and generates responses using an LLM with retrieved context.
 
-For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipeline](https://build.nvidia.com/nvidia/build-an-enterprise-rag-pipeline).
-And look for: `Retrival Pipeline`.
+This pipeline integrates with Dataloop's AI Playground and uses NIM models for embedding queries and generating responses. It includes human-in-the-loop validation by storing responses in a prompts dataset for review.
+
+For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipeline](https://build.nvidia.com/nvidia/build-an-enterprise-rag-pipeline) and look for: `Retrieval Pipeline`.
 
 ## Prerequisites
 
-- Run the `Extraction Pipeline` in [Preprocessing Multimodal PDF RAG Blueprint](../preprocessing_multimodal_rag/README.md),
-  and use the final embeddings Dataset and Model as inputs for this `Retrival Pipeline` **Retrival Dataset** and **Retrival Embedding Model**.
+- **NVIDIA NGC API Key**: Required for all NIM model services
+- **Completed Extraction Pipeline**: Run the [Preprocessing Multimodal PDF RAG Blueprint](../preprocessing_multimodal_rag/README.md) first
+- **Retrieval Dataset**: The output dataset from the extraction pipeline containing embedded chunks
+- **Prompts Dataset**: A dataset to store user queries and generated responses
+
+> **Critical**: The `retrieval_embed_model` must be the same model used in the extraction pipeline (`nv-embedqa-e5v5.models.nv-embedqa-e5v5`). Using a different embedding model will cause semantic search failures because the vector spaces won't align.
 
 ## Features
 
-- **Efficient Model Interaction**: Utilizes Dataloop's AI Playground for seamless model communication.
-- **Embedding Generation**: Leverages NIM models to generate embeddings and responses.
-- **Document Retrieval**: Incorporates a retriever service to fetch relevant documents.
-- **Human-in-the-Loop**: Stores model responses in a prompt dataset and sends them to a labeling task for validation.
+- **Query Embedding**: Converts user questions into vectors using the same model as document embeddings
+- **Vector Similarity Search**: Retrieves the K nearest document chunks to the query
+- **Context-Aware Generation**: Uses retrieved chunks as context for the LLM response
+- **Human-in-the-Loop**: Stores responses for validation and refinement
 
 ## Components
 
-### 1. Dataset
-- **Type**: Storage
-- **Function**: `clone_item`
-- **Service Name**: pipeline-utils
-- **Description**: Manages dataset storage for prompt items.
+### NIM Models
 
-### 2. Embedding Model
+| Model | Purpose |
+|-------|---------|
+| **nv-embedqa-e5v5** | Embeds user queries for similarity search |
+| **llama-3.1-405b-instruct** | Generates responses using retrieved context |
+
+### Pipeline Nodes
+
+#### 1. Dataset (Storage Node)
+- **Function**: `clone_item`
+- **Service**: pipeline-utils
+- **Purpose**: Receives prompt items from the prompts dataset
+
+#### 2. nv-embedqa-e5v5 (Embedding Model)
 - **Type**: ML
 - **Function**: `embed`
-- **Package**: nv-embedqa-e5v5
-- **Description**: Generates embeddings for input data.
+- **Purpose**: Generates embeddings for the user query
+- **Output**: Vector representation of the query
 
-### 3. Retriever Service
+#### 3. Retriever Prompt
 - **Type**: Custom
 - **Function**: `query_nearest_items_prompt`
+- **Service**: retriever-service
 - **Package**: llm-tools-retriever
-- **Description**: Retrieves relevant documents based on embeddings.
+- **Purpose**: Finds K nearest document chunks using vector similarity
+- **Inputs**:
+  - `item`: The prompt item
+  - `embeddings`: Query embedding from previous node
+  - `embedder`: Retrieval embedding model (must match extraction)
+  - `dataset`: Retrieval dataset (from extraction pipeline)
+  - `k`: Number of nearest items to retrieve
 
-### 4. Response Generation
+#### 4. llama-3.1-405b-instruct (Response Generation)
 - **Type**: ML
 - **Function**: `predict`
-- **Package**: nim-api-llama3-1-405b-instruct-meta
-- **Description**: Generates responses using the Llama model.
+- **Purpose**: Generates a response using retrieved context
+- **Output**: Item with response annotations
+
+## Configuration Variables
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `embed_model` | Model | Embedding model for user queries |
+| `gen_ai_model` | Model | LLM for response generation |
+| `retrieval_dataset` | Dataset | Dataset containing embedded chunks (from extraction pipeline) |
+| `retrieval_embed_model` | Model | Embedding model used for retrieval dataset (must match extraction) |
+| `k_nearest_items` | Integer | Number of chunks to retrieve (default: 30) |
 
 ## Usage
 
-1. **Install the Blueprint**: Install the pipeline from Dataloop Marketplace.
+### 1. Install the Blueprint
 
-2. **Set up the Pipeline**: Choose the appropriate **Retrival Dataset** and **Embedding Model** for the **Retriever Prompt** Service,
-   and choose the dataset that will store prompts for the LLM model.
+Install the pipeline from the Dataloop Marketplace.
 
-3. **Run the Pipeline**: Make sure you have inserted your nim api key to the models services and run the pipeline.
+### 2. Configure the Retrieval Dataset
+
+Set the `retrieval_dataset` variable to the ID of the dataset output by the extraction pipeline.
+
+### 3. Configure the Embedding Model
+
+Set the `retrieval_embed_model` to `nv-embedqa-e5v5.models.nv-embedqa-e5v5` (must match the extraction pipeline).
+
+### 4. Configure Model Services
+
+Ensure your NVIDIA NGC API key is configured in the model services:
+- nv-embedqa-e5v5
+- llama-3.1-405b-instruct
+
+### 5. Create Prompt Items
+
+Create prompt items in your prompts dataset containing user questions.
+
+### 6. Run the Pipeline
+
+Execute the pipeline. Each prompt item will be processed, retrieving relevant chunks and generating a response.
+
+## Troubleshooting
+
+### No Relevant Results Retrieved
+
+- Verify `retrieval_dataset` points to the correct embedded chunks dataset
+- Confirm `retrieval_embed_model` matches the model used during extraction
+- Check that the retrieval dataset contains items with embedding annotations
+
+### Poor Response Quality
+
+- Increase `k_nearest_items` to provide more context
+- Verify the extraction pipeline processed documents correctly
+- Check that prompt items contain clear, well-formed questions
+
+### Pipeline Execution Fails
+
+- Verify NVIDIA NGC API key is valid and configured
+- Check that all required services are running
+- Ensure the retrieval dataset is accessible
+
+### Embedding Model Mismatch Error
+
+The retrieval embedding model **must** be the same as the one used in the extraction pipeline. If you used a different model during extraction, you'll need to re-run the extraction pipeline with the correct model, or update this pipeline to use the matching model.
 
 ## Contributing
 
-We welcome contributions! Please see our [contributing guidelines] for more information on how to get involved.
+We welcome contributions! Please see our contributing guidelines for more information on how to get involved.

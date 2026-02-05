@@ -336,25 +336,25 @@
           {
             "name": "reasoning LLM",
             "type": "Model",
-            "description": null,
+            "description": "Main LLM for summarization, outline generation, and content creation. Recommended: Llama 3.1 405B Instruct",
             "value": ""
           },
           {
             "name": "iterative LLM",
             "type": "Model",
-            "description": null,
+            "description": "LLM for iteratively combining dialogue segments into a cohesive conversation. Recommended: Llama 3.1 70B Instruct",
             "value": ""
           },
           {
             "name": "json podcast LLM",
             "type": "Model",
-            "description": null,
+            "description": "LLM for converting the raw outline into a structured JSON podcast outline. Recommended: Llama 3.1 8B Instruct",
             "value": ""
           },
           {
             "name": "json convo LLM",
             "type": "Model",
-            "description": null,
+            "description": "LLM for converting dialogue or monologue text into structured JSON conversation format. Recommended: Llama 3.1 8B Instruct",
             "value": ""
           }
         ],
