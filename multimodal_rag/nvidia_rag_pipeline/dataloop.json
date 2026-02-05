@@ -17,14 +17,9 @@
       "Text"
     ]
   },
-  "displayName": "NVIDIA RAG Pipeline",
-  "description": "The NVIDIA blueprint for the RAG pipeline utilizes Dataloop's AI Playground to enable efficient interaction with models. It leverages NIM models for generating embeddings and responses, and incorporates a retriever service to effectively fetch relevant documents from the source dataset. The model's responses are stored in the prompts dataset and subsequently sent to a labeling task, enabling human-in-the-loop validation and refinement.",
+  "displayName": "RAG Pipeline NVIDIA Blueprint",
+  "description": "NVIDIA blueprint for the RAG retrieval pipeline. Retrieves prepared embeddings from multimodal PDFs after documents have been embedded by the preprocessing pipeline, uses NIM models for generating query embeddings and responses, and incorporates a retriever service to fetch relevant documents from the source dataset. Model responses are stored in the prompts dataset and sent to a labeling task for human-in-the-loop validation.",
   "scope": "public",
-  "codebase": {
-    "type": "git",
-    "gitUrl": "https://github.com/dataloop-ai-apps/nvidia-nim-blueprints.git",
-    "gitTag": "0.0.34"
-  },
   "components": {
     "pipelineTemplates": [
       {
@@ -81,8 +76,8 @@
             "id": "1b5b0181-c7bc-449c-bf4e-c6803c928946"
           }
         ],
-        "description": "NVIDIA blueprint RAG pipeline.",
-        "name": "NVIDIA blueprint RAG pipeline",
+        "description": "NVIDIA blueprint RAG retrieval pipeline.",
+        "name": "NVIDIA blueprint RAG retrieval pipeline",
         "nodes": [
           {
             "id": "64e7bc35-6b01-4970-ae0c-6100ab16684c",
@@ -114,16 +109,16 @@
                 "io": "output"
               }
             ],
-            "name": "nv-embedqa-e5-v5",
+            "name": "Embedding Model (NV EmbedQA E5 V5)",
             "type": "ml",
             "namespace": {
               "functionName": "embed",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nv-embedqa-e5v5"
+              "packageName": "nim-nv-embedqa-e5-v5"
             },
-            "appName": "nv-embedqa-e5-v5",
-            "dpkName": "nv-embedqa-e5v5",
+            "appName": "NIM Nv Embedqa E5 V5",
+            "dpkName": "nim-nv-embedqa-e5-v5",
             "metadata": {
               "position": {
                 "x": 10083,
@@ -261,16 +256,16 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3.1-405b-instruct",
+            "name": "Response LLM (Llama 3.1 405B Instruct)",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-api-llama3-1-405b-instruct-meta"
+              "packageName": "nim-llama-3-1-405b-instruct"
             },
-            "appName": "llama-3.1-405b-instruct",
-            "dpkName": "nim-api-llama3-1-405b-instruct-meta",
+            "appName": "NIM Llama 3.1 405B Instruct",
+            "dpkName": "nim-llama-3-1-405b-instruct",
             "metadata": {
               "position": {
                 "x": 10878.4971501579,
@@ -331,13 +326,13 @@
           {
             "name": "embed_model",
             "type": "Model",
-            "description": "Embedding model, used for embedding the user prompt questions.",
+            "description": "Embedding model for embedding user prompt questions. Recommended: NVIDIA NV-EmbedQA E5 v5",
             "value": "$var(embed_model__model)"
           },
           {
             "name": "gen_ai_model",
             "type": "Model",
-            "description": "Generative model that generate the response.",
+            "description": "Generative LLM for producing the final response from retrieved context. Recommended: Llama 3.1 405B Instruct",
             "value": "$var(gen_ai_model__model)"
           },
           {
@@ -348,7 +343,7 @@
           {
             "name": "retrieval_embed_model",
             "type": "Model",
-            "description": "Embedding model, that was used for embedding the retrival dataset items."
+            "description": "Embedding model that was used for embedding the retrieval dataset items. Should match the preprocessing embedding model. Recommended: NVIDIA NV-EmbedQA E5 v5"
           },
           {
             "name": "k_nearest_items",
@@ -362,17 +357,17 @@
   },
   "dependencies": [
     {
-      "name": "nv-embedqa-e5v5"
+      "name": "nim-nv-embedqa-e5-v5"
     },
     {
-      "name": "nim-api-llama3-1-405b-instruct-meta"
+      "name": "nim-llama-3-1-405b-instruct"
     },
     {
       "name": "llm-tools-retriever"
     }
   ],
   "variables": {
-    "embed_model__model": "nv-embedqa-e5v5.models.nv-embedqa-e5v5",
-    "gen_ai_model__model": "nim-api-llama3-1-405b-instruct-meta.models.llama-3-1-405b-instruct"
+    "embed_model__model": "nim-nv-embedqa-e5-v5.models.nim-nv-embedqa-e5-v5",
+    "gen_ai_model__model": "nim-llama-3-1-405b-instruct.models.nim-llama-3-1-405b-instruct"
   }
 }

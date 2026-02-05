@@ -6,6 +6,7 @@
 
 ---
 
+
 A collection of NVIDIA NIM-powered blueprints for the Dataloop Platform. These blueprints leverage NVIDIA's AI models to enable advanced GenAI workflows including document processing, report generation, and multimodal RAG pipelines.
 
 ## Blueprints
@@ -41,7 +42,7 @@ Transforms PDF documents into audio content using text-to-speech technology. Sup
 
 ### Multimodal RAG Pipeline
 
-A two-stage RAG system for enterprise document processing:
+Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pdf-data-extraction-for-enterprise-rag) blueprint. On the Dataloop platform, this blueprint is implemented as two separate pipelines that work together:
 
 1. **Preprocessing Pipeline**: Extracts text and images from PDFs, generates chunks, and creates embeddings using NVIDIA NIM models (YOLOX, PaddleOCR, E5-V5).
 
