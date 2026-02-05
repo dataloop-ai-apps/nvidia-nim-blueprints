@@ -4,6 +4,9 @@
     "description": "Generate a report based on a given topic and report structure.",
     "version": "0.0.35",
     "scope": "public",
+    "codebase": {
+      "type": "item"
+    },
     "attributes": {
         "Hub": ["Nvidia", "Dataloop"],
         "Category": ["Application"],
