@@ -1,6 +1,6 @@
 {
-  "name": "report-generation-pipeline",
-  "displayName": "Report Generation Blueprint",
+  "name": "report-generation-blueprint",
+  "displayName": "Report Generation NVIDIA Blueprint",
   "description": "Generate a report based on a given topic and report structure.",
   "version": "0.0.33",
   "scope": "public",
@@ -30,7 +30,7 @@
       "name": "report-generation"
     },
     {
-      "name": "nim-api-llama3-3-70b-instruct-meta"
+      "name": "nim-llama-3-3-70b-instruct"
     },
     {
       "name": "wait-node"
@@ -287,10 +287,10 @@
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-api-llama3-3-70b-instruct-meta"
+              "packageName": "nim-llama-3-3-70b-instruct"
             },
-            "appName": "llama-3.3-70b-instruct",
-            "dpkName": "nim-api-llama3-3-70b-instruct-meta",
+            "appName": "NIM Llama 3.3 70B Instruct",
+            "dpkName": "nim-llama-3-3-70b-instruct",
             "metadata": {
               "position": {
                 "x": 10135.834189459738,
@@ -348,10 +348,10 @@
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-api-llama3-3-70b-instruct-meta"
+              "packageName": "nim-llama-3-3-70b-instruct"
             },
-            "appName": "llama-3.3-70b-instruct",
-            "dpkName": "nim-api-llama3-3-70b-instruct-meta",
+            "appName": "NIM Llama 3.3 70B Instruct",
+            "dpkName": "nim-llama-3-3-70b-instruct",
             "metadata": {
               "position": {
                 "x": 11180.498023174121,
@@ -409,10 +409,10 @@
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-api-llama3-3-70b-instruct-meta"
+              "packageName": "nim-llama-3-3-70b-instruct"
             },
-            "appName": "llama-3.3-70b-instruct",
-            "dpkName": "nim-api-llama3-3-70b-instruct-meta",
+            "appName": "NIM Llama 3.3 70B Instruct",
+            "dpkName": "nim-llama-3-3-70b-instruct",
             "metadata": {
               "position": {
                 "x": 12721.319283769993,
@@ -470,10 +470,10 @@
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-api-llama3-3-70b-instruct-meta"
+              "packageName": "nim-llama-3-3-70b-instruct"
             },
-            "appName": "llama-3.3-70b-instruct",
-            "dpkName": "nim-api-llama3-3-70b-instruct-meta",
+            "appName": "NIM Llama 3.3 70B Instruct",
+            "dpkName": "nim-llama-3-3-70b-instruct",
             "metadata": {
               "position": {
                 "x": 11808.006517432825,
@@ -586,10 +586,10 @@
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-api-llama3-3-70b-instruct-meta"
+              "packageName": "nim-llama-3-3-70b-instruct"
             },
-            "appName": "llama-3.3-70b-instruct",
-            "dpkName": "nim-api-llama3-3-70b-instruct-meta",
+            "appName": "NIM Llama 3.3 70B Instruct",
+            "dpkName": "nim-llama-3-3-70b-instruct",
             "metadata": {
               "position": {
                 "x": 14077.171885908341,
@@ -641,7 +641,7 @@
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
             },
-            "appName": "Report Generation",
+            "appName": "Report Generation NVIDIA",
             "dpkName": "report-generation",
             "metadata": {
               "position": {
@@ -692,7 +692,7 @@
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
             },
-            "appName": "Report Generation",
+            "appName": "Report Generation NVIDIA",
             "dpkName": "report-generation",
             "metadata": {
               "position": {
@@ -743,7 +743,7 @@
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
             },
-            "appName": "Report Generation",
+            "appName": "Report Generation NVIDIA",
             "dpkName": "report-generation",
             "metadata": {
               "position": {
@@ -786,7 +786,7 @@
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
             },
-            "appName": "Report Generation",
+            "appName": "Report Generation NVIDIA",
             "dpkName": "report-generation",
             "metadata": {
               "position": {
@@ -837,7 +837,7 @@
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
             },
-            "appName": "Report Generation",
+            "appName": "Report Generation NVIDIA",
             "dpkName": "report-generation",
             "metadata": {
               "position": {
@@ -888,7 +888,7 @@
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
             },
-            "appName": "Report Generation",
+            "appName": "Report Generation NVIDIA",
             "dpkName": "report-generation",
             "metadata": {
               "position": {
@@ -931,7 +931,7 @@
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
             },
-            "appName": "Report Generation",
+            "appName": "Report Generation NVIDIA",
             "dpkName": "report-generation",
             "metadata": {
               "position": {
@@ -974,7 +974,7 @@
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
             },
-            "appName": "Report Generation",
+            "appName": "Report Generation NVIDIA",
             "dpkName": "report-generation",
             "metadata": {
               "position": {
@@ -1017,7 +1017,7 @@
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
             },
-            "appName": "Report Generation",
+            "appName": "Report Generation NVIDIA",
             "dpkName": "report-generation",
             "metadata": {
               "position": {
@@ -1060,7 +1060,7 @@
               "moduleName": "report-generation-module",
               "packageName": "report-generation"
             },
-            "appName": "Report Generation",
+            "appName": "Report Generation NVIDIA",
             "dpkName": "report-generation",
             "metadata": {
               "position": {

@@ -1,6 +1,6 @@
 {
     "name": "report-generation",
-    "displayName": "Report Generation", 
+    "displayName": "Report Generation NVIDIA",
     "description": "Generate a report based on a given topic and report structure.",
     "version": "0.0.33",
     "scope": "public",
