@@ -1,6 +1,6 @@
 {
   "name": "nim-rag-blueprint",
-  "version": "0.0.34",
+  "version": "0.0.35",
   "attributes": {
     "Category": [
       "Pipeline",
