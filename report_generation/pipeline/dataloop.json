@@ -2,7 +2,7 @@
   "name": "report-generation-blueprint",
   "displayName": "Report Generation NVIDIA Blueprint",
   "description": "Generate a report based on a given topic and report structure.",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "scope": "public",
   "codebase": {
     "type": "item"
