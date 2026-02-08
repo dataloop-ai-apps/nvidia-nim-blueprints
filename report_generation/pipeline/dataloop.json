@@ -1,12 +1,9 @@
 {
-  "name": "report-generation-blueprint",
+  "name": "report-generation-bp",
   "displayName": "Report Generation NVIDIA Blueprint",
   "description": "Generate a report based on a given topic and report structure.",
   "version": "0.0.36",
   "scope": "public",
-  "codebase": {
-    "type": "item"
-  },
   "attributes": {
     "Hub": [
       "Nvidia",
@@ -247,7 +244,7 @@
           }
         ],
         "description": "NVIDIA blueprint for report generation",
-        "name": "Report Generation Nvidia Blueprint",
+        "name": "Report Generation NVIDIA Blueprint",
         "nodes": [
           {
             "id": "556fecea-5dde-49ea-9eb0-1ca2d7d04545",

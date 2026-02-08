@@ -1,5 +1,5 @@
 {
-  "name": "preprocessing-multimodal-rag-blueprint",
+  "name": "preprocess-multimodal-rag-bp",
   "version": "0.0.36",
   "attributes": {
     "Category": [
@@ -18,12 +18,9 @@
       "Image"
     ]
   },
-  "displayName": "RAG Preprocessing Multimodal PDFs NVIDIA Blueprint",
+  "displayName": "RAG Preprocessing Multimodal PDFs",
   "description": "NVIDIA blueprint for the preprocessing stage of a multimodal PDF RAG pipeline.",
   "scope": "public",
-  "codebase": {
-    "type": "item"
-  },
   "components": {
     "pipelineTemplates": [
       {
@@ -191,7 +188,7 @@
           }
         ],
         "description": "NVIDIA blueprint for the preprocessing stage of a multimodal PDF RAG pipeline.",
-        "name": "Multimodal PDF RAG Nvidia Blueprint",
+        "name": "RAG Preprocessing Multimodal PDFs",
         "nodes": [
           {
             "id": "7bf0e347-64ca-4d6a-9ccf-c50ee8e02611",
