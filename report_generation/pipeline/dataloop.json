@@ -310,6 +310,7 @@
                 "stream": true
               },
               "componentGroupName": "models",
+              "variableModel": "report_llm",
               "repeatable": true,
               "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
               "mlType": "genAi"
@@ -371,6 +372,7 @@
                 "stream": true
               },
               "componentGroupName": "models",
+              "variableModel": "report_llm",
               "repeatable": true,
               "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
               "mlType": "genAi"
@@ -432,6 +434,7 @@
                 "stream": true
               },
               "componentGroupName": "models",
+              "variableModel": "report_llm",
               "repeatable": true,
               "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
               "mlType": "genAi"
@@ -493,6 +496,7 @@
                 "stream": true
               },
               "componentGroupName": "models",
+              "variableModel": "report_llm",
               "repeatable": true,
               "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
               "mlType": "genAi"
@@ -609,6 +613,7 @@
                 "stream": true
               },
               "componentGroupName": "models",
+              "variableModel": "report_llm",
               "repeatable": true,
               "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
               "mlType": "genAi"
