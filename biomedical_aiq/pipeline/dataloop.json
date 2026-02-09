@@ -137,10 +137,10 @@
               "functionName": "execute_research",
               "serviceName": "biomedical-aiq-compute",
               "moduleName": "biomedical-aiq-module",
-              "packageName": "biomedical-aiq-research-agent"
+              "packageName": "biomedical-aiq-research-agent-biomedical"
             },
-            "appName": "NVIDIA Biomedical AI-Q Research Agent",
-            "dpkName": "biomedical-aiq-research-agent",
+            "appName": "NVIDIA Biomedical AI-Q Research Agent-biomedical",
+            "dpkName": "biomedical-aiq-research-agent-biomedical",
             "metadata": {
               "position": {
                 "x": 10000,
@@ -245,10 +245,10 @@
               "functionName": "evaluate_reflection",
               "serviceName": "biomedical-aiq-compute",
               "moduleName": "biomedical-aiq-module",
-              "packageName": "biomedical-aiq-research-agent"
+              "packageName": "biomedical-aiq-research-agent-biomedical"
             },
-            "appName": "NVIDIA Biomedical AI-Q Research Agent",
-            "dpkName": "biomedical-aiq-research-agent",
+            "appName": "NVIDIA Biomedical AI-Q Research Agent-biomedical",
+            "dpkName": "biomedical-aiq-research-agent-biomedical",
             "metadata": {
               "position": {
                 "x": 10800,
@@ -288,10 +288,10 @@
               "functionName": "prepare_report",
               "serviceName": "biomedical-aiq-compute",
               "moduleName": "biomedical-aiq-module",
-              "packageName": "biomedical-aiq-research-agent"
+              "packageName": "biomedical-aiq-research-agent-biomedical"
             },
-            "appName": "NVIDIA Biomedical AI-Q Research Agent",
-            "dpkName": "biomedical-aiq-research-agent",
+            "appName": "NVIDIA Biomedical AI-Q Research Agent-biomedical",
+            "dpkName": "biomedical-aiq-research-agent-biomedical",
             "metadata": {
               "position": {
                 "x": 11200,
@@ -392,10 +392,10 @@
               "functionName": "write_output",
               "serviceName": "biomedical-aiq-compute",
               "moduleName": "biomedical-aiq-module",
-              "packageName": "biomedical-aiq-research-agent"
+              "packageName": "biomedical-aiq-research-agent-biomedical"
             },
-            "appName": "NVIDIA Biomedical AI-Q Research Agent",
-            "dpkName": "biomedical-aiq-research-agent",
+            "appName": "NVIDIA Biomedical AI-Q Research Agent-biomedical",
+            "dpkName": "biomedical-aiq-research-agent-biomedical",
             "metadata": {
               "position": {
                 "x": 12000,
