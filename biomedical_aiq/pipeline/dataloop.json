@@ -188,10 +188,10 @@
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-llama-3-3-nemotron-super-49b-v1"
+              "packageName": "nim-llama-3-3-nemotron-super-49b-v1-5"
             },
             "appName": "NIM Llama 3.3 Nemotron Super 49B",
-            "dpkName": "nim-llama-3-3-nemotron-super-49b-v1",
+            "dpkName": "nim-llama-3-3-nemotron-super-49b-v1-5",
             "metadata": {
               "position": {
                 "x": 10400,
@@ -199,7 +199,7 @@
                 "z": 0
               },
               "modelConfig": {
-                "nim_model_name": "nvidia/llama-3.3-nemotron-super-49b-v1",
+                "nim_model_name": "nvidia/llama-3.3-nemotron-super-49b-v1-5",
                 "system_prompt": "You are an expert biomedical research assistant. Think step by step and provide your analysis.",
                 "max_tokens": 4096,
                 "temperature": 0.2,
