@@ -32,6 +32,15 @@
     ],
     "pipelineNodes": [
       {
+        "name": "nvidia-aiq-init-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "biomedical-aiq-compute.biomedical-aiq-module.init_research"
+        },
+        "categories": ["NVIDIA Biomedical AI-Q"],
+        "scope": "project"
+      },
+      {
         "name": "nvidia-aiq-research-node",
         "invoke": {
           "type": "function",
@@ -79,6 +88,23 @@
           "dl-tavily-api-key"
         ],
         "functions": [
+          {
+            "name": "init_research",
+            "input": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item"
+              }
+            ],
+            "displayName": "NVIDIA AI-Q Init",
+            "displayIcon": "icon-dl-play"
+          },
           {
             "name": "execute_research",
             "input": [

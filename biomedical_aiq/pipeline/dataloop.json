@@ -34,6 +34,17 @@
         "connections": [
           {
             "src": {
+              "nodeId": "node-init",
+              "portId": "port-init-out"
+            },
+            "tgt": {
+              "nodeId": "node-research",
+              "portId": "port-research-in"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
               "nodeId": "node-research",
               "portId": "port-research-out"
             },
@@ -103,12 +114,55 @@
         ],
         "startNodes": [
           {
-            "nodeId": "node-research",
+            "nodeId": "node-init",
             "type": "root",
             "id": "start-node-1"
           }
         ],
         "nodes": [
+          {
+            "id": "node-init",
+            "inputs": [
+              {
+                "portId": "port-init-in",
+                "nodeId": "port-init-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-init-out",
+                "nodeId": "port-init-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "NVIDIA AI-Q Init",
+            "type": "custom",
+            "namespace": {
+              "functionName": "init_research",
+              "serviceName": "biomedical-aiq-compute",
+              "moduleName": "biomedical-aiq-module",
+              "packageName": "biomedical-aiq-research-agent-biomedical"
+            },
+            "appName": "NVIDIA Biomedical AI-Q Research Agent-biomedical",
+            "dpkName": "biomedical-aiq-research-agent-biomedical",
+            "metadata": {
+              "position": {
+                "x": 9600,
+                "y": 10274,
+                "z": 0
+              },
+              "componentGroupName": "NVIDIA Biomedical AI-Q",
+              "repeatable": true,
+              "pipelineNodeName": "nvidia-aiq-init-node"
+            }
+          },
           {
             "id": "node-research",
             "inputs": [

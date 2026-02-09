@@ -280,6 +280,19 @@ class BiomedicalAIQAgent(dl.BaseServiceRunner):
 
     # ─── Pipeline Node Functions ──────────────────────────────────────────────
 
+    def init_research(self, item: dl.Item):
+        """
+        Pipeline node: NVIDIA AI-Q Init (ROOT node - no incoming connections)
+
+        Simple pass-through that serves as the pipeline entry point.
+        Needed because the Research node receives a loop-back connection
+        and Dataloop root nodes cannot have incoming connections.
+
+        Returns: the item unchanged → goes to execute_research
+        """
+        logger.info("=== NVIDIA AI-Q Init node ===")
+        return item
+
     def execute_research(self, item: dl.Item):
         """
         Pipeline node: NVIDIA AI-Q Research
