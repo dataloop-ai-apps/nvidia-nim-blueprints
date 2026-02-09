@@ -1,5 +1,5 @@
 {
-  "name": "nim-rag-blueprint",
+  "name": "nim-rag-bp",
   "version": "0.0.36",
   "attributes": {
     "Category": [
@@ -20,9 +20,6 @@
   "displayName": "RAG Pipeline NVIDIA Blueprint",
   "description": "NVIDIA blueprint for the RAG retrieval pipeline. Retrieves prepared embeddings from multimodal PDFs after documents have been embedded by the preprocessing pipeline, uses NIM models for generating query embeddings and responses, and incorporates a retriever service to fetch relevant documents from the source dataset. Model responses are stored in the prompts dataset and sent to a labeling task for human-in-the-loop validation.",
   "scope": "public",
-  "codebase": {
-    "type": "item"
-  },
   "components": {
     "pipelineTemplates": [
       {
@@ -80,7 +77,7 @@
           }
         ],
         "description": "NVIDIA blueprint RAG retrieval pipeline.",
-        "name": "RAG Retrieval NVIDIA Blueprint",
+        "name": "RAG Pipeline NVIDIA Blueprint",
         "nodes": [
           {
             "id": "64e7bc35-6b01-4970-ae0c-6100ab16684c",

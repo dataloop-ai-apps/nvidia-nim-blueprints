@@ -1,11 +1,6 @@
 # NVIDIA NIM Blueprints for Dataloop
 
-<p align="center">
-  <img height="40mm" src="https://mk0dataloop4fni44fjg.kinstacdn.com/wp-content/uploads/2020/03/logo.svg" alt="Dataloop Logo">
-</p>
-
 ---
-
 
 A collection of NVIDIA NIM-powered blueprints for the Dataloop Platform. These blueprints leverage NVIDIA's AI models to enable advanced GenAI workflows including document processing, report generation, and multimodal RAG pipelines.
 
