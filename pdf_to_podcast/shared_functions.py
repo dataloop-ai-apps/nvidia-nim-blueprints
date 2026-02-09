@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import dotenv
 import logging
@@ -433,6 +434,37 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         return text
 
     @staticmethod
+    def _extract_json_string(text: str) -> str:
+        """
+        Extract a JSON object or array string from text that may contain
+        preamble or surrounding markdown fences (e.g. ```json ... ```).
+        """
+        # Try to strip markdown code fences first
+        fence_match = re.search(r"```(?:json)?\s*\n?([\s\S]*?)```", text)
+        if fence_match:
+            return fence_match.group(1).strip()
+
+        # Otherwise, find the first '{' or '[' and match to the last '}' or ']'
+        first_brace = text.find("{")
+        first_bracket = text.find("[")
+        if first_brace == -1 and first_bracket == -1:
+            return text  # Return as-is and let validation report the error
+
+        # Pick whichever comes first
+        if first_bracket == -1 or (first_brace != -1 and first_brace < first_bracket):
+            start = first_brace
+            end = text.rfind("}")
+            if end != -1:
+                return text[start : end + 1]
+        else:
+            start = first_bracket
+            end = text.rfind("]")
+            if end != -1:
+                return text[start : end + 1]
+
+        return text
+
+    @staticmethod
     def _get_outline_dict(outline_item: dl.Item) -> PodcastOutline:
         """
         Get the PodcastOutline from an outline item.
@@ -445,6 +477,13 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             raise ValueError(f"No outline found in item {outline_item.id} metadata.")
         if isinstance(outline_dict, dict):
             outline_dict = json.dumps(outline_dict)
+        elif isinstance(outline_dict, str):
+            extracted = SharedServiceRunner._extract_json_string(outline_dict)
+            if extracted != outline_dict:
+                logger.warning(
+                    "Outline response contained non-JSON preamble, extracted JSON from LLM response."
+                )
+            outline_dict = extracted
         outline = PodcastOutline.model_validate_json(outline_dict)
         return outline
 
