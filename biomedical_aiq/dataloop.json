@@ -2,7 +2,7 @@
   "name": "biomedical-aiq-research-agent",
   "displayName": "NVIDIA Biomedical AI-Q Research Agent",
   "description": "Biomedical research agent with Plan-Execute-Reflect loop, web search, RAG, and virtual screening. Adapted from NVIDIA Biomedical AI-Q Research Agent Blueprint.",
-  "version": "0.0.1",
+  "version": "0.0.36",
   "scope": "public",
   "codebase": {
     "type": "item"

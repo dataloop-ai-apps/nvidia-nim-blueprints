@@ -2,7 +2,7 @@
   "name": "biomedical-aiq-blueprint",
   "displayName": "NVIDIA Biomedical AI-Q Research Agent Blueprint",
   "description": "Biomedical research agent with Plan-Execute-Reflect loop using NVIDIA NIM models. Adapted from NVIDIA Biomedical AI-Q Research Agent Blueprint.",
-  "version": "0.0.1",
+  "version": "0.0.36",
   "scope": "public",
   "codebase": {
     "type": "item"
