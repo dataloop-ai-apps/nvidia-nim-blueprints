@@ -29,7 +29,7 @@
   "components": {
     "pipelineTemplates": [
       {
-        "name": "NVIDIA Biomedical AI-Q Research Agent",
+        "name": "NVIDIA Biomedical AI-Q Agent",
         "description": "Biomedical research pipeline: Plan → Search → Reflect (loop) → Virtual Screening → Final Report",
         "connections": [
           {
