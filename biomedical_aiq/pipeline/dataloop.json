@@ -17,7 +17,7 @@
   },
   "dependencies": [
     {
-      "name": "biomedical-aiq-research-agent"
+      "name": "biomedical-aiq-research-agent-biomedical"
     },
     {
       "name": "nim-llama-3-3-nemotron-super-49b-v1-5"
