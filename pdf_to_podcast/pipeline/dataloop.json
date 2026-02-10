@@ -2,7 +2,7 @@
   "name": "pdf-to-podcast-bp",
   "displayName": "PDF to Podcast NVIDIA Blueprint",
   "description": "The NVIDIA blueprint for the PDF to Podcast pipeline uses the ElevenLabs API to generate audio for original podcast content on provided PDFs.",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "scope": "public",
   "attributes": {
     "Hub": [
