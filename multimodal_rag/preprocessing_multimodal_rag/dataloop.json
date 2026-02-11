@@ -127,7 +127,8 @@
                 "type": "Dataset",
                 "name": "target_dataset",
                 "displayName": "target_dataset",
-                "io": "input"
+                "io": "input",
+                "value": "$var(chunks-dataset)"
               }
             ],
             "outputs": [
