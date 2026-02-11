@@ -1,5 +1,27 @@
 # Preprocessing Multimodal PDF RAG Blueprint
 
+## Quick setup
+
+1. Install the pipeline from the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace).
+2. Add your **NVIDIA NGC API Key** in [Data Governance](https://docs.dataloop.ai/docs/overview-1).
+3. Set **source** and **target** datasets, and the four model variables (see [Variables and model IDs](#variables-and-model-ids) below).
+4. Run the pipeline. When it finishes, use the target dataset and embedding model as inputs for the [NVIDIA RAG Pipeline](../nvidia_rag_pipeline/README.md) (retrieval stage).
+
+For prerequisites, components, and troubleshooting, see the sections below.
+
+### Variables and model IDs
+
+| Variable | Type | Recommended model | Purpose |
+|----------|------|-------------------|---------|
+| **nv-yolox-page-elements-v1** | Model | NVIDIA YOLOX Page Elements v1 | Page element detection (tables, figures, text blocks) |
+| **university-at-buffalo-cached** | Model | University at Buffalo CachedTransformer | Table detection and extraction |
+| **baidu-paddleocr** | Model | Baidu PaddleOCR | OCR on chart/images |
+| **nv-embedqa-e5v5** | Model | NVIDIA NV-EmbedQA E5 v5 | Vector embeddings for chunks (must match RAG retrieval) |
+
+**Getting the model ID:** When you run or edit the pipeline, each Model variable shows a model selector. Choose the recommended model (or another from your project); the selected value is the model ID (e.g. `nv-embedqa-e5v5.models.nv-embedqa-e5v5`). You can also find model IDs in your project under **Develop** → **AI Library** (or **Models**). Dataset variables: pick the source dataset (PDFs) and target dataset (for embedded chunks) from the dataset selector.
+
+---
+
 ## Overview
 
 The Preprocessing Multimodal PDF RAG pipeline is the first stage of the two-stage RAG system. It extracts content from PDF documents—including text, tables, and charts—and generates vector embeddings for semantic search.
