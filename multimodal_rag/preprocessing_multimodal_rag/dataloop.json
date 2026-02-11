@@ -120,6 +120,14 @@
                 "name": "item",
                 "displayName": "item",
                 "io": "input"
+              },
+              {
+                "portId": "d1e2f3a4-b5c6-d7e8-f9a0-b1c2d3e4f5a6",
+                "nodeId": "d1e2f3a4-b5c6-d7e8-f9a0-b1c2d3e4f5a6",
+                "type": "Dataset",
+                "name": "target_dataset",
+                "displayName": "target_dataset",
+                "io": "input"
               }
             ],
             "outputs": [
