@@ -1,5 +1,16 @@
 # Report Generation Blueprint
 
+## Quick setup
+
+1. Install the pipeline from the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace).
+2. Add your **NVIDIA NGC API Key** and **Tavily API Key** in [Data Governance](https://docs.dataloop.ai/docs/overview-1).
+3. Create a prompt with your topic and optional structure (see [Usage](#usage) below for format).
+4. Run the pipeline; it will research and generate the report.
+
+For details, requirements, and troubleshooting, see the sections below.
+
+---
+
 ## Overview
 
 The "Report Generation" is an NVIDIA blueprint designed to automate the creation of comprehensive reports on any given topic. This pipeline leverages advanced language models and web search capabilities to research, plan, and generate well-structured reports with minimal user input.

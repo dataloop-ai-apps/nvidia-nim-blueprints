@@ -18,7 +18,7 @@
     ]
   },
   "displayName": "RAG Pipeline NVIDIA Blueprint",
-  "description": "NVIDIA blueprint for the RAG retrieval pipeline. Retrieves prepared embeddings from multimodal PDFs after documents have been embedded by the preprocessing pipeline, uses NIM models for generating query embeddings and responses, and incorporates a retriever service to fetch relevant documents from the source dataset. Model responses are stored in the prompts dataset and sent to a labeling task for human-in-the-loop validation.",
+  "description": "RAG retrieval pipeline powered by NVIDIA NIM. Retrieves prepared embeddings from multimodal PDFs, uses NIM models for generating query embeddings and responses, and incorporates a retriever service to fetch relevant documents. Responses are stored in a prompts dataset and sent to a labeling task for human-in-the-loop validation. This is the second stage — first run the 'RAG Preprocessing Multimodal PDFs' pipeline to embed your documents. Setup: (1) Install this app — requires an NVIDIA NGC API key, which can be set up in advance as a secret integration or created during installation when prompted. (2) Create a pipeline from the 'RAG Pipeline NVIDIA Blueprint' template. (3) Model variables are preset to NV-EmbedQA E5 v5 (query embedding) and Llama 3.1 405B Instruct (response generation). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Set 'retrieval_dataset' to the dataset containing your preprocessed embeddings. (5) 'retrieval_embed_model' is preset to NV-EmbedQA E5 v5 — ensure it matches the model used during preprocessing. (6) Adjust 'k_nearest_items' if needed (default: 30). (7) Execute the pipeline.",
   "scope": "public",
   "components": {
     "pipelineTemplates": [
@@ -326,24 +326,24 @@
           {
             "name": "embed_model",
             "type": "Model",
-            "description": "Embedding model for embedding user prompt questions. Recommended: NVIDIA NV-EmbedQA E5 v5",
+            "description": "Embedding model for embedding user prompt questions. Preset: NVIDIA NV-EmbedQA E5 v5 (nim-nv-embedqa-e5-v5)",
             "value": "$var(embed_model__model)"
           },
           {
             "name": "gen_ai_model",
             "type": "Model",
-            "description": "Generative LLM for producing the final response from retrieved context. Recommended: Llama 3.1 405B Instruct",
+            "description": "Generative LLM for producing the final response from retrieved context. Preset: Llama 3.1 405B Instruct (nim-llama-3-1-405b-instruct)",
             "value": "$var(gen_ai_model__model)"
           },
           {
             "name": "retrieval_dataset",
             "type": "Dataset",
-            "description": "Insert Retrieval Dataset ID."
+            "description": "Dataset containing embedded chunks from the RAG Preprocessing pipeline. Required — select the output dataset from the preprocessing stage."
           },
           {
             "name": "retrieval_embed_model",
             "type": "Model",
-            "description": "Embedding model that was used for embedding the retrieval dataset items. Should match the preprocessing embedding model. Recommended: NVIDIA NV-EmbedQA E5 v5"
+            "description": "Embedding model that was used for embedding the retrieval dataset items. Must match the model used during preprocessing. Preset: NV-EmbedQA E5 v5 (nim-nv-embedqa-e5-v5)."
           },
           {
             "name": "k_nearest_items",
