@@ -2,7 +2,7 @@
   "name": "nvidia-aiq-enterprise-research",
   "displayName": "NVIDIA AIQ Enterprise Research Agent",
   "description": "AI Agent for Enterprise Research with Plan-Execute-Reflect loop, web search, RAG retrieval, and report generation powered by NVIDIA NIM models. Adapted from NVIDIA AIQ Agent for Enterprise Research Blueprint.",
-  "version": "0.0.40",
+  "version": "0.0.42",
   "scope": "public",
   "codebase": {
     "type": "item"
