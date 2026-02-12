@@ -1,0 +1,314 @@
+{
+  "name": "nvidia-aiq-enterprise-research-bp",
+  "displayName": "AI Agent for Enterprise Research",
+  "description": "Enterprise research agent pipeline: Agent orchestrates web search and RAG retrieval in a Plan-Execute-Reflect loop, then NIM Llama 3.3 70B generates the final report. Powered by NVIDIA NIM models.",
+  "version": "0.0.45",
+  "scope": "public",
+  "codebase": {
+    "type": "item"
+  },
+  "attributes": {
+    "Hub": ["Nvidia", "Dataloop"],
+    "Category": ["Pipeline", "Blueprint"],
+    "Pipeline Type": "GenAI",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop",
+    "Media Type": ["Text"]
+  },
+  "dependencies": [
+    { "name": "nvidia-aiq-enterprise-research" },
+    { "name": "nim-llama-3-3-70b-instruct" },
+    { "name": "nim-rag-bp" }
+  ],
+  "variables": {
+    "report_writer_model__model": "nim-llama-3-3-70b-instruct.models.nim-llama-3-3-70b-instruct"
+  },
+  "components": {
+    "pipelineTemplates": [
+      {
+        "name": "AI Agent for Enterprise Research",
+        "description": "Agent → Web Search (cycle) → RAG Retrieval (cycle) → NIM Llama 3.3 Report Generation",
+        "connections": [
+          {
+            "src": { "nodeId": "node-init", "portId": "port-init-out" },
+            "tgt": { "nodeId": "node-agent", "portId": "port-agent-in" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "node-agent", "portId": "port-agent-out" },
+            "tgt": { "nodeId": "node-web-search", "portId": "port-ws-in" },
+            "condition": "{}",
+            "action": "web_search"
+          },
+          {
+            "src": { "nodeId": "node-web-search", "portId": "port-ws-out" },
+            "tgt": { "nodeId": "node-agent", "portId": "port-agent-in" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "node-agent", "portId": "port-agent-out" },
+            "tgt": { "nodeId": "node-rag", "portId": "port-rag-in" },
+            "condition": "{}",
+            "action": "ask_rag"
+          },
+          {
+            "src": { "nodeId": "node-rag", "portId": "port-rag-out" },
+            "tgt": { "nodeId": "node-agent", "portId": "port-agent-in" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "node-agent", "portId": "port-agent-out" },
+            "tgt": { "nodeId": "node-llama", "portId": "port-llama-in" },
+            "condition": "{}",
+            "action": "generate_report"
+          }
+        ],
+        "startNodes": [
+          {
+            "nodeId": "node-init",
+            "type": "root",
+            "id": "start-node-1"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "node-init",
+            "inputs": [
+              {
+                "portId": "port-init-in",
+                "nodeId": "port-init-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              },
+              {
+                "portId": "port-init-rag-pipeline",
+                "nodeId": "port-init-rag-pipeline",
+                "type": "String",
+                "name": "rag_pipeline_id",
+                "displayName": "RAG Pipeline ID",
+                "variableName": "rag_pipeline_id",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-init-out",
+                "nodeId": "port-init-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Init",
+            "type": "custom",
+            "namespace": {
+              "functionName": "init_research",
+              "serviceName": "enterprise-research-compute",
+              "moduleName": "enterprise-research-module",
+              "packageName": "nvidia-aiq-enterprise-research"
+            },
+            "appName": "NVIDIA AIQ Enterprise Research Agent",
+            "dpkName": "nvidia-aiq-enterprise-research",
+            "metadata": {
+              "position": { "x": 9600, "y": 10274, "z": 0 },
+              "componentGroupName": "NVIDIA AIQ Enterprise Research",
+              "repeatable": true,
+              "pipelineNodeName": "aiq-init-node"
+            }
+          },
+          {
+            "id": "node-agent",
+            "inputs": [
+              {
+                "portId": "port-agent-in",
+                "nodeId": "port-agent-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-agent-out",
+                "nodeId": "port-agent-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": ["web_search", "ask_rag", "generate_report"],
+                "io": "output"
+              }
+            ],
+            "name": "NVIDIA AIQ Agent",
+            "type": "custom",
+            "namespace": {
+              "functionName": "run_agent",
+              "serviceName": "enterprise-research-compute",
+              "moduleName": "enterprise-research-module",
+              "packageName": "nvidia-aiq-enterprise-research"
+            },
+            "appName": "NVIDIA AIQ Enterprise Research Agent",
+            "dpkName": "nvidia-aiq-enterprise-research",
+            "metadata": {
+              "position": { "x": 10000, "y": 10274, "z": 0 },
+              "componentGroupName": "NVIDIA AIQ Enterprise Research",
+              "repeatable": true,
+              "pipelineNodeName": "aiq-agent-node"
+            }
+          },
+          {
+            "id": "node-web-search",
+            "inputs": [
+              {
+                "portId": "port-ws-in",
+                "nodeId": "port-ws-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-ws-out",
+                "nodeId": "port-ws-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Tavily Web Search",
+            "type": "custom",
+            "namespace": {
+              "functionName": "web_search",
+              "serviceName": "enterprise-research-compute",
+              "moduleName": "enterprise-research-module",
+              "packageName": "nvidia-aiq-enterprise-research"
+            },
+            "appName": "NVIDIA AIQ Enterprise Research Agent",
+            "dpkName": "nvidia-aiq-enterprise-research",
+            "metadata": {
+              "position": { "x": 10400, "y": 10074, "z": 0 },
+              "componentGroupName": "NVIDIA AIQ Enterprise Research",
+              "repeatable": true,
+              "pipelineNodeName": "aiq-web-search-node"
+            }
+          },
+          {
+            "id": "node-rag",
+            "inputs": [
+              {
+                "portId": "port-rag-in",
+                "nodeId": "port-rag-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-rag-out",
+                "nodeId": "port-rag-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "RAG Retrieval",
+            "type": "custom",
+            "namespace": {
+              "functionName": "rag_retrieve",
+              "serviceName": "enterprise-research-compute",
+              "moduleName": "enterprise-research-module",
+              "packageName": "nvidia-aiq-enterprise-research"
+            },
+            "appName": "NVIDIA AIQ Enterprise Research Agent",
+            "dpkName": "nvidia-aiq-enterprise-research",
+            "metadata": {
+              "position": { "x": 10400, "y": 10474, "z": 0 },
+              "componentGroupName": "NVIDIA AIQ Enterprise Research",
+              "repeatable": true,
+              "pipelineNodeName": "aiq-rag-retrieval-node"
+            }
+          },
+          {
+            "id": "node-llama",
+            "inputs": [
+              {
+                "portId": "port-llama-in",
+                "nodeId": "port-llama-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-llama-out",
+                "nodeId": "port-llama-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "port-llama-annotations",
+                "nodeId": "port-llama-annotations",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "NIM Llama 3.3 70B - Report Writer",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "serviceName": "",
+              "moduleName": "",
+              "packageName": "nim-llama-3-3-70b-instruct"
+            },
+            "appName": "NIM Llama 3.3 70B Instruct",
+            "dpkName": "nim-llama-3-3-70b-instruct",
+            "metadata": {
+              "position": { "x": 10800, "y": 10274, "z": 0 },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.3-70b-instruct",
+                "system_prompt": "You are an expert enterprise research report writer. Using the provided research context, write a comprehensive, well-structured report that addresses the user's research query. Use proper markdown formatting. Include all relevant findings, data, and insights from the research. Add a Sources section at the end with proper citations.",
+                "max_tokens": 8192,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "stream": true
+              },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "variableModel": "report_writer_model",
+              "pipelineNodeName": "nim-llama-70b-report-writer",
+              "mlType": "genAi"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "report_writer_model",
+            "type": "Model",
+            "description": "LLM model for generating the final research report. Preset: NIM Llama 3.3 70B Instruct.",
+            "value": "$var(report_writer_model__model)"
+          },
+          {
+            "name": "rag_pipeline_id",
+            "type": "String",
+            "description": "Optional: Pipeline ID of a configured 'RAG Pipeline NVIDIA Blueprint' instance. Create a pipeline from the nim-rag-bp template, configure its dataset and models, then paste its ID here. Leave empty to skip RAG retrieval and use web search only."
+          }
+        ]
+      }
+    ]
+  }
+}
