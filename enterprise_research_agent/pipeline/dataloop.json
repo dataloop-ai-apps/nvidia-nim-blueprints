@@ -108,10 +108,10 @@
               "functionName": "init_research",
               "serviceName": "enterprise-research-compute",
               "moduleName": "enterprise-research-module",
-              "packageName": "nvidia-aiq-enterprise-research-biomedical"
+              "packageName": "nvidia-aiq-enterprise-research"
             },
-            "appName": "NVIDIA AIQ Enterprise Research Agent-biomedical",
-            "dpkName": "nvidia-aiq-enterprise-research-biomedical",
+            "appName": "NVIDIA AIQ Enterprise Research Agent",
+            "dpkName": "nvidia-aiq-enterprise-research",
             "metadata": {
               "position": { "x": 9600, "y": 10274, "z": 0 },
               "componentGroupName": "NVIDIA AIQ Enterprise Research",
@@ -148,10 +148,10 @@
               "functionName": "run_agent",
               "serviceName": "enterprise-research-compute",
               "moduleName": "enterprise-research-module",
-              "packageName": "nvidia-aiq-enterprise-research-biomedical"
+              "packageName": "nvidia-aiq-enterprise-research"
             },
-            "appName": "NVIDIA AIQ Enterprise Research Agent-biomedical",
-            "dpkName": "nvidia-aiq-enterprise-research-biomedical",
+            "appName": "NVIDIA AIQ Enterprise Research Agent",
+            "dpkName": "nvidia-aiq-enterprise-research",
             "metadata": {
               "position": { "x": 10000, "y": 10274, "z": 0 },
               "componentGroupName": "NVIDIA AIQ Enterprise Research",
@@ -187,10 +187,10 @@
               "functionName": "web_search",
               "serviceName": "enterprise-research-compute",
               "moduleName": "enterprise-research-module",
-              "packageName": "nvidia-aiq-enterprise-research-biomedical"
+              "packageName": "nvidia-aiq-enterprise-research"
             },
-            "appName": "NVIDIA AIQ Enterprise Research Agent-biomedical",
-            "dpkName": "nvidia-aiq-enterprise-research-biomedical",
+            "appName": "NVIDIA AIQ Enterprise Research Agent",
+            "dpkName": "nvidia-aiq-enterprise-research",
             "metadata": {
               "position": { "x": 10400, "y": 10074, "z": 0 },
               "componentGroupName": "NVIDIA AIQ Enterprise Research",
@@ -226,10 +226,10 @@
               "functionName": "rag_retrieve",
               "serviceName": "enterprise-research-compute",
               "moduleName": "enterprise-research-module",
-              "packageName": "nvidia-aiq-enterprise-research-biomedical"
+              "packageName": "nvidia-aiq-enterprise-research"
             },
-            "appName": "NVIDIA AIQ Enterprise Research Agent-biomedical",
-            "dpkName": "nvidia-aiq-enterprise-research-biomedical",
+            "appName": "NVIDIA AIQ Enterprise Research Agent",
+            "dpkName": "nvidia-aiq-enterprise-research",
             "metadata": {
               "position": { "x": 10400, "y": 10474, "z": 0 },
               "componentGroupName": "NVIDIA AIQ Enterprise Research",
