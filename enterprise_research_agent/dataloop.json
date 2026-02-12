@@ -75,7 +75,7 @@
         "entryPoint": "enterprise_research_agent/aiq_agent.py",
         "className": "AIQEnterpriseAgent",
         "integrations": [
-          "dl-nvidia-api-key",
+          "dl-ngc-api-key",
           "dl-tavily-api-key"
         ],
         "functions": [

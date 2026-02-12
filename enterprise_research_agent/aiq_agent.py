@@ -48,9 +48,9 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
     """Service runner for the NVIDIA AIQ Enterprise Research Agent pipeline."""
 
     def __init__(self):
-        nvidia_api_key = os.environ.get("NVIDIA_API_KEY")
+        nvidia_api_key = os.environ.get("NGC_API_KEY")
         if nvidia_api_key is None:
-            raise ValueError("Missing NVIDIA_API_KEY environment variable.")
+            raise ValueError("Missing NGC_API_KEY environment variable.")
 
         tavily_api_key = os.environ.get("TAVILY_API_KEY")
         if tavily_api_key is None:
