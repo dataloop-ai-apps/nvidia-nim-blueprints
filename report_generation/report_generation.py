@@ -636,10 +636,32 @@ class ReportGenerator(dl.BaseServiceRunner):
         
         return item
 
+    def _get_missing_section_indices(self, sections: list) -> list:
+        """Return indices of sections not yet present in all_completed_sections."""
+        return [
+            i for i, section in enumerate(sections)
+            if section['name'] not in self.all_completed_sections
+        ]
+
     def write_final_report(self, item: dl.Item):
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
-        # Maintain original order
-        ordered_sections = [self.all_completed_sections[section['name']] for section in main_item.metadata['user']['sections']]
+        sections = main_item.metadata['user']['sections']
+        user_meta = main_item.metadata['user']
+
+        # Load only the sections missing from cache
+        missing_indices = self._get_missing_section_indices(sections)
+        if missing_indices:
+            logger.info(f"Missing {len(missing_indices)} section(s) from cache: "
+                        f"{[sections[i]['name'] for i in missing_indices]}. Loading from main item metadata.")
+            for i in missing_indices:
+                key = f'item_section_{i}'
+                section_item_id = user_meta.get(key)
+                if section_item_id is None:
+                    raise ValueError(f"Missing metadata key '{key}' for section '{sections[i]['name']}' on main item {main_item.id}")
+                section_item = dl.items.get(item_id=section_item_id)
+                self.gather_sections(item=section_item)
+
+        ordered_sections = [self.all_completed_sections[section['name']] for section in sections]
         
         # Compile final report
         final_report = "\n\n".join([section_text for section_text in ordered_sections])
