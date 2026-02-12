@@ -1,0 +1,135 @@
+{
+  "name": "nvidia-aiq-enterprise-research",
+  "displayName": "NVIDIA AIQ Enterprise Research Agent",
+  "description": "AI Agent for Enterprise Research with Plan-Execute-Reflect loop, web search, RAG retrieval, and report generation powered by NVIDIA NIM models. Adapted from NVIDIA AIQ Agent for Enterprise Research Blueprint.",
+  "version": "0.0.42",
+  "scope": "public",
+  "codebase": {
+    "type": "item"
+  },
+  "attributes": {
+    "Hub": ["Nvidia", "Dataloop"],
+    "Category": ["Application"],
+    "Application Type": "GenAI",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop"
+  },
+  "components": {
+    "computeConfigs": [
+      {
+        "name": "enterprise-research-compute",
+        "runtime": {
+          "podType": "regular-xs",
+          "concurrency": 10,
+          "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints:0.0.3",
+          "autoscaler": {
+            "type": "rabbitmq",
+            "minReplicas": 0,
+            "maxReplicas": 2
+          }
+        }
+      }
+    ],
+    "pipelineNodes": [
+      {
+        "name": "aiq-init-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "enterprise-research-compute.enterprise-research-module.init_research"
+        },
+        "categories": ["NVIDIA AIQ Enterprise Research"],
+        "scope": "project"
+      },
+      {
+        "name": "aiq-agent-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "enterprise-research-compute.enterprise-research-module.run_agent"
+        },
+        "categories": ["NVIDIA AIQ Enterprise Research"],
+        "scope": "project"
+      },
+      {
+        "name": "aiq-web-search-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "enterprise-research-compute.enterprise-research-module.web_search"
+        },
+        "categories": ["NVIDIA AIQ Enterprise Research"],
+        "scope": "project"
+      },
+      {
+        "name": "aiq-rag-retrieval-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "enterprise-research-compute.enterprise-research-module.rag_retrieve"
+        },
+        "categories": ["NVIDIA AIQ Enterprise Research"],
+        "scope": "project"
+      }
+    ],
+    "modules": [
+      {
+        "name": "enterprise-research-module",
+        "computeConfig": "enterprise-research-compute",
+        "entryPoint": "enterprise_research_agent/aiq_agent.py",
+        "className": "AIQEnterpriseAgent",
+        "integrations": [
+          "dl-nvidia-api-key",
+          "dl-tavily-api-key"
+        ],
+        "functions": [
+          {
+            "name": "init_research",
+            "input": [
+              { "name": "item", "type": "Item" },
+              { "name": "rag_pipeline_id", "type": "String" }
+            ],
+            "output": [
+              { "name": "item", "type": "Item" }
+            ],
+            "displayName": "AIQ Init",
+            "displayIcon": "icon-dl-play"
+          },
+          {
+            "name": "run_agent",
+            "input": [
+              { "name": "item", "type": "Item" }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item",
+                "actions": ["web_search", "ask_rag", "generate_report"]
+              }
+            ],
+            "displayName": "NVIDIA AIQ Agent",
+            "displayIcon": "icon-dl-smart-search"
+          },
+          {
+            "name": "web_search",
+            "input": [
+              { "name": "item", "type": "Item" }
+            ],
+            "output": [
+              { "name": "item", "type": "Item" }
+            ],
+            "displayName": "Tavily Web Search",
+            "displayIcon": "icon-dl-web"
+          },
+          {
+            "name": "rag_retrieve",
+            "input": [
+              { "name": "item", "type": "Item" }
+            ],
+            "output": [
+              { "name": "item", "type": "Item" }
+            ],
+            "displayName": "RAG Retrieval",
+            "displayIcon": "icon-dl-search"
+          }
+        ]
+      }
+    ]
+  }
+}
