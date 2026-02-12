@@ -16,7 +16,7 @@
     "Media Type": ["Text"]
   },
   "dependencies": [
-    { "name": "nvidia-aiq-enterprise-research-biomedical" },
+    { "name": "nvidia-aiq-enterprise-research" },
     { "name": "nim-llama-3-3-70b-instruct" },
     { "name": "nim-rag-bp" }
   ],
