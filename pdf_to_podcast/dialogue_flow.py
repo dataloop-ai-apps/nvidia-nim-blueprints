@@ -374,7 +374,12 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
         pdf_name = podcast_metadata.get("pdf_name")
         # item is the original structured outline prompt item
-        outline = SharedServiceRunner._get_outline_dict(outline_item=item)
+        outline_item_id = podcast_metadata.get("outline_item_id")
+        if outline_item_id is None:
+            raise ValueError(f"No outline item id found in item {item.id}.")
+        outline = SharedServiceRunner._get_outline_dict(
+            outline_item=dl.items.get(item_id=outline_item_id)
+        )
         working_dir = SharedServiceRunner._get_hidden_dir(item=item)
 
         # get all segment items
