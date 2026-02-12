@@ -50,7 +50,7 @@ class TTSConverter:
             audio_stream = self.client.text_to_speech.convert(
                 text=text,
                 voice_id=voice_id,
-                model_id="eleven_monolingual_v1",
+                model_id="eleven_multilingual_v2",
                 output_format="mp3_44100_128",
                 voice_settings={"stability": 0.5, "similarity_boost": 0.75},
             )
@@ -318,10 +318,13 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
         pdf_name = podcast_metadata.get("pdf_name")
         monologue = podcast_metadata.get("monologue")
-        original_item = dl.items.get(item_id=item.metadata.get("user", {}).get("original_item_id", None))
-        if original_item is None:
+        item_id = item.metadata.get("user", {}).get("original_item_id", None)
+        if item_id is None:
+            item_id = item.metadata.get("user", {}).get("podcast", {}).get("outline_item_id", {})
+        if item_id is None:
             raise ValueError(f"No original item id found in the final transcript item {item.id}. Please check that item was prepared correctly.")
-
+        original_item = dl.items.get(item_id=item_id)
+        
         if monologue is True:
             output_file_name = Path(pdf_name).stem + "_monologue.mp3"
         else:
