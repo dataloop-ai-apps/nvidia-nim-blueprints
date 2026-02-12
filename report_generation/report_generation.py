@@ -2,6 +2,7 @@ import dtlpy as dl
 from typing import List, Optional
 from pydantic import BaseModel, Field
 import os
+from datetime import datetime
 from tavily import TavilyClient, AsyncTavilyClient
 import logging
 import json
@@ -217,7 +218,12 @@ class ReportGenerator(dl.BaseServiceRunner):
             raise ValueError("Topic and report structure are required. Please refer to the documentation for the correct format.")
         
         # Create report planner query writer prompt
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        current_year = datetime.now().year
+
         report_planner_query_writer_instructions = f"""You are an expert technical writer, helping to plan a report. 
+
+        Today's date is {current_date}.
 
         The report will be focused on the following topic:
 
@@ -233,6 +239,7 @@ class ReportGenerator(dl.BaseServiceRunner):
 
         1. Be related to the topic 
         2. Help satisfy the requirements specified in the report organization
+        3. Target recent information by including year markers where relevant (e.g., "{current_year}")
 
         Make the query specific enough to find high-quality, relevant sources while covering the breadth needed for the report structure.
         
@@ -248,7 +255,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         return item_search_queries
     
     def search_tavily(self, item: dl.Item):
-        queries = item.annotations.list()[0].coordinates
+        queries = item.annotations.list()[-1].coordinates
         query_list = [line.strip() for line in queries.split('\n') if line.strip()]
         search_docs = self.tavily_search(query_list, self.params['tavily_topic'], self.params['tavily_days'])
         # Deduplicate and format sources
@@ -318,7 +325,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         Process the LLM's search queries and generate report sections
         """
         self.all_completed_sections = {}
-        sections_str = item.annotations.list()[0].coordinates
+        sections_str = item.annotations.list()[-1].coordinates
         sections = []
 
         # First try to parse as proper JSON if it's enclosed in a code block
@@ -402,7 +409,10 @@ class ReportGenerator(dl.BaseServiceRunner):
         for i, section in enumerate(sections):
             if section.get('research', False):
                 # Query writer instructions
+                current_year = datetime.now().year
                 query_writer_instructions = f"""Your goal is to generate targeted web search queries that will gather comprehensive information for writing a technical report section.
+
+                Today's date is {datetime.now().strftime("%Y-%m-%d")}.
 
                 Topic for this section:
                 {section['name']}
@@ -413,7 +423,7 @@ class ReportGenerator(dl.BaseServiceRunner):
                 When generating {self.params['number_of_queries']} search queries, ensure they:
                 1. Cover different aspects of the topic (e.g., core features, real-world applications, technical architecture)
                 2. Include specific technical terms related to the topic
-                3. Target recent information by including year markers where relevant (e.g., "2023")
+                3. Target recent information by including year markers where relevant (e.g., "{current_year}")
                 4. Look for comparisons or differentiators from similar technologies/approaches
                 5. Search for both official documentation and practical implementation examples
 
@@ -621,7 +631,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         if section_number is None:
             logger.warning(f"Could not extract section number from item name: {item.name}")
         section_name = sections[int(section_number)]['name']
-        section_text = item.annotations.list()[0].coordinates
+        section_text = item.annotations.list()[-1].coordinates
         self.all_completed_sections[section_name] = section_text
         
         return item

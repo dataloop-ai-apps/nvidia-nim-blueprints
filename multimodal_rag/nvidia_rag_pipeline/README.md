@@ -1,5 +1,29 @@
 # NVIDIA RAG Pipeline
 
+## Quick setup
+
+1. Run the [Preprocessing Multimodal PDF RAG](../preprocessing_multimodal_rag/README.md) pipeline first so you have a dataset of embedded chunks.
+2. Install this pipeline from the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace).
+3. Add your **NVIDIA NGC API Key** in [Data Governance](https://docs.dataloop.ai/docs/overview-1).
+4. Set pipeline variables (see [Variables and model IDs](#variables-and-model-ids) below): **retrieval_dataset**, **retrieval_embed_model** (must match preprocessing), **embed_model**, **gen_ai_model**, and optionally **k_nearest_items**.
+5. Create prompt items with your questions and run the pipeline to get RAG answers.
+
+For configuration, components, and troubleshooting, see the sections below.
+
+### Variables and model IDs
+
+| Variable | Type | Recommended / value | Purpose |
+|----------|------|--------------------|---------|
+| **retrieval_dataset** | Dataset | Output dataset from [preprocessing](../preprocessing_multimodal_rag/README.md) | Dataset of embedded chunks to search |
+| **retrieval_embed_model** | Model | NVIDIA NV-EmbedQA E5 v5 (same as preprocessing) | Must match the embedding model used in preprocessing |
+| **embed_model** | Model | NVIDIA NV-EmbedQA E5 v5 | Embeds user questions for retrieval |
+| **gen_ai_model** | Model | Llama 3.1 405B Instruct | Generates the final RAG response |
+| **k_nearest_items** | Integer | 30 (default) | Number of chunks to retrieve |
+
+**Getting the model ID:** When you run or edit the pipeline, each Model variable shows a model selector. Choose the recommended model (or another from your project); the selected value is the model ID (e.g. `nim-nv-embedqa-e5-v5.models.nim-nv-embedqa-e5-v5`). You can also find model IDs in your project under **Develop** → **AI Library** (or **Models**). For **retrieval_embed_model**, use the exact same model ID as in the preprocessing pipeline so vector spaces match.
+
+---
+
 ## Overview
 
 The NVIDIA RAG Pipeline is the second stage of the two-stage RAG system. It accepts user queries, retrieves relevant document chunks using vector similarity search, and generates responses using an LLM with retrieved context.

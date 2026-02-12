@@ -1,11 +1,15 @@
 # NVIDIA NIM Blueprints for Dataloop
 
-<p align="center">
-  <img height="40mm" src="https://mk0dataloop4fni44fjg.kinstacdn.com/wp-content/uploads/2020/03/logo.svg" alt="Dataloop Logo">
-</p>
+## Quick setup
+
+1. Open the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace) and find the blueprint you want (Report Generation, PDF to Podcast, or Multimodal RAG).
+2. Install the pipeline into your project.
+3. Add the required API keys in your organization’s [Data Governance](https://docs.dataloop.ai/docs/overview-1) (e.g. NVIDIA NGC, and Tavily or ElevenLabs where needed).
+4. Configure and run the pipeline from your project.
+
+For per-blueprint steps and requirements, see the README for each app in [Blueprints](#blueprints) below, or the detailed [Installation](#installation) section.
 
 ---
-
 
 A collection of NVIDIA NIM-powered blueprints for the Dataloop Platform. These blueprints leverage NVIDIA's AI models to enable advanced GenAI workflows including document processing, report generation, and multimodal RAG pipelines.
 

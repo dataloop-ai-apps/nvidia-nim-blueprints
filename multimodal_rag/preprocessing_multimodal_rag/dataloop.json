@@ -1,6 +1,6 @@
 {
-  "name": "preprocessing-multimodal-rag-blueprint",
-  "version": "0.0.36",
+  "name": "preprocess-multimodal-rag-bp",
+  "version": "0.0.40",
   "attributes": {
     "Category": [
       "Pipeline",
@@ -18,12 +18,9 @@
       "Image"
     ]
   },
-  "displayName": "RAG Preprocessing Multimodal PDFs NVIDIA Blueprint",
-  "description": "NVIDIA blueprint for the preprocessing stage of a multimodal PDF RAG pipeline.",
+  "displayName": "RAG Preprocessing Multimodal PDFs",
+  "description": "Preprocessing stage of a multimodal PDF RAG pipeline powered by NVIDIA NIM. Extracts text and images from PDFs, detects page layout elements, performs OCR, chunks content, and generates vector embeddings for retrieval. This is the first stage of a two-part RAG system — run this before the 'RAG Pipeline NVIDIA Blueprint'. Setup: (1) Install this app — requires an NVIDIA NGC API key, which can be set up in advance as a secret integration or created during installation when prompted. (2) Create a pipeline from the 'RAG Preprocessing Multimodal PDFs' template. (3) Model variables are preset to NV-EmbedQA E5 v5 (embeddings), NVIDIA YOLOX Page Elements v1 (layout detection), University at Buffalo CachedTransformer (table detection), and Baidu PaddleOCR (OCR). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Upload PDFs to your dataset and execute to generate embeddings.",
   "scope": "public",
-  "codebase": {
-    "type": "item"
-  },
   "components": {
     "pipelineTemplates": [
       {
@@ -191,7 +188,7 @@
           }
         ],
         "description": "NVIDIA blueprint for the preprocessing stage of a multimodal PDF RAG pipeline.",
-        "name": "Multimodal PDF RAG Nvidia Blueprint",
+        "name": "RAG Preprocessing Multimodal PDFs",
         "nodes": [
           {
             "id": "7bf0e347-64ca-4d6a-9ccf-c50ee8e02611",
@@ -807,25 +804,25 @@
           {
             "name": "university-at-buffalo-cached",
             "type": "Model",
-            "description": "Table detection and extraction model for identifying tabular data in document pages. Recommended: University at Buffalo CachedTransformer",
+            "description": "Table detection and extraction model for identifying tabular data in document pages. Preset: University at Buffalo CachedTransformer (university-at-buffalo-cached)",
             "value": "$var(university-at-buffalo-cached__model)"
           },
           {
             "name": "nv-yolox-page-elements-v1",
             "type": "Model",
-            "description": "Page element detection model for identifying layout components (tables, figures, text blocks) in document pages. Recommended: NVIDIA YOLOX Page Elements v1",
+            "description": "Page element detection model for identifying layout components (tables, figures, text blocks) in document pages. Preset: NVIDIA YOLOX Page Elements v1 (nv-yolox-page-elements-v1)",
             "value": "$var(nv-yolox-page-elements_v1__model)"
           },
           {
             "name": "baidu-paddleocr",
             "type": "Model",
-            "description": "OCR model for extracting text from document images and cropped page elements. Recommended: Baidu PaddleOCR",
+            "description": "OCR model for extracting text from document images and cropped page elements. Preset: Baidu PaddleOCR (baidu-paddleocr)",
             "value": "$var(baidu-paddleocr__model)"
           },
           {
             "name": "nv-embedqa-e5v5",
             "type": "Model",
-            "description": "Embedding model for vectorizing text chunks for retrieval. Recommended: NVIDIA NV-EmbedQA E5 v5",
+            "description": "Embedding model for vectorizing text chunks for retrieval. Preset: NVIDIA NV-EmbedQA E5 v5 (nim-nv-embedqa-e5-v5)",
             "value": "$var(nv-embedqa-e5v5__model)"
           }
         ]

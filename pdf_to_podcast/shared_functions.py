@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import dotenv
 import logging
@@ -248,8 +249,18 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             )
 
         if isinstance(conversation_json_str, str):
-            # First decode the string safely
-            conversation_json = json.loads(conversation_json_str)
+            # Extract JSON from possible LLM preamble
+            extracted = SharedServiceRunner._extract_json_string(conversation_json_str)
+            try:
+                conversation_json = json.loads(extracted)
+            except json.JSONDecodeError as e:
+                logger.warning(f"Conversation JSON parse failed: {e}. Attempting repair...")
+                repaired = SharedServiceRunner._repair_conversation_json(extracted)
+                if repaired is not None:
+                    conversation_json = json.loads(repaired)
+                    logger.info("Successfully repaired truncated conversation JSON.")
+                else:
+                    raise
         else:
             conversation_json = conversation_json_str
 
@@ -433,6 +444,251 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         return text
 
     @staticmethod
+    def _extract_json_string(text: str) -> str:
+        """
+        Extract a JSON object or array string from text that may contain
+        preamble or surrounding markdown fences (e.g. ```json ... ```).
+        Skips JSON schema definitions ($defs) if the actual data follows.
+        """
+        # Try to strip markdown code fences first
+        fence_match = re.search(r"```(?:json)?\s*\n?([\s\S]*?)```", text)
+        if fence_match:
+            candidate = fence_match.group(1).strip()
+            # If the fenced block is a JSON schema, look for another block
+            if '"$defs"' not in candidate and '"$schema"' not in candidate:
+                return candidate
+            # Try to find a second fenced block with actual data
+            remaining = text[fence_match.end():]
+            second_match = re.search(r"```(?:json)?\s*\n?([\s\S]*?)```", remaining)
+            if second_match:
+                return second_match.group(1).strip()
+
+        # Find all top-level JSON objects in the text
+        candidates = []
+        depth = 0
+        start = None
+        for i, ch in enumerate(text):
+            if ch == '{':
+                if depth == 0:
+                    start = i
+                depth += 1
+            elif ch == '}':
+                depth -= 1
+                if depth == 0 and start is not None:
+                    candidates.append(text[start : i + 1])
+                    start = None
+
+        # Prefer a candidate that looks like actual data (not a JSON schema)
+        for candidate in candidates:
+            if '"$defs"' not in candidate and '"$schema"' not in candidate:
+                return candidate
+
+        # Fallback: return the first candidate, or the last one, or original text
+        if candidates:
+            return candidates[0]
+
+        # Try array extraction as fallback
+        first_bracket = text.find("[")
+        if first_bracket != -1:
+            end = text.rfind("]")
+            if end != -1:
+                return text[first_bracket : end + 1]
+
+        return text
+
+    @staticmethod
+    def _repair_outline_json(text: str) -> Optional[str]:
+        """
+        Attempt to repair truncated or malformed outline JSON from an LLM.
+
+        Handles common issues:
+        1. Model outputs a segments array [...] instead of {title, segments} object
+        2. JSON is truncated (missing closing brackets/braces)
+        3. Last segment is incomplete after truncation repair
+
+        Returns the repaired JSON string, or None if repair is not possible.
+        """
+        text = text.strip()
+        was_bare_array = False
+
+        # --- Case 1: model output a bare array of segments ---
+        if text.startswith("["):
+            was_bare_array = True
+            text = '{"title": "Untitled Podcast", "segments": ' + text + "}"
+
+        # --- Case 2: try to close truncated JSON ---
+        repaired = SharedServiceRunner._close_truncated_json(text)
+        if repaired is None:
+            return None
+
+        # --- Case 3: validate and trim incomplete last segment ---
+        # Try parsing as-is
+        try:
+            data = json.loads(repaired)
+        except json.JSONDecodeError:
+            return None
+
+        # Ensure it's an object with segments
+        if not isinstance(data, dict):
+            return None
+        if "segments" not in data and was_bare_array:
+            return None
+
+        # Add default title if missing
+        if "title" not in data:
+            data["title"] = "Untitled Podcast"
+
+        segments = data.get("segments", [])
+        if isinstance(segments, list) and len(segments) > 0:
+            # Validate each segment; drop the last one if it's incomplete
+            valid_segments = []
+            for seg in segments:
+                if (
+                    isinstance(seg, dict)
+                    and "section" in seg
+                    and "topics" in seg
+                    and "duration" in seg
+                    and "references" in seg
+                ):
+                    valid_segments.append(seg)
+                else:
+                    # Incomplete segment — only keep it if it's not the last one
+                    # (non-last incomplete segments indicate a deeper problem)
+                    if seg is not segments[-1]:
+                        logger.warning(
+                            f"Dropping incomplete segment in the middle: {seg}"
+                        )
+            if len(valid_segments) < len(segments):
+                logger.info(
+                    f"Trimmed {len(segments) - len(valid_segments)} incomplete "
+                    f"segment(s) from truncated outline (kept {len(valid_segments)})."
+                )
+            if not valid_segments:
+                return None
+            data["segments"] = valid_segments
+
+        return json.dumps(data)
+
+    @staticmethod
+    def _close_truncated_json(text: str) -> Optional[str]:
+        """
+        Attempt to close truncated JSON by appending missing brackets/braces.
+        Returns valid JSON string or None.
+        """
+        text = text.strip()
+
+        # Already valid?
+        try:
+            json.loads(text)
+            return text
+        except json.JSONDecodeError:
+            pass
+
+        # Count unmatched braces/brackets
+        stack = []
+        in_string = False
+        escape = False
+        for ch in text:
+            if escape:
+                escape = False
+                continue
+            if ch == '\\' and in_string:
+                escape = True
+                continue
+            if ch == '"' and not escape:
+                in_string = not in_string
+                continue
+            if in_string:
+                continue
+            if ch in ('{', '['):
+                stack.append(ch)
+            elif ch == '}':
+                if stack and stack[-1] == '{':
+                    stack.pop()
+            elif ch == ']':
+                if stack and stack[-1] == '[':
+                    stack.pop()
+
+        if not stack:
+            return None  # Balanced but still invalid — can't help
+
+        # If we're inside a string, close it first
+        if in_string:
+            text += '"'
+
+        # Close all open braces/brackets in reverse order
+        closing = ""
+        for opener in reversed(stack):
+            closing += '}' if opener == '{' else ']'
+
+        # Try with and without trailing comma removal
+        for t in [text, text.rstrip().rstrip(',')]:
+            candidate = t + closing
+            try:
+                json.loads(candidate)
+                logger.info(
+                    f"Repaired truncated outline JSON by closing {len(stack)} "
+                    f"unclosed bracket(s)/brace(s)."
+                )
+                return candidate
+            except json.JSONDecodeError:
+                continue
+
+        return None
+
+    @staticmethod
+    def _repair_conversation_json(text: str) -> Optional[str]:
+        """
+        Attempt to repair truncated conversation JSON from an LLM.
+
+        The expected structure is: {"scratchpad": "...", "dialogue": [{text, speaker}, ...]}
+        Handles:
+        1. Truncated JSON (unclosed brackets/braces/strings)
+        2. Incomplete last dialogue entry
+        """
+        repaired = SharedServiceRunner._close_truncated_json(text)
+        if repaired is None:
+            return None
+
+        try:
+            data = json.loads(repaired)
+        except json.JSONDecodeError:
+            return None
+
+        if not isinstance(data, dict):
+            return None
+
+        # Add default scratchpad if missing
+        if "scratchpad" not in data:
+            data["scratchpad"] = ""
+
+        dialogue = data.get("dialogue", [])
+        if isinstance(dialogue, list) and len(dialogue) > 0:
+            # Drop incomplete dialogue entries (missing text or speaker)
+            valid_entries = []
+            for entry in dialogue:
+                if (
+                    isinstance(entry, dict)
+                    and "text" in entry
+                    and "speaker" in entry
+                    and isinstance(entry["text"], str)
+                    and len(entry["text"].strip()) > 0
+                ):
+                    valid_entries.append(entry)
+
+            if len(valid_entries) < len(dialogue):
+                logger.info(
+                    f"Trimmed {len(dialogue) - len(valid_entries)} incomplete "
+                    f"dialogue entry/entries from truncated conversation "
+                    f"(kept {len(valid_entries)})."
+                )
+            if not valid_entries:
+                return None
+            data["dialogue"] = valid_entries
+
+        return json.dumps(data)
+
+    @staticmethod
     def _get_outline_dict(outline_item: dl.Item) -> PodcastOutline:
         """
         Get the PodcastOutline from an outline item.
@@ -444,9 +700,54 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         if outline_dict is None:
             raise ValueError(f"No outline found in item {outline_item.id} metadata.")
         if isinstance(outline_dict, dict):
+            # If the dict is a JSON schema (e.g. model echoed back the schema), reject it
+            if "$defs" in outline_dict or "$schema" in outline_dict:
+                raise ValueError(
+                    f"LLM returned the JSON schema definition instead of actual outline data "
+                    f"for item {outline_item.id}. The model may need to be re-run."
+                )
             outline_dict = json.dumps(outline_dict)
-        outline = PodcastOutline.model_validate_json(outline_dict)
-        return outline
+        elif isinstance(outline_dict, str):
+            extracted = SharedServiceRunner._extract_json_string(outline_dict)
+            if extracted != outline_dict:
+                logger.warning(
+                    "Outline response contained non-JSON preamble, extracted JSON from LLM response."
+                )
+            # Check if extracted content is a JSON schema instead of actual data
+            if '"$defs"' in extracted or '"$schema"' in extracted:
+                logger.warning(
+                    "LLM returned the JSON schema definition instead of outline data. "
+                    "Checking if actual data follows the schema in the response..."
+                )
+                # Try to find actual data after the schema in the original text
+                second_pass = SharedServiceRunner._extract_json_string(outline_dict)
+                if second_pass != extracted and '"$defs"' not in second_pass:
+                    extracted = second_pass
+                    logger.info("Found actual outline data after the schema definition.")
+                else:
+                    raise ValueError(
+                        f"LLM returned the JSON schema definition instead of actual outline data "
+                        f"for item {outline_item.id}. The model may need to be re-run."
+                    )
+            outline_dict = extracted
+
+        # Attempt to parse; if it fails, try to repair the JSON
+        try:
+            outline = PodcastOutline.model_validate_json(outline_dict)
+            return outline
+        except Exception as first_error:
+            logger.warning(f"Initial outline parse failed: {first_error}")
+            repaired = SharedServiceRunner._repair_outline_json(outline_dict)
+            if repaired is not None and repaired != outline_dict:
+                logger.info("Attempting parse with repaired JSON...")
+                try:
+                    outline = PodcastOutline.model_validate_json(repaired)
+                    logger.info("Successfully parsed repaired outline JSON.")
+                    return outline
+                except Exception as repair_error:
+                    logger.warning(f"Repaired JSON also failed: {repair_error}")
+            # Re-raise the original error
+            raise first_error
 
     @staticmethod
     def _get_podcast_metadata(item: dl.Item) -> Dict:

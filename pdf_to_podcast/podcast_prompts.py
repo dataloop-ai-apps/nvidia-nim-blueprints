@@ -109,6 +109,8 @@ Output Requirements:
 
 The result must conform to the following JSON schema:
 {{ schema }}
+
+IMPORTANT: Output ONLY the JSON data object that conforms to the schema above. Do NOT output the schema itself. Do NOT include "$defs" or "$schema" keys in your response. Start your response directly with the JSON object containing "title" and "segments" keys.
 """
 
 # Template for generating transcript with source references

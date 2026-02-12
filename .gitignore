@@ -374,6 +374,8 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
+pdf_to_podcast/test_pdf_to_podcast.py
+report_generation/test_report_generation.py
 
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm,data,pycharm+all
 
