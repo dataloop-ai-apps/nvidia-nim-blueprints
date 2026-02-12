@@ -790,13 +790,14 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         If the item is already in the hidden directory, return the item.dir.
         Otherwise, return the hidden subdirectory.
         """
+        HIDDEN_DIR = ".pdf2podcast"
         if item.dir == "/":
-            hidden_dir = f"/.pdf2podcast"
+            hidden_dir = f"/{HIDDEN_DIR}"
         else:
-            if 'pdf2podcast' in item.dir:
+            if HIDDEN_DIR in item.dir:
                 hidden_dir = item.dir
             else:
-                hidden_dir = f"{item.dir}/.pdf2podcast"
+                hidden_dir = f"{item.dir}/{HIDDEN_DIR}"
         return hidden_dir
 
     @staticmethod
