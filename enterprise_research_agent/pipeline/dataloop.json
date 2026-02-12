@@ -2,7 +2,7 @@
   "name": "nvidia-aiq-enterprise-research-bp",
   "displayName": "AI Agent for Enterprise Research",
   "description": "Enterprise research agent pipeline: Agent orchestrates web search and RAG retrieval in a Plan-Execute-Reflect loop, then NIM Llama 3.3 70B generates the final report. Powered by NVIDIA NIM models.",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "scope": "public",
   "codebase": {
     "type": "item"
