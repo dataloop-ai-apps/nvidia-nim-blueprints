@@ -2,7 +2,7 @@
   "name": "report-generation-bp",
   "displayName": "Report Generation NVIDIA Blueprint",
   "description": "Generate a report based on a given topic and report structure using NVIDIA NIM. The pipeline uses an LLM to create outlines, research topics via the Tavily search API, draft sections, and synthesize the final report. Setup: (1) Install this app — requires an NVIDIA NGC API key and a Tavily API key, which can be set up in advance as secret integrations or created during installation when prompted. (2) Create a pipeline from the 'Report Generation NVIDIA Blueprint' template. (3) The model variable is preset to Llama 3.3 70B Instruct for all report generation steps. To use a different model, copy a model ID from Model Management into the pipeline's Variables panel. (4) Execute the pipeline with your topic and report structure.",
-  "version": "0.0.44",
+  "version": "0.0.45",
   "scope": "public",
   "attributes": {
     "Hub": [
