@@ -377,10 +377,9 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         outline_item_id = podcast_metadata.get("outline_item_id")
         if outline_item_id is None:
             raise ValueError(f"No outline item id found in item {item.id}.")
-        outline = SharedServiceRunner._get_outline_dict(
-            outline_item=dl.items.get(item_id=outline_item_id)
-        )
-        working_dir = SharedServiceRunner._get_hidden_dir(item=item)
+        outline_item = dl.items.get(item_id=outline_item_id)
+        outline = SharedServiceRunner._get_outline_dict(outline_item=outline_item)
+        working_dir = SharedServiceRunner._get_hidden_dir(item=outline_item)
 
         # get all segment items
         filters = dl.Filters()
@@ -390,7 +389,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             values=f"{working_dir}/{pdf_name}/prompt5",
         )
         filters.sort_by(field="filename")
-        segment_items = list(item.dataset.items.list(filters=filters).all())
+        segment_items = list(outline_item.dataset.items.list(filters=filters).all())
         if len(segment_items) < 2:
             raise ValueError(
                 "Insufficient segments for a podcast. At least 2 segments are required to combine dialogues."
@@ -428,7 +427,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             )
 
             new_item = SharedServiceRunner._create_and_upload_prompt_item(
-                dataset=item.dataset,
+                dataset=outline_item.dataset,
                 item_name=new_name,
                 prompt=llm_prompt,
                 remote_dir=working_dir,
