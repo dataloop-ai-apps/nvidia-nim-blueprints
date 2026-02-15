@@ -455,7 +455,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         if rag_pipeline_id:
             try:
                 rag_pipeline = dl.pipelines.get(pipeline_id=rag_pipeline_id)
-                if not rag_pipeline.installed:
+                if rag_pipeline.status != 'Installed':
                     logger.warning(
                         f"RAG pipeline '{rag_pipeline.name}' is not installed/active. "
                         f"RAG retrieval will be skipped."
@@ -620,9 +620,11 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
     def _prepare_for_report(self, main_item: dl.Item, state: dict, progress: dl.Progress) -> dl.Item:
         """Internal: compile research and prepare PromptItem for NIM Llama.
 
-        Strategy: keep the original user message intact. Pass all research
-        context via nearestItems. The Llama node's system prompt (in the
-        pipeline modelConfig) provides the formatting instructions.
+        Strategy:
+        - Keep the original user message (topic + organization) untouched
+        - Upload the full research draft as a nearestItems document
+        - The Llama node's system prompt (configured in the pipeline template)
+          provides the report-writing instructions
         """
 
         # Compile research document with everything Llama needs as context
@@ -657,11 +659,10 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         finally:
             os.remove(local_path)
 
-        # Set nearestItems on the PromptItem so Llama receives the research context
-        # The original user message (topic + organization) is preserved as-is
-        prompt_item = dl.PromptItem.from_item(main_item)
 
+        prompt_item = dl.PromptItem.from_item(main_item)
         last_prompt = prompt_item.prompts[-1]
+
         if not hasattr(last_prompt, 'metadata') or last_prompt.metadata is None:
             last_prompt.metadata = {}
         last_prompt.metadata['nearestItems'] = [research_item.id]
