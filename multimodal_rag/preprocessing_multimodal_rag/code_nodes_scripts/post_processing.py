@@ -43,7 +43,7 @@ class ServiceRunner(dl.BaseServiceRunner):
 
         # Extract cached response from metadata
         metadata = item.metadata.get("user", {}).get("cached_response")
-        if metadata != {}:
+        if metadata:
             processed_item = self._upload_temp_text_file(
                 item=item,
                 content=json.dumps(metadata, indent=2),
