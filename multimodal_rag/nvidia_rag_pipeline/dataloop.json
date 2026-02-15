@@ -18,7 +18,7 @@
     ]
   },
   "displayName": "RAG Pipeline NVIDIA Blueprint",
-  "description": "RAG retrieval pipeline powered by NVIDIA NIM. Retrieves prepared embeddings from multimodal PDFs, uses NIM models for generating query embeddings and responses, and incorporates a retriever service to fetch relevant documents. Responses are stored in a prompts dataset and sent to a labeling task for human-in-the-loop validation. This is the second stage — first run the 'RAG Preprocessing Multimodal PDFs' pipeline to embed your documents. Setup: (1) Install this app — requires an NVIDIA NGC API key, which can be set up in advance as a secret integration or created during installation when prompted. (2) Create a pipeline from the 'RAG Pipeline NVIDIA Blueprint' template. (3) Model variables are preset to NV-EmbedQA E5 v5 (query embedding and retrieval) and Llama 3.1 405B Instruct (response generation). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Set 'retrieval_dataset' to the dataset containing your preprocessed embeddings. (5) Adjust 'k_nearest_items' if needed (default: 30). (6) Execute the pipeline.",
+  "description": "RAG retrieval pipeline powered by NVIDIA NIM. Retrieves prepared embeddings from multimodal PDFs, uses NIM models for generating query embeddings and responses, and incorporates a retriever service to fetch relevant documents. Responses are stored in a prompts dataset and sent to a labeling task for human-in-the-loop validation. This is the second stage — first run the 'RAG Preprocessing Multimodal PDFs' pipeline to embed your documents. Setup: (1) Install this app — requires an NVIDIA NGC API key, which can be set up in advance as a secret integration or created during installation when prompted. (2) Create a pipeline from the 'RAG Pipeline NVIDIA Blueprint' template. (3) Model variables are preset to Llama 3.2 Nemoretriever 300M Embed V2 (query embedding and retrieval) and Llama 3.1 8B Instruct (response generation). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Set 'retrieval_dataset' to the dataset containing your preprocessed embeddings. (5) Adjust 'k_nearest_items' if needed (default: 30). (6) Execute the pipeline.",
   "scope": "public",
   "components": {
     "pipelineTemplates": [
@@ -98,16 +98,16 @@
                 "io": "output"
               }
             ],
-            "name": "Embedding Model (NV EmbedQA E5 V5)",
+            "name": "Embedding Model (Llama 3.2 Nemoretriever 300M Embed V2)",
             "type": "ml",
             "namespace": {
               "functionName": "embed",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-nv-embedqa-e5-v5"
+              "packageName": "nim-llama-3-2-nemoretriever-300m-embed-v2"
             },
-            "appName": "NIM Nv Embedqa E5 V5",
-            "dpkName": "nim-nv-embedqa-e5-v5",
+            "appName": "Llama 3.2 Nemoretriever 300M Embed V2",
+            "dpkName": "nim-llama-3-2-nemoretriever-300m-embed-v2",
             "metadata": {
               "position": {
                 "x": 10083,
@@ -117,7 +117,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "embed_model",
-              "pipelineNodeName": "nv-embedqa-e5v5",
+              "pipelineNodeName": "llama-3-2-nemoretriever-300m-embed-v2",
               "mlType": "embeddings"
             }
           },
@@ -245,16 +245,16 @@
                 "io": "output"
               }
             ],
-            "name": "Response LLM (Llama 3.1 405B Instruct)",
+            "name": "Response LLM (Llama 3.1 8B Instruct)",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-llama-3-1-8b-instruct"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "Llama 3.1 8B Instruct",
+            "dpkName": "nim-llama-3-1-8b-instruct",
             "metadata": {
               "position": {
                 "x": 10878.4971501579,
@@ -264,7 +264,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "gen_ai_model",
-              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "pipelineNodeName": "nim-llama-3-1-8b-instruct",
               "mlType": "genAi"
             }
           }
@@ -273,13 +273,13 @@
           {
             "name": "embed_model",
             "type": "Model",
-            "description": "Embedding model used for embedding user prompt questions and for retrieval (must match the model used during preprocessing). Preset: NVIDIA NV-EmbedQA E5 v5 (nim-nv-embedqa-e5-v5)",
+            "description": "Embedding model used for embedding user prompt questions and for retrieval (must match the model used during preprocessing). Preset: Llama 3.2 Nemoretriever 300M Embed V2 (nim-llama-3-2-nemoretriever-300m-embed-v2)",
             "value": "$var(embed_model__model)"
           },
           {
             "name": "gen_ai_model",
             "type": "Model",
-            "description": "Generative LLM for producing the final response from retrieved context. Preset: Llama 3.1 405B Instruct (nim-llama-3-1-405b-instruct)",
+            "description": "Generative LLM for producing the final response from retrieved context. Preset: Llama 3.1 8B Instruct (nim-llama-3-1-8b-instruct)",
             "value": "$var(gen_ai_model__model)"
           },
           {
@@ -299,17 +299,17 @@
   },
   "dependencies": [
     {
-      "name": "nim-nv-embedqa-e5-v5"
+      "name": "nim-llama-3-2-nemoretriever-300m-embed-v2"
     },
     {
-      "name": "nim-llama-3-1-405b-instruct"
+      "name": "nim-llama-3-1-8b-instruct"
     },
     {
       "name": "llm-tools-retriever"
     }
   ],
   "variables": {
-    "embed_model__model": "nim-nv-embedqa-e5-v5.models.nim-nv-embedqa-e5-v5",
-    "gen_ai_model__model": "nim-llama-3-1-405b-instruct.models.nim-llama-3-1-405b-instruct"
+    "embed_model__model": "nim-llama-3-2-nemoretriever-300m-embed-v2.models.nim-llama-3-2-nemoretriever-300m-embed-v2",
+    "gen_ai_model__model": "nim-llama-3-1-8b-instruct.models.nim-llama-3-1-8b-instruct"
   }
 }

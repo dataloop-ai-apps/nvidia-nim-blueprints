@@ -181,7 +181,7 @@
             "appName": "NVIDIA AIQ Enterprise Research Agent",
             "dpkName": "nvidia-aiq-enterprise-research",
             "metadata": {
-              "position": { "x": 10400, "y": 10274, "z": 0 },
+              "position": { "x": 10400, "y": 10074, "z": 0 },
               "componentGroupName": "NVIDIA AIQ Enterprise Research",
               "repeatable": true,
               "pipelineNodeName": "aiq-research-node"
@@ -228,7 +228,7 @@
             "appName": "NIM Llama 3.3 70B Instruct",
             "dpkName": "nim-llama-3-3-70b-instruct",
             "metadata": {
-              "position": { "x": 10800, "y": 10274, "z": 0 },
+              "position": { "x": 10400, "y": 10474, "z": 0 },
               "modelConfig": {
                 "nim_model_name": "meta/llama-3.3-70b-instruct",
                 "system_prompt": "You are working with a team of research experts to deliver a publication-ready long-form report. The user provides a research topic and report organization. You also receive a research draft and sources via the provided context documents.\n\nYour task: Based on the research draft in the context, produce a comprehensive, well-structured final report.\n\nGuidelines:\n- Introduction: Begin with an engaging, context-rich introduction that frames the central questions and scope.\n- Flow & Structure: Arrange sections logically with clear headings and smooth transitions.\n- Integrated Synthesis: Blend multi-source insights into the narrative. Avoid standalone Takeaways/Insights subsections.\n- Exploratory Depth: Pursue lines of inquiry that deepen understanding.\n- Length & Form: Aim for very long reports. Write in multiple coherent paragraphs. Avoid bullet lists unless absolutely necessary.\n- Use ## for sections, ### for subsections.\n- Do NOT refer to yourself as the writer. Do not add meta-commentary.\n- Do not add a sources section (added in post-processing).\n- Do NOT wrap the report in markdown code blocks.\n- Write the report in the same language as the user's message.\n- Each section should be as long as necessary for deep analysis.\n- Return only the final report.",
