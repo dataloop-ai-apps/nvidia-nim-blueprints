@@ -137,12 +137,15 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         return new_item
 
     @staticmethod
-    def create_convo_json(item: dl.Item, progress: dl.Progress, context: dl.Context):
+    def create_convo_json(
+        item: dl.Item, model: dl.Model, progress: dl.Progress, context: dl.Context
+    ):
         """
         Create a final conversation from the monologue in JSON format
 
         Args:
             item (dl.Item): Dataloop item containing the monologue
+            model (dl.Model): Dataloop model entity for setting max_tokens
             progress (dl.Progress): Dataloop progress object
             context (dl.Context): Dataloop context object
 
@@ -162,8 +165,10 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
 
         logger.info("Preparing to generate final monologue transcript JSON")
 
-        # create the final conversation in JSON format
+        # Set model configuration for structured output generation
         schema = Conversation.model_json_schema()
+        SharedServiceRunner._set_model_configuration(model, max_tokens=2048)
+
         template = FinancialSummaryPrompts.get_template("monologue_dialogue_prompt")
         llm_prompt = template.render(
             speaker_1_name=speaker_1_name,

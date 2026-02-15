@@ -98,7 +98,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
     @staticmethod
     def generate_structured_outline(
-        item: dl.Item, progress: dl.Progress, context: dl.Context
+        item: dl.Item, model: dl.Model, progress: dl.Progress, context: dl.Context
     ):
         """
         Convert raw outline text to structured PodcastOutline format.
@@ -108,9 +108,9 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         Args:
             item (dl.Item): Dataloop item containing the raw outline in the hidden directory
+            model (dl.Model): Dataloop model entity for setting max_tokens
             progress (dl.Progress): Dataloop progress object
             context (dl.Context): Dataloop context object
-            prompt_focus (str): Focus instructions guide for the prompt
 
         Returns:
             item (dl.Item): Item for prompting to generate structured outline following the PodcastOutline schema
@@ -136,6 +136,9 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             "type": "string",
             "enum": valid_filenames,
         }
+
+        # Set model configuration for structured output generation
+        SharedServiceRunner._set_model_configuration(model, max_tokens=2048)
 
         template = PodcastPrompts.get_template(
             "podcast_multi_pdf_structured_outline_prompt"
@@ -444,13 +447,14 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
     @staticmethod
     def create_convo_json(
-        item: dl.Item, progress: dl.Progress, context: dl.Context
+        item: dl.Item, model: dl.Model, progress: dl.Progress, context: dl.Context
     ) -> dl.Item:
         """
         Convert the dialogue into structured Conversation format.
 
         Args:
             item (dl.Item): Dataloop item containing the dialogue
+            model (dl.Model): Dataloop model entity for setting max_tokens
             progress (dl.Progress): Dataloop progress object
             context (dl.Context): Dataloop context object
 
@@ -472,7 +476,10 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         logger.info("Formatting final conversation")
 
+        # Set max_tokens on model for structured output generation
         schema = Conversation.model_json_schema()
+        SharedServiceRunner._set_model_max_tokens(model, max_tokens=2048)
+
         template = PodcastPrompts.get_template("podcast_dialogue_prompt")
         llm_prompt = template.render(
             speaker_1_name=speaker_1_name,

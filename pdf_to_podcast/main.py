@@ -48,8 +48,8 @@ class ServiceRunner(dl.BaseServiceRunner):
         )
 
     @staticmethod
-    def generate_audio(item: dl.Item, voice_mapping: dict = None, output_file: str = None):
-        return SharedServiceRunner.generate_audio(item, voice_mapping, output_file)
+    def generate_audio(item: dl.Item, voice_mapping: dict = None, output_file: str = None, speech_model: str = None):
+        return SharedServiceRunner.generate_audio(item, None, None, voice_mapping, output_file, speech_model)
 
     # Monologue flow methods
     @staticmethod
@@ -61,8 +61,8 @@ class ServiceRunner(dl.BaseServiceRunner):
         return MonologueServiceRunner.generate_monologue(item, progress, context)
 
     @staticmethod
-    def monologue_create_convo_json(item: dl.Item, progress: dl.Progress, context: dl.Context):
-        return MonologueServiceRunner.create_convo_json(item, progress, context)
+    def monologue_create_convo_json(item: dl.Item, model: dl.Model, progress: dl.Progress, context: dl.Context):
+        return MonologueServiceRunner.create_convo_json(item, model, progress, context)
 
     # Dialogue flow methods
     @staticmethod
@@ -70,8 +70,8 @@ class ServiceRunner(dl.BaseServiceRunner):
         return DialogueServiceRunner.generate_raw_outline(item, progress, context)
 
     @staticmethod
-    def dialogue_generate_structured_outline(item: dl.Item, progress: dl.Progress, context: dl.Context):
-        return DialogueServiceRunner.generate_structured_outline(item, progress, context)
+    def dialogue_generate_structured_outline(item: dl.Item, model: dl.Model, progress: dl.Progress, context: dl.Context):
+        return DialogueServiceRunner.generate_structured_outline(item, model, progress, context)
 
     @staticmethod
     def dialogue_process_segments(item: dl.Item, progress: dl.Progress, context: dl.Context):
@@ -90,8 +90,8 @@ class ServiceRunner(dl.BaseServiceRunner):
     #     return DialogueServiceRunner.check_dialogue(items, progress, context)
 
     @staticmethod
-    def dialogue_create_convo_json(item: dl.Item, progress: dl.Progress, context: dl.Context):
-        return DialogueServiceRunner.create_convo_json(item, progress, context)
+    def dialogue_create_convo_json(item: dl.Item, model: dl.Model, progress: dl.Progress, context: dl.Context):
+        return DialogueServiceRunner.create_convo_json(item, model, progress, context)
 
     @staticmethod
     def create_final_json(item: dl.Item, progress: dl.Progress, context: dl.Context):
@@ -113,6 +113,7 @@ if __name__ == "__main__":
     context = dl.Context()
 
     model_dialogue = dl.models.get(model_id="67ed3672f41fe3426dd2c3e0") # 405b reasoning
+    speech_model = "eleven_multilingual_v2"
 
     # item should be a pdf file
     item = dl.items.get(item_id=item_id)
@@ -147,7 +148,7 @@ if __name__ == "__main__":
         input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
 
         # Create convo json
-        convo_json = ServiceRunner.monologue_create_convo_json(monologue, progress, context)
+        convo_json = ServiceRunner.monologue_create_convo_json(monologue, model_dialogue, progress, context)
         print(f"4/5: Successfully prepared final conversation: {convo_json.name} ({convo_json.id})")
         print(f"Link here: {convo_json.platform_url}")
 
@@ -162,7 +163,7 @@ if __name__ == "__main__":
         input("Please get llama reasoning prediction via UI. Once it's finished, press Enter to continue...")
 
         # Generate structured outline
-        structured_outline = ServiceRunner.dialogue_generate_structured_outline(outline, progress, context)
+        structured_outline = ServiceRunner.dialogue_generate_structured_outline(outline, model_dialogue, progress, context)
         print(f"3/9: Successfully prepared structured outline: {structured_outline.name} ({structured_outline.id})")
         print(f"Link here: {structured_outline.platform_url}")
 
@@ -200,7 +201,7 @@ if __name__ == "__main__":
         print(f"Link here: {combined_dialogue.platform_url}")
 
         # Create convo json
-        convo_json = ServiceRunner.dialogue_create_convo_json(combined_dialogue, progress, context)
+        convo_json = ServiceRunner.dialogue_create_convo_json(combined_dialogue, model_dialogue, progress, context)
         print(f"7/9: Successfully prepared convo json: {convo_json.name} ({convo_json.id})")
         print(f"Link here: {convo_json.platform_url}")
 
@@ -214,7 +215,7 @@ if __name__ == "__main__":
         print(f"end-1: Successfully prepared final conversation: {final_transcript.name} ({final_transcript.id})")
         print(f"Link here: {final_transcript.platform_url}")
 
-        output_podcast = SharedServiceRunner.generate_audio(final_transcript, progress, context)
+        output_podcast = SharedServiceRunner.generate_audio(final_transcript, progress, context, speech_model=speech_model)
         print(f"End: Successfully prepared audio file: {output_podcast.name} ({output_podcast.id})")
         print(f"Link here: {output_podcast.platform_url}")
     except Exception as e:
