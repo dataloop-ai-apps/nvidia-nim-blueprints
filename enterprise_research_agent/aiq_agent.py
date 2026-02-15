@@ -621,11 +621,10 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         """Internal: compile research and prepare PromptItem for NIM Llama.
 
         Strategy:
-        - Append a brief report instruction to the original user message
-          (preserving the original topic/organization text)
+        - Keep the original user message (topic + organization) untouched
         - Upload the full research draft as a nearestItems document
-        - The Llama node receives: user message (original + instruction) +
-          context (research draft via nearestItems)
+        - The Llama node's system prompt (configured in the pipeline template)
+          provides the report-writing instructions
         """
 
         # Compile research document with everything Llama needs as context
