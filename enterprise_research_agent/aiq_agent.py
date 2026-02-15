@@ -455,7 +455,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         if rag_pipeline_id:
             try:
                 rag_pipeline = dl.pipelines.get(pipeline_id=rag_pipeline_id)
-                if not rag_pipeline.installed:
+                if rag_pipeline.status != 'Installed':
                     logger.warning(
                         f"RAG pipeline '{rag_pipeline.name}' is not installed/active. "
                         f"RAG retrieval will be skipped."
@@ -620,9 +620,12 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
     def _prepare_for_report(self, main_item: dl.Item, state: dict, progress: dl.Progress) -> dl.Item:
         """Internal: compile research and prepare PromptItem for NIM Llama.
 
-        Strategy: keep the original user message intact. Pass all research
-        context via nearestItems. The Llama node's system prompt (in the
-        pipeline modelConfig) provides the formatting instructions.
+        Strategy:
+        - Append a brief report instruction to the original user message
+          (preserving the original topic/organization text)
+        - Upload the full research draft as a nearestItems document
+        - The Llama node receives: user message (original + instruction) +
+          context (research draft via nearestItems)
         """
 
         # Compile research document with everything Llama needs as context
@@ -657,17 +660,34 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         finally:
             os.remove(local_path)
 
-        # Set nearestItems on the PromptItem so Llama receives the research context
-        # The original user message (topic + organization) is preserved as-is
+        # Update the PromptItem:
+        # 1. Append report instruction to the user message (original text preserved)
+        # 2. Set nearestItems to the research document
         prompt_item = dl.PromptItem.from_item(main_item)
-
         last_prompt = prompt_item.prompts[-1]
+
+        # Append instruction to the original user message
+        report_instruction = (
+            "\n\n---\n"
+            "Based on the research context provided, write a comprehensive, "
+            "publication-ready long-form report on the above topic following the "
+            "report organization. Use proper markdown formatting (# for title, "
+            "## for sections, ### for subsections). Write in detailed paragraphs, "
+            "not bullet points. Do not include source citations (added in "
+            "post-processing). Do not add meta-commentary. Return only the report."
+        )
+        for element in last_prompt.elements:
+            if element.get('mimetype') == dl.PromptType.TEXT:
+                element['value'] = element['value'] + report_instruction
+                break
+
+        # Set nearestItems so Llama gets the full research draft as context
         if not hasattr(last_prompt, 'metadata') or last_prompt.metadata is None:
             last_prompt.metadata = {}
         last_prompt.metadata['nearestItems'] = [research_item.id]
 
         prompt_item.update()
-        logger.info(f"Set nearestItems on PromptItem (original user message preserved)")
+        logger.info(f"Updated PromptItem: appended report instruction + set nearestItems")
 
         main_item = self._set_state(main_item, state)
 
