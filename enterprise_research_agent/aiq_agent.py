@@ -263,7 +263,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         """Execute a RAG pipeline query and return the response text."""
         try:
             rag_pipeline = dl.pipelines.get(pipeline_id=rag_pipeline_id)
-            if not rag_pipeline.installed:
+            if rag_pipeline.status != 'Installed':
                 logger.warning(f"RAG pipeline not active - skipping")
                 return ""
 
@@ -286,7 +286,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
 
             # Execute the RAG pipeline
             execution = rag_pipeline.execute(
-                execution_input={"item": [rag_prompt_item.id]}
+                execution_input={"item": {"item_id": rag_prompt_item.id, "dataset_id": dataset.id}}
             )
 
             # Wait for completion
@@ -621,19 +621,25 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         """Internal: compile research and prepare PromptItem for NIM Llama.
 
         Strategy:
-        - Keep the original user message (topic + organization) untouched
-        - Upload the full research draft as a nearestItems document
-        - The Llama node's system prompt (configured in the pipeline template)
-          provides the report-writing instructions
+        - Embed the report-writing instruction inside the research document
+        - Upload it as a nearestItems document on prompt #1
+        - The original user message stays untouched, no prompt #2 is added
+        - Llama's response is annotated on prompt #1 (the only prompt)
         """
 
-        # Compile research document with everything Llama needs as context
-        research_doc = f"""# Research Report Draft: {state['topic']}
+        # Compile research document: instruction + draft + citations
+        # The instruction is embedded here so Llama gets it via nearestItems context
+        research_doc = f"""## Instructions
+Based on the following research draft, write a comprehensive, publication-ready
+long-form report. Use proper markdown formatting (# title, ## sections,
+### subsections). Write in detailed paragraphs, not bullet points. Do not
+include source citations (added in post-processing). Do not add
+meta-commentary. Return only the final report.
 
 ## Report Organization
 {state['report_organization']}
 
-## Draft Report
+## Research Draft
 {state['running_summary']}
 
 ## Sources & Citations
@@ -659,7 +665,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         finally:
             os.remove(local_path)
 
-
+        # Set nearestItems on prompt #1 (the only prompt) — no prompt #2 added
         prompt_item = dl.PromptItem.from_item(main_item)
         last_prompt = prompt_item.prompts[-1]
 
@@ -668,7 +674,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         last_prompt.metadata['nearestItems'] = [research_item.id]
 
         prompt_item.update()
-        logger.info(f"Set nearestItems on PromptItem (original user message preserved)")
+        logger.info(f"Set nearestItems on prompt #1 (no additional prompts added)")
 
         main_item = self._set_state(main_item, state)
 
