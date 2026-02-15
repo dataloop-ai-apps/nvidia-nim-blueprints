@@ -123,6 +123,10 @@
               {
                 "name": "item",
                 "type": "Item"
+              },
+              {
+                "name": "model",
+                "type": "Model"
               }
             ],
             "output": [
@@ -155,6 +159,10 @@
               {
                 "name": "item",
                 "type": "Item"
+              },
+              {
+                "name": "model",
+                "type": "Model"
               }
             ],
             "output": [
@@ -223,6 +231,10 @@
               {
                 "name": "item",
                 "type": "Item"
+              },
+              {
+                "name": "model",
+                "type": "Model"
               }
             ],
             "output": [
@@ -262,6 +274,10 @@
               },
               {
                 "name": "output_file",
+                "type": "String"
+              },
+              {
+                "name": "speech_model",
                 "type": "String"
               }
             ],

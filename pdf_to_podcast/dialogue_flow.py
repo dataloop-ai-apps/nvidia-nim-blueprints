@@ -98,7 +98,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
     @staticmethod
     def generate_structured_outline(
-        item: dl.Item, progress: dl.Progress, context: dl.Context
+        item: dl.Item, model: dl.Model, progress: dl.Progress, context: dl.Context
     ):
         """
         Convert raw outline text to structured PodcastOutline format.
@@ -108,9 +108,9 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         Args:
             item (dl.Item): Dataloop item containing the raw outline in the hidden directory
+            model (dl.Model): Dataloop model entity for setting max_tokens
             progress (dl.Progress): Dataloop progress object
             context (dl.Context): Dataloop context object
-            prompt_focus (str): Focus instructions guide for the prompt
 
         Returns:
             item (dl.Item): Item for prompting to generate structured outline following the PodcastOutline schema
@@ -136,6 +136,9 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             "type": "string",
             "enum": valid_filenames,
         }
+
+        # Set model configuration for structured output generation
+        SharedServiceRunner._set_model_configuration(model, max_tokens=2048)
 
         template = PodcastPrompts.get_template(
             "podcast_multi_pdf_structured_outline_prompt"
@@ -374,8 +377,12 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
         pdf_name = podcast_metadata.get("pdf_name")
         # item is the original structured outline prompt item
-        outline = SharedServiceRunner._get_outline_dict(outline_item=item)
-        working_dir = SharedServiceRunner._get_hidden_dir(item=item)
+        outline_item_id = podcast_metadata.get("outline_item_id")
+        if outline_item_id is None:
+            raise ValueError(f"No outline item id found in item {item.id}.")
+        outline_item = dl.items.get(item_id=outline_item_id)
+        outline = SharedServiceRunner._get_outline_dict(outline_item=outline_item)
+        working_dir = SharedServiceRunner._get_hidden_dir(item=outline_item)
 
         # get all segment items
         filters = dl.Filters()
@@ -385,7 +392,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             values=f"{working_dir}/{pdf_name}/prompt5",
         )
         filters.sort_by(field="filename")
-        segment_items = list(item.dataset.items.list(filters=filters).all())
+        segment_items = list(outline_item.dataset.items.list(filters=filters).all())
         if len(segment_items) < 2:
             raise ValueError(
                 "Insufficient segments for a podcast. At least 2 segments are required to combine dialogues."
@@ -423,7 +430,7 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
             )
 
             new_item = SharedServiceRunner._create_and_upload_prompt_item(
-                dataset=item.dataset,
+                dataset=outline_item.dataset,
                 item_name=new_name,
                 prompt=llm_prompt,
                 remote_dir=working_dir,
@@ -440,13 +447,14 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
     @staticmethod
     def create_convo_json(
-        item: dl.Item, progress: dl.Progress, context: dl.Context
+        item: dl.Item, model: dl.Model, progress: dl.Progress, context: dl.Context
     ) -> dl.Item:
         """
         Convert the dialogue into structured Conversation format.
 
         Args:
             item (dl.Item): Dataloop item containing the dialogue
+            model (dl.Model): Dataloop model entity for setting max_tokens
             progress (dl.Progress): Dataloop progress object
             context (dl.Context): Dataloop context object
 
@@ -468,7 +476,10 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         logger.info("Formatting final conversation")
 
+        # Set max_tokens on model for structured output generation
         schema = Conversation.model_json_schema()
+        SharedServiceRunner._set_model_max_tokens(model, max_tokens=2048)
+
         template = PodcastPrompts.get_template("podcast_dialogue_prompt")
         llm_prompt = template.render(
             speaker_1_name=speaker_1_name,

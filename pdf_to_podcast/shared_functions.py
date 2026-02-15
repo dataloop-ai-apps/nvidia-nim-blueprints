@@ -36,12 +36,16 @@ class DialogueEntry(BaseModel):
 
 
 class TTSConverter:
-    def __init__(self, api_key: str = None):
-        """Initialize the TTS converter with ElevenLabs API key"""
+    def __init__(self, api_key: str = None, speech_model: str = None):
+        """Initialize the TTS converter with ElevenLabs API key and speech model"""
         self.api_key = api_key or os.getenv("ELEVENLABS_API_KEY")
         if not self.api_key:
             raise ValueError("ElevenLabs API key is required")
+        
+        if not speech_model:
+            raise ValueError("ElevenLabs speech model is required")
 
+        self.speech_model = speech_model
         self.client = ElevenLabs(api_key=self.api_key)
 
     def _convert_text(self, text: str, voice_id: str) -> bytes:
@@ -50,7 +54,7 @@ class TTSConverter:
             audio_stream = self.client.text_to_speech.convert(
                 text=text,
                 voice_id=voice_id,
-                model_id="eleven_monolingual_v1",
+                model_id=self.speech_model,
                 output_format="mp3_44100_128",
                 voice_settings={"stability": 0.5, "similarity_boost": 0.75},
             )
@@ -115,6 +119,20 @@ class TTSConverter:
 
 
 class SharedServiceRunner(dl.BaseServiceRunner):
+    @staticmethod
+    def _set_model_configuration(model: dl.Model, **kwargs) -> None:
+        """
+        Set configuration parameters on model for LLM generation.
+        
+        Args:
+            model (dl.Model): Dataloop model entity to configure
+            **kwargs: Configuration parameters to set (e.g., max_tokens=2048)
+        """
+        for key, value in kwargs.items():
+            model.configuration[key] = value
+        model.update()
+        logger.info(f"Set model configuration: {kwargs} on model {model.id}")
+
     @staticmethod
     def prepare_and_summarize_pdf(
         item: dl.Item,
@@ -248,6 +266,8 @@ class SharedServiceRunner(dl.BaseServiceRunner):
                 f"No conversation JSON found in the conversation segment item {item.id}."
             )
 
+        guidance_msg = "\n\n[Guidance] The model did not produce valid JSON. Try to adjust the model configuration in the previous pipeline node and rerun the cycle from there."
+        
         if isinstance(conversation_json_str, str):
             # Extract JSON from possible LLM preamble
             extracted = SharedServiceRunner._extract_json_string(conversation_json_str)
@@ -257,10 +277,19 @@ class SharedServiceRunner(dl.BaseServiceRunner):
                 logger.warning(f"Conversation JSON parse failed: {e}. Attempting repair...")
                 repaired = SharedServiceRunner._repair_conversation_json(extracted)
                 if repaired is not None:
-                    conversation_json = json.loads(repaired)
-                    logger.info("Successfully repaired truncated conversation JSON.")
+                    try:
+                        conversation_json = json.loads(repaired)
+                        logger.info("Successfully repaired truncated conversation JSON.")
+                    except json.JSONDecodeError as repair_e:
+                        raise json.JSONDecodeError(
+                            repair_e.msg + guidance_msg,
+                            repair_e.doc, repair_e.pos
+                        ) from repair_e
                 else:
-                    raise
+                    raise json.JSONDecodeError(
+                        e.msg + guidance_msg,
+                        e.doc, e.pos
+                    ) from e
         else:
             conversation_json = conversation_json_str
 
@@ -303,6 +332,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         context,
         voice_mapping: dict = None,
         output_file: str = None,
+        speech_model: str = None,
     ):
         """
         Generate audio from the conversation JSON file
@@ -311,6 +341,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             item (dl.Item): Dataloop JSON item containing the conversation
             voice_mapping (dict): A dictionary mapping speaker names to voice IDs
             output_file (str): The name of the output audio file
+            speech_model (str): ElevenLabs speech model to use (default: eleven_multilingual_v2)
 
         Returns:
             str: Path to the generated audio file
@@ -318,10 +349,13 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
         pdf_name = podcast_metadata.get("pdf_name")
         monologue = podcast_metadata.get("monologue")
-        original_item = dl.items.get(item_id=item.metadata.get("user", {}).get("original_item_id", None))
-        if original_item is None:
+        item_id = item.metadata.get("user", {}).get("original_item_id", None)
+        if item_id is None:
+            item_id = item.metadata.get("user", {}).get("podcast", {}).get("outline_item_id", {})
+        if item_id is None:
             raise ValueError(f"No original item id found in the final transcript item {item.id}. Please check that item was prepared correctly.")
-
+        original_item = dl.items.get(item_id=item_id)
+        
         if monologue is True:
             output_file_name = Path(pdf_name).stem + "_monologue.mp3"
         else:
@@ -337,7 +371,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         if not api_key:
             raise ValueError("ELEVENLABS_API_KEY environment variable is required")
 
-        converter = TTSConverter(api_key=api_key)
+        converter = TTSConverter(api_key=api_key, speech_model=speech_model)
 
         # Download and process the conversation JSON from the last response
         conversation_json = item.download(save_locally=False).read().decode("utf-8")
@@ -790,13 +824,14 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         If the item is already in the hidden directory, return the item.dir.
         Otherwise, return the hidden subdirectory.
         """
+        HIDDEN_DIR = ".pdf2podcast"
         if item.dir == "/":
-            hidden_dir = f"/.pdf2podcast"
+            hidden_dir = f"/{HIDDEN_DIR}"
         else:
-            if 'pdf2podcast' in item.dir:
+            if HIDDEN_DIR in item.dir:
                 hidden_dir = item.dir
             else:
-                hidden_dir = f"{item.dir}/.pdf2podcast"
+                hidden_dir = f"{item.dir}/{HIDDEN_DIR}"
         return hidden_dir
 
     @staticmethod

@@ -356,6 +356,12 @@
             "type": "Model",
             "description": "LLM for converting dialogue or monologue text into structured JSON conversation format. Preset: Llama 3.1 8B Instruct (nim-llama-3-1-8b-instruct)",
             "value": "$var(json convo LLM__model)"
+          },
+          {
+            "name": "Speech Model",
+            "type": "String",
+            "description": "ElevenLabs speech model for text-to-speech generation. Default: eleven_multilingual_v2",
+            "value": "eleven_multilingual_v2"
           }
         ],
         "description": "",
@@ -660,6 +666,15 @@
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
+                "io": "input"
+              },
+              {
+                "portId": "mono-convo-model-port-id",
+                "nodeId": "mono-convo-model-port-id",
+                "type": "Model",
+                "name": "model",
+                "displayName": "model",
+                "variableName": "json convo LLM",
                 "io": "input"
               }
             ],
@@ -1055,6 +1070,15 @@
                 "name": "item",
                 "displayName": "item",
                 "io": "input"
+              },
+              {
+                "portId": "struct-outline-model-port-id",
+                "nodeId": "struct-outline-model-port-id",
+                "type": "Model",
+                "name": "model",
+                "displayName": "model",
+                "variableName": "json podcast LLM",
+                "io": "input"
               }
             ],
             "outputs": [
@@ -1407,6 +1431,15 @@
                 "name": "item",
                 "displayName": "item",
                 "io": "input"
+              },
+              {
+                "portId": "dial-convo-model-port-id",
+                "nodeId": "dial-convo-model-port-id",
+                "type": "Model",
+                "name": "model",
+                "displayName": "model",
+                "variableName": "json convo LLM",
+                "io": "input"
               }
             ],
             "outputs": [
@@ -1571,6 +1604,15 @@
                 "type": "String",
                 "name": "output_file",
                 "displayName": "output_file",
+                "io": "input"
+              },
+              {
+                "portId": "speech-model-port-id",
+                "nodeId": "speech-model-port-id",
+                "type": "String",
+                "name": "speech_model",
+                "displayName": "speech_model",
+                "variableName": "Speech Model",
                 "io": "input"
               }
             ],
