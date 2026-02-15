@@ -539,6 +539,16 @@ class ReportGenerator(dl.BaseServiceRunner):
         """
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         sections = main_item.metadata['user']['sections']
+
+        if main_item.metadata.get('user', {}).get('non_research_created', False):
+            logger.info("Non-research sections already created, skipping duplicate call.")
+            return []
+
+        # Set the flag immediately to prevent concurrent calls from also creating items
+        main_item.metadata.setdefault('user', {})
+        main_item.metadata['user']['non_research_created'] = True
+        main_item.update()
+
         non_research_sections_prompt_items = []
         
         # Get all completed research sections to provide context
@@ -645,6 +655,11 @@ class ReportGenerator(dl.BaseServiceRunner):
 
     def write_final_report(self, item: dl.Item):
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
+
+        if main_item.metadata.get('user', {}).get('report_compiled', False):
+            logger.info("Final report already compiled, skipping duplicate call.")
+            return main_item
+
         sections = main_item.metadata['user']['sections']
         user_meta = main_item.metadata['user']
 
@@ -682,4 +697,9 @@ class ReportGenerator(dl.BaseServiceRunner):
                 'model_id': 'llama_3.3_70b_instruct-1'
             }
         )
+
+        # Mark report as compiled to prevent duplicate writes
+        main_item.metadata['user']['report_compiled'] = True
+        main_item.update()
+
         return main_item
