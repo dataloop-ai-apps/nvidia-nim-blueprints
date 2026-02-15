@@ -1,7 +1,7 @@
 {
   "name": "nvidia-aiq-enterprise-research",
   "displayName": "NVIDIA AIQ Enterprise Research Agent",
-  "description": "AI Agent for Enterprise Research with Plan-Execute-Reflect loop, web search, RAG retrieval, and report generation powered by NVIDIA NIM models. Adapted from NVIDIA AIQ Agent for Enterprise Research Blueprint.",
+  "description": "AI Agent for Enterprise Research with Plan-Execute-Reflect loop, RAG-first search with LLM-as-judge, web search fallback, and report generation. Replicated from NVIDIA AIQ Research Assistant Blueprint.",
   "version": "0.0.45",
   "scope": "public",
   "codebase": {
@@ -50,19 +50,10 @@
         "scope": "project"
       },
       {
-        "name": "aiq-web-search-node",
+        "name": "aiq-research-node",
         "invoke": {
           "type": "function",
-          "namespace": "enterprise-research-compute.enterprise-research-module.web_search"
-        },
-        "categories": ["NVIDIA AIQ Enterprise Research"],
-        "scope": "project"
-      },
-      {
-        "name": "aiq-rag-retrieval-node",
-        "invoke": {
-          "type": "function",
-          "namespace": "enterprise-research-compute.enterprise-research-module.rag_retrieve"
+          "namespace": "enterprise-research-compute.enterprise-research-module.research"
         },
         "categories": ["NVIDIA AIQ Enterprise Research"],
         "scope": "project"
@@ -75,7 +66,7 @@
         "entryPoint": "enterprise_research_agent/aiq_agent.py",
         "className": "AIQEnterpriseAgent",
         "integrations": [
-          "dl-nvidia-api-key",
+          "dl-ngc-api-key",
           "dl-tavily-api-key"
         ],
         "functions": [
@@ -100,32 +91,21 @@
               {
                 "name": "item",
                 "type": "Item",
-                "actions": ["web_search", "ask_rag", "generate_report"]
+                "actions": ["research", "generate_report"]
               }
             ],
             "displayName": "NVIDIA AIQ Agent",
             "displayIcon": "icon-dl-smart-search"
           },
           {
-            "name": "web_search",
+            "name": "research",
             "input": [
               { "name": "item", "type": "Item" }
             ],
             "output": [
               { "name": "item", "type": "Item" }
             ],
-            "displayName": "Tavily Web Search",
-            "displayIcon": "icon-dl-web"
-          },
-          {
-            "name": "rag_retrieve",
-            "input": [
-              { "name": "item", "type": "Item" }
-            ],
-            "output": [
-              { "name": "item", "type": "Item" }
-            ],
-            "displayName": "RAG Retrieval",
+            "displayName": "AIQ Research",
             "displayIcon": "icon-dl-search"
           }
         ]

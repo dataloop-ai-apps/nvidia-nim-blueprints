@@ -1,7 +1,7 @@
 {
   "name": "nvidia-aiq-enterprise-research-bp",
   "displayName": "AI Agent for Enterprise Research",
-  "description": "Enterprise research agent pipeline: Agent orchestrates web search and RAG retrieval in a Plan-Execute-Reflect loop, then NIM Llama 3.3 70B generates the final report. Powered by NVIDIA NIM models.",
+  "description": "Enterprise research agent pipeline replicated from NVIDIA AIQ Research Assistant Blueprint. Agent orchestrates RAG-first search with LLM-as-judge and web search fallback in a Plan-Execute-Reflect loop, then NIM Llama 3.3 70B generates the final report.",
   "version": "0.0.45",
   "scope": "public",
   "codebase": {
@@ -27,7 +27,7 @@
     "pipelineTemplates": [
       {
         "name": "AI Agent for Enterprise Research",
-        "description": "Agent → Web Search (cycle) → RAG Retrieval (cycle) → NIM Llama 3.3 Report Generation",
+        "description": "Agent -> Research (RAG-first + Web fallback, cycle) -> NIM Llama 3.3 Report Generation",
         "connections": [
           {
             "src": { "nodeId": "node-init", "portId": "port-init-out" },
@@ -36,23 +36,12 @@
           },
           {
             "src": { "nodeId": "node-agent", "portId": "port-agent-out" },
-            "tgt": { "nodeId": "node-web-search", "portId": "port-ws-in" },
+            "tgt": { "nodeId": "node-research", "portId": "port-research-in" },
             "condition": "{}",
-            "action": "web_search"
+            "action": "research"
           },
           {
-            "src": { "nodeId": "node-web-search", "portId": "port-ws-out" },
-            "tgt": { "nodeId": "node-agent", "portId": "port-agent-in" },
-            "condition": "{}"
-          },
-          {
-            "src": { "nodeId": "node-agent", "portId": "port-agent-out" },
-            "tgt": { "nodeId": "node-rag", "portId": "port-rag-in" },
-            "condition": "{}",
-            "action": "ask_rag"
-          },
-          {
-            "src": { "nodeId": "node-rag", "portId": "port-rag-out" },
+            "src": { "nodeId": "node-research", "portId": "port-research-out" },
             "tgt": { "nodeId": "node-agent", "portId": "port-agent-in" },
             "condition": "{}"
           },
@@ -138,7 +127,7 @@
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
-                "actions": ["web_search", "ask_rag", "generate_report"],
+                "actions": ["research", "generate_report"],
                 "io": "output"
               }
             ],
@@ -160,11 +149,11 @@
             }
           },
           {
-            "id": "node-web-search",
+            "id": "node-research",
             "inputs": [
               {
-                "portId": "port-ws-in",
-                "nodeId": "port-ws-in",
+                "portId": "port-research-in",
+                "nodeId": "port-research-in",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
@@ -173,18 +162,18 @@
             ],
             "outputs": [
               {
-                "portId": "port-ws-out",
-                "nodeId": "port-ws-out",
+                "portId": "port-research-out",
+                "nodeId": "port-research-out",
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
                 "io": "output"
               }
             ],
-            "name": "Tavily Web Search",
+            "name": "AIQ Research",
             "type": "custom",
             "namespace": {
-              "functionName": "web_search",
+              "functionName": "research",
               "serviceName": "enterprise-research-compute",
               "moduleName": "enterprise-research-module",
               "packageName": "nvidia-aiq-enterprise-research"
@@ -192,49 +181,10 @@
             "appName": "NVIDIA AIQ Enterprise Research Agent",
             "dpkName": "nvidia-aiq-enterprise-research",
             "metadata": {
-              "position": { "x": 10400, "y": 10074, "z": 0 },
+              "position": { "x": 10400, "y": 10274, "z": 0 },
               "componentGroupName": "NVIDIA AIQ Enterprise Research",
               "repeatable": true,
-              "pipelineNodeName": "aiq-web-search-node"
-            }
-          },
-          {
-            "id": "node-rag",
-            "inputs": [
-              {
-                "portId": "port-rag-in",
-                "nodeId": "port-rag-in",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "input"
-              }
-            ],
-            "outputs": [
-              {
-                "portId": "port-rag-out",
-                "nodeId": "port-rag-out",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "output"
-              }
-            ],
-            "name": "RAG Retrieval",
-            "type": "custom",
-            "namespace": {
-              "functionName": "rag_retrieve",
-              "serviceName": "enterprise-research-compute",
-              "moduleName": "enterprise-research-module",
-              "packageName": "nvidia-aiq-enterprise-research"
-            },
-            "appName": "NVIDIA AIQ Enterprise Research Agent",
-            "dpkName": "nvidia-aiq-enterprise-research",
-            "metadata": {
-              "position": { "x": 10400, "y": 10474, "z": 0 },
-              "componentGroupName": "NVIDIA AIQ Enterprise Research",
-              "repeatable": true,
-              "pipelineNodeName": "aiq-rag-retrieval-node"
+              "pipelineNodeName": "aiq-research-node"
             }
           },
           {
@@ -281,9 +231,9 @@
               "position": { "x": 10800, "y": 10274, "z": 0 },
               "modelConfig": {
                 "nim_model_name": "meta/llama-3.3-70b-instruct",
-                "system_prompt": "You are an expert enterprise research report writer. Using the provided research context, write a comprehensive, well-structured report that addresses the user's research query. Use proper markdown formatting. Include all relevant findings, data, and insights from the research. Add a Sources section at the end with proper citations.",
-                "max_tokens": 8192,
-                "temperature": 0.2,
+                "system_prompt": "You are working with a team of research experts to deliver a publication-ready long-form report. The user provides a research topic and report organization. You also receive a research draft and sources via the provided context documents.\n\nYour task: Based on the research draft in the context, produce a comprehensive, well-structured final report.\n\nGuidelines:\n- Introduction: Begin with an engaging, context-rich introduction that frames the central questions and scope.\n- Flow & Structure: Arrange sections logically with clear headings and smooth transitions.\n- Integrated Synthesis: Blend multi-source insights into the narrative. Avoid standalone Takeaways/Insights subsections.\n- Exploratory Depth: Pursue lines of inquiry that deepen understanding.\n- Length & Form: Aim for very long reports. Write in multiple coherent paragraphs. Avoid bullet lists unless absolutely necessary.\n- Use ## for sections, ### for subsections.\n- Do NOT refer to yourself as the writer. Do not add meta-commentary.\n- Do not add a sources section (added in post-processing).\n- Do NOT wrap the report in markdown code blocks.\n- Write the report in the same language as the user's message.\n- Each section should be as long as necessary for deep analysis.\n- Return only the final report.",
+                "max_tokens": 20000,
+                "temperature": 0.0,
                 "top_p": 0.7,
                 "stream": true
               },
