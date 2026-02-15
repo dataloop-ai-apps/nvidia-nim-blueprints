@@ -2,7 +2,7 @@
   "name": "pdf-to-podcast",
   "displayName": "PDF to Podcast NVIDIA",
   "description": "Application for modules to prepare and summarize PDFs, generate monologue or dialogue, and convert to audio with ElevenLabs.",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "scope": "public",
   "attributes": {
     "Hub": ["Nvidia", "Dataloop"],

@@ -2,7 +2,7 @@
   "name": "pdf-to-podcast-bp",
   "displayName": "PDF to Podcast NVIDIA Blueprint",
   "description": "Generate original podcast-style audio from PDFs using the ElevenLabs API and NVIDIA NIM LLMs. The pipeline extracts and summarizes text, generates monologue or dialogue scripts, and synthesizes speech audio. Setup: (1) Install this app — requires an NVIDIA NGC API key and an ElevenLabs API key, which can be set up in advance as secret integrations or created during installation when prompted. (2) Create a pipeline from the 'PDF to Podcast NVIDIA Blueprint' template. (3) Model variables are preset to Llama 3.1 405B Instruct (reasoning LLM), Llama 3.1 70B Instruct (iterative LLM), and Llama 3.1 8B Instruct (json podcast LLM and json convo LLM). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Upload PDFs to your dataset and execute the pipeline.",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "scope": "public",
   "attributes": {
     "Hub": [
