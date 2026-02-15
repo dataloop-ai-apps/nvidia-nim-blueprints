@@ -285,7 +285,8 @@
           {
             "name": "retrieval_dataset",
             "type": "Dataset",
-            "description": "Dataset containing embedded chunks from the RAG Preprocessing pipeline. Required — select the output dataset from the preprocessing stage."
+            "description": "Dataset containing embedded chunks from the RAG Preprocessing pipeline. Required — select the output dataset from the preprocessing stage.",
+            "value": "$var(retrieval_dataset__dataset)"
           },
           {
             "name": "k_nearest_items",
