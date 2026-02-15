@@ -660,34 +660,16 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         finally:
             os.remove(local_path)
 
-        # Update the PromptItem:
-        # 1. Append report instruction to the user message (original text preserved)
-        # 2. Set nearestItems to the research document
+
         prompt_item = dl.PromptItem.from_item(main_item)
         last_prompt = prompt_item.prompts[-1]
 
-        # Append instruction to the original user message
-        report_instruction = (
-            "\n\n---\n"
-            "Based on the research context provided, write a comprehensive, "
-            "publication-ready long-form report on the above topic following the "
-            "report organization. Use proper markdown formatting (# for title, "
-            "## for sections, ### for subsections). Write in detailed paragraphs, "
-            "not bullet points. Do not include source citations (added in "
-            "post-processing). Do not add meta-commentary. Return only the report."
-        )
-        for element in last_prompt.elements:
-            if element.get('mimetype') == dl.PromptType.TEXT:
-                element['value'] = element['value'] + report_instruction
-                break
-
-        # Set nearestItems so Llama gets the full research draft as context
         if not hasattr(last_prompt, 'metadata') or last_prompt.metadata is None:
             last_prompt.metadata = {}
         last_prompt.metadata['nearestItems'] = [research_item.id]
 
         prompt_item.update()
-        logger.info(f"Updated PromptItem: appended report instruction + set nearestItems")
+        logger.info(f"Set nearestItems on PromptItem (original user message preserved)")
 
         main_item = self._set_state(main_item, state)
 
