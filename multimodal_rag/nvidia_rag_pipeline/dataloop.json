@@ -1,6 +1,6 @@
 {
   "name": "nim-rag-bp",
-  "version": "0.0.42",
+  "version": "0.0.48",
   "attributes": {
     "Category": [
       "Pipeline",
@@ -48,17 +48,6 @@
           },
           {
             "src": {
-              "nodeId": "7ff0594c-e6b7-4da6-b7bb-0001251ea72d",
-              "portId": "262c2af2-b839-4480-960c-2b646e869b82"
-            },
-            "tgt": {
-              "nodeId": "64e7bc35-6b01-4970-ae0c-6100ab16684c",
-              "portId": "90c88062-8eaf-46fe-a4c0-13cac394ee71"
-            },
-            "condition": "{}"
-          },
-          {
-            "src": {
               "nodeId": "658203ec-ae8b-4064-af80-54e422e925d0",
               "portId": "808ce4ff-e358-47b2-98f2-37c037f28e5f"
             },
@@ -71,7 +60,7 @@
         ],
         "startNodes": [
           {
-            "nodeId": "7ff0594c-e6b7-4da6-b7bb-0001251ea72d",
+            "nodeId": "64e7bc35-6b01-4970-ae0c-6100ab16684c",
             "type": "root",
             "id": "1b5b0181-c7bc-449c-bf4e-c6803c928946"
           }
@@ -277,47 +266,6 @@
               "variableModel": "gen_ai_model",
               "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
               "mlType": "genAi"
-            }
-          },
-          {
-            "id": "7ff0594c-e6b7-4da6-b7bb-0001251ea72d",
-            "inputs": [
-              {
-                "portId": "71f20c1c-e484-440a-b936-84ce5a1bfea7",
-                "nodeId": "71f20c1c-e484-440a-b936-84ce5a1bfea7",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "input"
-              }
-            ],
-            "outputs": [
-              {
-                "portId": "262c2af2-b839-4480-960c-2b646e869b82",
-                "nodeId": "262c2af2-b839-4480-960c-2b646e869b82",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "output"
-              }
-            ],
-            "name": "Dataset",
-            "type": "storage",
-            "namespace": {
-              "functionName": "clone_item",
-              "projectName": "DataloopTasks",
-              "serviceName": "pipeline-utils",
-              "moduleName": "default_module",
-              "packageName": "pipeline-utils"
-            },
-            "metadata": {
-              "position": {
-                "x": 9775.2438826641,
-                "y": 10092.7621793927,
-                "z": 0
-              },
-              "componentGroupName": "data",
-              "repeatable": true
             }
           }
         ],

@@ -2,7 +2,7 @@
   "name": "nvidia-aiq-enterprise-research-bp",
   "displayName": "AI Agent for Enterprise Research",
   "description": "Enterprise research agent pipeline replicated from NVIDIA AIQ Research Assistant Blueprint. Agent orchestrates RAG-first search with LLM-as-judge and web search fallback in a Plan-Execute-Reflect loop, then NIM Llama 3.3 70B generates the final report.",
-  "version": "0.0.42",
+  "version": "0.0.48",
   "scope": "public",
   "codebase": {
     "type": "item"
