@@ -266,7 +266,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
                 f"No conversation JSON found in the conversation segment item {item.id}."
             )
 
-        guidance_msg = "\n\n[Guidance] Invalid JSON from model. Reconfigure the model or model parameters and rerun the cycle from there."
+        guidance_msg = "\n\n[Guidance] The model did not produce valid JSON. Try to adjust the model configuration in the previous pipeline node and rerun the cycle from there."
         
         if isinstance(conversation_json_str, str):
             # Extract JSON from possible LLM preamble
