@@ -308,7 +308,8 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         outline_item_id = podcast_metadata.get("outline_item_id")
         if outline_item_id is None:
-            raise ValueError(f"No outline item id found in item {item.id}.")
+            # NOTE: If "outline_item_id" is None, this is the outline item itself
+            outline_item_id = item.id
         outline = SharedServiceRunner._get_outline_dict(
             outline_item=dl.items.get(item_id=outline_item_id)
         )
@@ -379,7 +380,8 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         # item is the original structured outline prompt item
         outline_item_id = podcast_metadata.get("outline_item_id")
         if outline_item_id is None:
-            raise ValueError(f"No outline item id found in item {item.id}.")
+            # NOTE: If "outline_item_id" is None, this is the outline item itself
+            outline_item_id = item.id
         outline_item = dl.items.get(item_id=outline_item_id)
         outline = SharedServiceRunner._get_outline_dict(outline_item=outline_item)
         working_dir = SharedServiceRunner._get_hidden_dir(item=outline_item)
