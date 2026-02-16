@@ -180,7 +180,7 @@ if __name__ == "__main__":
         # get segment items
         filters = dl.Filters()
         filters.add(field='hidden', values=True)
-        filters.add(field="dir", values=f"/.pdf2podcast/{structured_outline.metadata['user']['podcast']['pdf_name']}")
+        filters.add(field="dir", values=f"/.dataloop/pdf2podcast/{structured_outline.metadata['user']['podcast']['pdf_name']}")
         filters.sort_by(field="filename")
         segments = structured_outline.dataset.items.list(filters=filters)
         segment_items = list(segments.all())

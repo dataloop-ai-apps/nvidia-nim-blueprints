@@ -5,22 +5,23 @@
 1. Run the [Preprocessing Multimodal PDF RAG](../preprocessing_multimodal_rag/README.md) pipeline first so you have a dataset of embedded chunks.
 2. Install this pipeline from the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace).
 3. Add your **NVIDIA NGC API Key** in [Data Governance](https://docs.dataloop.ai/docs/overview-1).
-4. Set pipeline variables (see [Variables and model IDs](#variables-and-model-ids) below): **retrieval_dataset**, **retrieval_embed_model** (must match preprocessing), **embed_model**, **gen_ai_model**, and optionally **k_nearest_items**.
+4. Set pipeline variables (see [Variables and model IDs](#variables-and-model-ids) below): **retrieval_dataset**, **embed_model** (must match preprocessing), **gen_ai_model**, and optionally **k_nearest_items**.
 5. Create prompt items with your questions and run the pipeline to get RAG answers.
 
 For configuration, components, and troubleshooting, see the sections below.
+
+> **Tip**: This pipeline can also serve as the RAG backend for the [AI Agent for Enterprise Research](../../enterprise_research_agent/README.md). After installing and configuring this pipeline, copy its pipeline ID and paste it into the research agent's `rag_pipeline_id` variable to enable RAG-first search with LLM-as-judge relevancy checking.
 
 ### Variables and model IDs
 
 | Variable | Type | Recommended / value | Purpose |
 |----------|------|--------------------|---------|
 | **retrieval_dataset** | Dataset | Output dataset from [preprocessing](../preprocessing_multimodal_rag/README.md) | Dataset of embedded chunks to search |
-| **retrieval_embed_model** | Model | NVIDIA NV-EmbedQA E5 v5 (same as preprocessing) | Must match the embedding model used in preprocessing |
-| **embed_model** | Model | NVIDIA NV-EmbedQA E5 v5 | Embeds user questions for retrieval |
-| **gen_ai_model** | Model | Llama 3.1 405B Instruct | Generates the final RAG response |
+| **embed_model** | Model | Llama 3.2 Nemoretriever 300M Embed V2 (must match preprocessing) | Embeds user questions and used for retrieval — must match the embedding model used in preprocessing |
+| **gen_ai_model** | Model | Llama 3.1 8B Instruct | Generates the final RAG response |
 | **k_nearest_items** | Integer | 30 (default) | Number of chunks to retrieve |
 
-**Getting the model ID:** When you run or edit the pipeline, each Model variable shows a model selector. Choose the recommended model (or another from your project); the selected value is the model ID (e.g. `nim-nv-embedqa-e5-v5.models.nim-nv-embedqa-e5-v5`). You can also find model IDs in your project under **Develop** → **AI Library** (or **Models**). For **retrieval_embed_model**, use the exact same model ID as in the preprocessing pipeline so vector spaces match.
+**Getting the model ID:** When you run or edit the pipeline, each Model variable shows a model selector. Choose the recommended model (or another from your project); the selected value is the model ID (e.g. `nim-llama-3-2-nemoretriever-300m-embed-v2`). You can also find model IDs in your project **Models** page. For **embed_model**, use the exact same model ID as in the preprocessing pipeline so vector spaces match.
 
 ---
 
@@ -29,6 +30,8 @@ For configuration, components, and troubleshooting, see the sections below.
 The NVIDIA RAG Pipeline is the second stage of the two-stage RAG system. It accepts user queries, retrieves relevant document chunks using vector similarity search, and generates responses using an LLM with retrieved context.
 
 This pipeline integrates with Dataloop's AI Playground and uses NIM models for embedding queries and generating responses. It includes human-in-the-loop validation by storing responses in a prompts dataset for review.
+
+This pipeline can also be used as a **dependency** by the [AI Agent for Enterprise Research](../../enterprise_research_agent/README.md). When configured as a RAG source for the research agent, it provides document-grounded answers that the agent evaluates for relevancy before falling back to web search.
 
 For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipeline](https://build.nvidia.com/nvidia/build-an-enterprise-rag-pipeline) and look for: `Retrieval Pipeline`.
 
@@ -39,7 +42,7 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 - **Retrieval Dataset**: The output dataset from the extraction pipeline containing embedded chunks
 - **Prompts Dataset**: A dataset to store user queries and generated responses
 
-> **Critical**: The `retrieval_embed_model` must be the same model used in the extraction pipeline (`nv-embedqa-e5v5.models.nv-embedqa-e5v5`). Using a different embedding model will cause semantic search failures because the vector spaces won't align.
+> **Critical**: The `embed_model` must be the same model used in the extraction pipeline (e.g. `nim-llama-3-2-nemoretriever-300m-embed-v2`). Using a different embedding model will cause semantic search failures because the vector spaces won't align.
 
 ## Features
 
@@ -54,8 +57,8 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 
 | Model | Purpose |
 |-------|---------|
-| **nv-embedqa-e5v5** | Embeds user queries for similarity search |
-| **llama-3.1-405b-instruct** | Generates responses using retrieved context |
+| **Llama 3.2 Nemoretriever 300M Embed V2** | Embeds user queries for similarity search |
+| **Llama 3.1 8B Instruct** | Generates responses using retrieved context |
 
 ### Pipeline Nodes
 
@@ -64,7 +67,7 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 - **Service**: pipeline-utils
 - **Purpose**: Receives prompt items from the prompts dataset
 
-#### 2. nv-embedqa-e5v5 (Embedding Model)
+#### 2. Llama 3.2 Nemoretriever 300M Embed V2 (Embedding Model)
 - **Type**: ML
 - **Function**: `embed`
 - **Purpose**: Generates embeddings for the user query
@@ -79,11 +82,11 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 - **Inputs**:
   - `item`: The prompt item
   - `embeddings`: Query embedding from previous node
-  - `embedder`: Retrieval embedding model (must match extraction)
+  - `embedder`: Embedding model (must match extraction)
   - `dataset`: Retrieval dataset (from extraction pipeline)
   - `k`: Number of nearest items to retrieve
 
-#### 4. llama-3.1-405b-instruct (Response Generation)
+#### 4. Llama 3.1 8B Instruct (Response Generation)
 - **Type**: ML
 - **Function**: `predict`
 - **Purpose**: Generates a response using retrieved context
@@ -93,10 +96,9 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 
 | Variable | Type | Description |
 |----------|------|-------------|
-| `embed_model` | Model | Embedding model for user queries |
+| `embed_model` | Model | Embedding model for user queries and retrieval (must match extraction) |
 | `gen_ai_model` | Model | LLM for response generation |
 | `retrieval_dataset` | Dataset | Dataset containing embedded chunks (from extraction pipeline) |
-| `retrieval_embed_model` | Model | Embedding model used for retrieval dataset (must match extraction) |
 | `k_nearest_items` | Integer | Number of chunks to retrieve (default: 30) |
 
 ## Usage
@@ -111,13 +113,13 @@ Set the `retrieval_dataset` variable to the ID of the dataset output by the extr
 
 ### 3. Configure the Embedding Model
 
-Set the `retrieval_embed_model` to `nv-embedqa-e5v5.models.nv-embedqa-e5v5` (must match the extraction pipeline).
+Set the `embed_model` to the same embedding model used in the preprocessing pipeline (e.g. `nim-llama-3-2-nemoretriever-300m-embed-v2`). This model is used both for embedding user queries and for retrieval — it must match the extraction pipeline so vector spaces align.
 
 ### 4. Configure Model Services
 
 Ensure your NVIDIA NGC API key is configured in the model services:
-- nv-embedqa-e5v5
-- llama-3.1-405b-instruct
+- Llama 3.2 Nemoretriever 300M Embed V2
+- Llama 3.1 8B Instruct
 
 ### 5. Create Prompt Items
 
@@ -132,7 +134,7 @@ Execute the pipeline. Each prompt item will be processed, retrieving relevant ch
 ### No Relevant Results Retrieved
 
 - Verify `retrieval_dataset` points to the correct embedded chunks dataset
-- Confirm `retrieval_embed_model` matches the model used during extraction
+- Confirm `embed_model` matches the model used during extraction
 - Check that the retrieval dataset contains items with embedding annotations
 
 ### Poor Response Quality
@@ -149,7 +151,7 @@ Execute the pipeline. Each prompt item will be processed, retrieving relevant ch
 
 ### Embedding Model Mismatch Error
 
-The retrieval embedding model **must** be the same as the one used in the extraction pipeline. If you used a different model during extraction, you'll need to re-run the extraction pipeline with the correct model, or update this pipeline to use the matching model.
+The `embed_model` **must** be the same as the one used in the extraction pipeline. If you used a different model during extraction, you'll need to re-run the extraction pipeline with the correct model, or update this pipeline to use the matching model.
 
 ## Contributing
 

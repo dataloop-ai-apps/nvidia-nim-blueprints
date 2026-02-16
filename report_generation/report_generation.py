@@ -156,7 +156,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         
         return params
     
-    def _create_prompt_item(self, item, prompt_text, prompt_name, main_item=None):
+    def _create_prompt_item(self, item, prompt_text, prompt_name, main_item=None, overwrite=True):
         """
         Utility function to create and upload a prompt item
         
@@ -165,6 +165,9 @@ class ReportGenerator(dl.BaseServiceRunner):
             prompt_text: The text content for the prompt
             prompt_name: Name for the new prompt item
             main_item: Optional main item to link to (defaults to item if None)
+            overwrite: Whether to overwrite an existing item with the same name at the
+                       same path. Set to False when concurrent calls may create items
+                       with identical names to prevent one call from deleting another's items.
             
         Returns:
             item_prompt: The created prompt item
@@ -183,7 +186,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         # Upload the prompt item
         item_prompt = item.dataset.items.upload(
             prompt_item, 
-            overwrite=True, 
+            overwrite=overwrite, 
             remote_path=f"/.dataloop/temp_prompts_{main_item.name.replace('.json','')}/",
             item_metadata={
                 "user":{
@@ -535,16 +538,24 @@ class ReportGenerator(dl.BaseServiceRunner):
     
     def write_non_research_sections(self, item: dl.Item):
         """
-        Process and write sections that don't require research after research sections are completed
+        Process and write sections that don't require research after research sections are completed.
+
+        The upstream Wait node may release multiple items due to a race condition,
+        causing this function to run more than once per pipeline execution.
+        Two layers prevent duplicate / destroyed items:
+          1. Metadata flag (non_research_created) - fast-path guard for spaced-out calls.
+          2. overwrite=False on upload - atomic server-side guard for tight races.
+             If the item already exists the upload raises an error, which we catch
+             and return [] so only the first call's items reach the LLM node.
         """
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         sections = main_item.metadata['user']['sections']
 
+        # Layer 1: metadata guard
         if main_item.metadata.get('user', {}).get('non_research_created', False):
             logger.info("Non-research sections already created, skipping duplicate call.")
             return []
 
-        # Set the flag immediately to prevent concurrent calls from also creating items
         main_item.metadata.setdefault('user', {})
         main_item.metadata['user']['non_research_created'] = True
         main_item.update()
@@ -612,13 +623,22 @@ class ReportGenerator(dl.BaseServiceRunner):
                 Important:
                 Generate a report section based on the provided content."""
 
-                item_non_research = self._create_prompt_item(
-                    item=item,
-                    prompt_text=final_section_writer_instructions,
-                    prompt_name=f'section_{i}',
-                    main_item=main_item
-                )
-                non_research_sections_prompt_items.append(item_non_research)
+                try:
+                    # Layer 2: overwrite=False prevents a concurrent call from
+                    # deleting items that were already created and queued for the LLM.
+                    # If the item already exists the server rejects the upload.
+                    item_non_research = self._create_prompt_item(
+                        item=item,
+                        prompt_text=final_section_writer_instructions,
+                        prompt_name=f'section_{i}',
+                        main_item=main_item,
+                        overwrite=False
+                    )
+                    non_research_sections_prompt_items.append(item_non_research)
+                except Exception as e:
+                    logger.info(f"section_{i} already exists from a concurrent call, "
+                                f"returning empty list: {e}")
+                    return []
         
         return non_research_sections_prompt_items
 
