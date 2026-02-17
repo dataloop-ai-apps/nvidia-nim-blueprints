@@ -73,6 +73,11 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
 
     # ─── Helpers ──────────────────────────────────────────────────────────────
 
+    @staticmethod
+    def _item_folder(main_item_id: str) -> str:
+        """Return the single hidden folder for all temp artifacts of a given prompt item."""
+        return f"/.dataloop/aiq_{main_item_id[:8]}/"
+
     def _upload_data_file(self, dataset, data: str, remote_path: str, filename: str) -> dl.Item:
         """Upload a text/JSON string as a hidden file. Returns the uploaded Item."""
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as f:
@@ -114,7 +119,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         state_item = self._upload_data_file(
             dataset=item.dataset,
             data=state_json,
-            remote_path="/.dataloop/aiq_state/",
+            remote_path=self._item_folder(item.id),
             filename=f"state_{item.id[:12]}.json",
         )
         item.metadata.setdefault('user', {})
@@ -145,7 +150,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         try:
             temp_item = main_item.dataset.items.upload(
                 local_path=local_path,
-                remote_path=f"/.dataloop/aiq_temp_{main_item.id[:8]}/",
+                remote_path=self._item_folder(main_item.id),
                 remote_name=filename,
                 overwrite=True,
                 item_metadata={
@@ -259,7 +264,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
 
     # ─── RAG Search Helper ────────────────────────────────────────────────────
 
-    def _execute_rag_query(self, query: str, rag_pipeline_id: str, dataset) -> str:
+    def _execute_rag_query(self, query: str, rag_pipeline_id: str, dataset, main_item_id: str) -> str:
         """Execute a RAG pipeline query and return the response text."""
         try:
             rag_pipeline = dl.pipelines.get(pipeline_id=rag_pipeline_id)
@@ -279,7 +284,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
 
             rag_prompt_item = dataset.items.upload(
                 prompt_item,
-                remote_path="/.dataloop/aiq_rag_queries/",
+                remote_path=self._item_folder(main_item_id),
                 overwrite=True,
             )
             logger.info(f"Created RAG PromptItem for query: '{query[:60]}...'")
@@ -368,8 +373,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
     # ─── Source Deduplication and XML Formatting (NVIDIA pattern) ─────────────
 
     def _deduplicate_and_format_sources(
-        self, queries: list, rag_answers: list, relevancies: list, web_answers: list
-    ) -> str:
+        self, queries: list, rag_answers: list, relevancies: list, web_answers: list) -> str:
         """Convert RAG and fallback results into XML <sources> structure.
         Matches NVIDIA's deduplicate_and_format_sources pattern.
         If RAG was relevant, use RAG answer; otherwise use web answer."""
@@ -397,7 +401,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
 
     # ─── Process Single Query (NVIDIA pattern) ──────────────────────────────
 
-    def _process_single_query(self, query_obj: dict, rag_pipeline_id: str, dataset) -> dict:
+    def _process_single_query(self, query_obj: dict, rag_pipeline_id: str, dataset, main_item_id: str) -> dict:
         """Process a single query: RAG-first -> relevancy check -> web fallback.
         Matches NVIDIA's process_single_query pattern."""
         query_text = query_obj.get('query', str(query_obj)) if isinstance(query_obj, dict) else str(query_obj)
@@ -411,7 +415,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
 
         # Step 1: RAG search (if configured)
         if rag_pipeline_id:
-            rag_answer = self._execute_rag_query(query_text, rag_pipeline_id, dataset)
+            rag_answer = self._execute_rag_query(query_text, rag_pipeline_id, dataset, main_item_id)
             if rag_answer:
                 rag_citation = f"---\nQUERY:\n{query_text}\n\nANSWER:\n{rag_answer}\n\nCITATION:\nRAG Pipeline\n"
                 logger.info(f"RAG returned answer length: {len(rag_answer)}")
@@ -630,21 +634,21 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         # Compile research document: instruction + draft + citations
         # The instruction is embedded here so Llama gets it via nearestItems context
         research_doc = f"""## Instructions
-Based on the following research draft, write a comprehensive, publication-ready
-long-form report. Use proper markdown formatting (# title, ## sections,
-### subsections). Write in detailed paragraphs, not bullet points. Do not
-include source citations (added in post-processing). Do not add
-meta-commentary. Return only the final report.
+                        Based on the following research draft, write a comprehensive, publication-ready
+                        long-form report. Use proper markdown formatting (# title, ## sections,
+                        ### subsections). Write in detailed paragraphs, not bullet points. Do not
+                        include source citations (added in post-processing). Do not add
+                        meta-commentary. Return only the final report.
 
-## Report Organization
-{state['report_organization']}
+                        ## Report Organization
+                        {state['report_organization']}
 
-## Research Draft
-{state['running_summary']}
+                        ## Research Draft
+                        {state['running_summary']}
 
-## Sources & Citations
-{state.get('citations', 'No sources collected.')}
-"""
+                        ## Sources & Citations
+                        {state.get('citations', 'No sources collected.')}
+                        """
 
         # Upload research document
         safe_topic = re.sub(r'[^\w\s-]', '', state['topic'])[:40].strip().replace(' ', '_')
@@ -657,7 +661,7 @@ meta-commentary. Return only the final report.
         try:
             research_item = main_item.dataset.items.upload(
                 local_path=local_path,
-                remote_path="/.dataloop/aiq_research/",
+                remote_path=self._item_folder(main_item.id),
                 remote_name=filename,
                 overwrite=True,
             )
@@ -720,7 +724,7 @@ meta-commentary. Return only the final report.
         with ThreadPoolExecutor(max_workers=min(len(queries), 4)) as executor:
             futures = {
                 executor.submit(
-                    self._process_single_query, q, rag_pipeline_id, main_item.dataset
+                    self._process_single_query, q, rag_pipeline_id, main_item.dataset, main_item.id
                 ): q for q in queries
             }
             for future in as_completed(futures):
@@ -763,7 +767,7 @@ meta-commentary. Return only the final report.
         results_file = self._upload_data_file(
             dataset=item.dataset,
             data=results_data,
-            remote_path=f"/.dataloop/aiq_temp_{main_item.id[:8]}/",
+            remote_path=self._item_folder(main_item.id),
             filename=f"research_results_{item.id[:8]}.json",
         )
         logger.info(f"Uploaded research results file: {results_file.id}")

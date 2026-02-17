@@ -16,6 +16,9 @@
 from pydantic import BaseModel
 from typing import Optional, Dict, Literal, List
 
+DEFAULT_SPEAKER_1_NAME = "Alice"
+DEFAULT_SPEAKER_2_NAME = "Will"
+
 
 class SavedPodcast(BaseModel):
     job_id: str
@@ -58,3 +61,43 @@ class PodcastSegment(BaseModel):
 class PodcastOutline(BaseModel):
     title: str
     segments: List[PodcastSegment]
+
+
+class PodcastMetadata(BaseModel):
+    """Typed metadata contract for podcast pipeline items.
+
+    Every pipeline step reads and writes through this model to ensure
+    consistent metadata across the entire flow. Stored under
+    item.metadata["user"]["podcast"].
+    """
+
+    pdf_name: str
+    pipeline_stage: Optional[str] = None
+    monologue: bool = False
+    focus: Optional[str] = None
+    with_references: bool = False
+    speaker_1_name: str = DEFAULT_SPEAKER_1_NAME
+    speaker_2_name: str = DEFAULT_SPEAKER_2_NAME
+    duration: int = 10
+    references: Optional[List[str]] = None
+    summary_item_id: Optional[str] = None
+    outline_item_id: Optional[str] = None
+    pdf_id: Optional[str] = None
+    segment_idx: Optional[int] = None
+    total_segments: Optional[int] = None
+    segment_topic: Optional[str] = None
+    topics: Optional[List[str]] = None
+
+    def validate_stage(self, expected: str) -> None:
+        """Validate this metadata belongs to the expected pipeline stage."""
+        if self.pipeline_stage is not None and self.pipeline_stage != expected:
+            raise ValueError(
+                f"Expected item at pipeline stage '{expected}', "
+                f"got '{self.pipeline_stage}'. Wrong item may have been passed."
+            )
+
+    def to_item_metadata(self, **extra_user_fields) -> dict:
+        """Serialize to Dataloop item metadata format: {\"user\": {\"podcast\": {...}, ...extra}}"""
+        user_meta = {"podcast": self.model_dump()}
+        user_meta.update(extra_user_fields)
+        return {"user": user_meta}

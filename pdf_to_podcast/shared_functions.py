@@ -3,6 +3,7 @@ import re
 import json
 import dotenv
 import logging
+import tempfile
 import dtlpy as dl
 
 from io import BytesIO
@@ -13,7 +14,13 @@ from elevenlabs.client import ElevenLabs
 
 from pdf_to_podcast.monologue_prompts import FinancialSummaryPrompts
 from pdf_to_podcast.podcast_prompts import PodcastPrompts
-from pdf_to_podcast.podcast_types import Conversation, PodcastOutline
+from pdf_to_podcast.podcast_types import (
+    Conversation,
+    PodcastOutline,
+    PodcastMetadata,
+    DEFAULT_SPEAKER_1_NAME,
+    DEFAULT_SPEAKER_2_NAME,
+)
 
 # Load environment variables from .env file
 dotenv.load_dotenv(".env")
@@ -25,11 +32,19 @@ logger = logging.getLogger("[NVIDIA-NIM-BLUEPRINTS]")
 DEFAULT_VOICE_1 = "EXAVITQu4vr4xnSDxMaL"
 DEFAULT_VOICE_2 = "bIHbv24MWmeRgasZH58o"
 DEFAULT_VOICE_MAPPING = {"speaker-1": DEFAULT_VOICE_1, "speaker-2": DEFAULT_VOICE_2}
-DEFAULT_SPEAKER_1_NAME = "Alice"
-DEFAULT_SPEAKER_2_NAME = "Will"
+
+# Hidden directory name for pipeline working files
+HIDDEN_DIR_NAME = ".dataloop/pdf2podcast"
+
+# Directory names for segment processing stages
+SEGMENT_DIR_PROMPT4 = "prompt4"
+SEGMENT_DIR_PROMPT5 = "prompt5"
 
 
-class DialogueEntry(BaseModel):
+class TTSEntry(BaseModel):
+    """Audio entry for TTS conversion. Separate from podcast_types.DialogueEntry
+    which is the strict conversation schema model."""
+
     text: str
     speaker: Optional[str] = "speaker-1"
     voice_id: Optional[str] = None
@@ -90,8 +105,8 @@ class TTSConverter:
             total_entries = len(dialogue)
 
             for i, entry in enumerate(dialogue, 1):
-                # Create DialogueEntry instance for validation
-                entry_model = DialogueEntry(**entry)
+                # Create TTSEntry instance for validation
+                entry_model = TTSEntry(**entry)
 
                 # Determine which voice to use
                 voice_id = (
@@ -185,21 +200,27 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             with_references = False
 
         # upload text to dataloop item
-        text_filename = f"{pdf_name}_text.txt"
-        with open(text_filename, "w", encoding="utf-8") as f:
+        remote_text_filename = f"{pdf_name}_text.txt"
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=f"_{parent_item.id}_text.txt", delete=False, encoding="utf-8"
+        ) as f:
             f.write(pdf_text)
-        text_item = parent_item.dataset.items.upload(
-            local_path=text_filename,
-            remote_name=text_filename,
-            remote_path=SharedServiceRunner._get_hidden_dir(item=parent_item),
-            overwrite=True,
-            item_metadata={
-                "user": {
-                    "parentItemId": parent_item.id,
-                    "podcast": {"original_item_name": pdf_name},
-                }
-            },
-        )
+            local_text_path = f.name
+        try:
+            text_item = parent_item.dataset.items.upload(
+                local_path=local_text_path,
+                remote_name=remote_text_filename,
+                remote_path=SharedServiceRunner._get_hidden_dir(item=parent_item),
+                overwrite=True,
+                item_metadata={
+                    "user": {
+                        "parentItemId": parent_item.id,
+                        "podcast": {"original_item_name": pdf_name},
+                    }
+                },
+            )
+        finally:
+            os.remove(local_text_path)
         logger.info(f"Uploaded pdf text item {text_item.id}")
 
         if monologue is True:
@@ -209,28 +230,27 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         llm_prompt = template.render(text=pdf_text)
 
         new_name = f"{pdf_name}_{'monologue_' if monologue is True else 'podcast_'}prompt1_summary"
-        new_item_metadata = item.metadata.get("user", {})
-        new_item_metadata.update(
-            {
-                "podcast": {
-                    "pdf_id": parent_item.id,
-                    "pdf_name": pdf_name,
-                    "focus": focus,
-                    "monologue": monologue,
-                    "with_references": with_references,
-                    "speaker_1_name": speaker_1_name,
-                    "speaker_2_name": speaker_2_name,
-                },
-            }
+        podcast_meta = PodcastMetadata(
+            pdf_name=pdf_name,
+            pipeline_stage="summary",
+            pdf_id=parent_item.id,
+            focus=focus,
+            monologue=monologue,
+            with_references=with_references,
+            speaker_1_name=speaker_1_name,
+            speaker_2_name=speaker_2_name,
+            **({"duration": duration} if duration is not None else {}),
         )
-        if duration is not None:
-            new_item_metadata["podcast"]["duration"] = duration
+        extra_user = {}
+        original_item_id = item.metadata.get("user", {}).get("original_item_id")
+        if original_item_id:
+            extra_user["original_item_id"] = original_item_id
         new_item = SharedServiceRunner._create_and_upload_prompt_item(
             dataset=parent_item.dataset,
             item_name=new_name,
             prompt=llm_prompt,
             remote_dir=SharedServiceRunner._get_hidden_dir(item=parent_item),
-            item_metadata={"user": new_item_metadata},
+            item_metadata=podcast_meta.to_item_metadata(**extra_user),
         )
 
         logger.info(
@@ -258,7 +278,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         logger.info("Formatting final conversation")
 
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
-        pdf_name = podcast_metadata.get("pdf_name")
+        pdf_name = podcast_metadata.pdf_name
 
         conversation_json_str = SharedServiceRunner._get_last_message(item=item)
         if conversation_json_str is None:
@@ -310,19 +330,22 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         final_conversation = Conversation.model_validate(conversation_json)
 
         # upload the final conversation
-        new_name = f"{Path(pdf_name).stem}_final_transcript.json"
-        json_path = Path.cwd() / new_name
-        with open(json_path, "w", encoding="utf-8") as f:
-            json_file = final_conversation.model_dump_json(indent=2)
-            f.write(json_file)
-
-        new_item = item.dataset.items.upload(
-            local_path=str(json_path),
-            remote_name=new_name,
-            remote_path=SharedServiceRunner._get_hidden_dir(item=item),
-            overwrite=True,
-            item_metadata=item.metadata,
-        )
+        remote_name = f"{Path(pdf_name).stem}_final_transcript.json"
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=f"_{item.id}_transcript.json", delete=False, encoding="utf-8"
+        ) as f:
+            f.write(final_conversation.model_dump_json(indent=2))
+            local_json_path = f.name
+        try:
+            new_item = item.dataset.items.upload(
+                local_path=local_json_path,
+                remote_name=remote_name,
+                remote_path=SharedServiceRunner._get_hidden_dir(item=item),
+                overwrite=True,
+                item_metadata=item.metadata,
+            )
+        finally:
+            os.remove(local_json_path)
         return new_item
 
     @staticmethod
@@ -347,8 +370,8 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             str: Path to the generated audio file
         """
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
-        pdf_name = podcast_metadata.get("pdf_name")
-        monologue = podcast_metadata.get("monologue")
+        pdf_name = podcast_metadata.pdf_name
+        monologue = podcast_metadata.monologue
         item_id = item.metadata.get("user", {}).get("original_item_id", None)
         if item_id is None:
             item_id = item.metadata.get("user", {}).get("podcast", {}).get("outline_item_id", {})
@@ -381,12 +404,13 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         try:
             conversation_json = json.loads(conversation_json)
 
-            # Create a temporary JSON file for the converter
-            temp_file = os.path.join(
-                os.path.dirname(__file__), "temp_conversation.json"
-            )
-            with open(temp_file, "w", encoding="utf-8") as f:
+            # Create a temporary JSON file for the converter (item ID in name to avoid collisions)
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=f"_{item.id}_convo.json", delete=False,
+                dir=os.path.dirname(__file__), encoding="utf-8"
+            ) as f:
                 json.dump(conversation_json, f)
+                temp_file = f.name
 
             # Process the file and generate audio
             converter.process_file(temp_file, output_file, voice_mapping)
@@ -436,7 +460,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         return pdf_text
 
     @staticmethod
-    def _get_last_message(item: dl.Item) -> str:
+    def _get_last_message(item: dl.Item) -> Optional[str]:
         """
         Get the last message from the item.
 
@@ -444,18 +468,34 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             item (dl.Item): Dataloop item containing the last message
 
         Returns:
-            str: The last message from the item
+            str or None: The text of the last message, or None if the item
+            has no messages or the message has no text content.
 
-        Converts the item to a prompt item and gets the last message.
+        Raises:
+            ValueError: If the item cannot be parsed as a prompt item or
+            the message structure is unexpected.
         """
-        prompt_item = dl.PromptItem.from_item(item)
-        messages = prompt_item.to_messages()
+        try:
+            prompt_item = dl.PromptItem.from_item(item)
+            messages = prompt_item.to_messages()
+        except Exception as e:
+            raise ValueError(
+                f"Failed to parse item {item.id} ('{item.name}') as a prompt item: {e}"
+            ) from e
+
+        if not messages:
+            return None
+
         try:
             last_message = messages[-1]
-            text = last_message.get("content", [])[0].get("text", None)
-        except Exception as e:
-            logger.error(f"Error getting last message from item {item.id}: {e}")
-            text = None
+            content = last_message.get("content", [])
+            if not content:
+                return None
+            text = content[0].get("text", None)
+        except (IndexError, KeyError, TypeError) as e:
+            raise ValueError(
+                f"Unexpected message structure in item {item.id} ('{item.name}'): {e}"
+            ) from e
         return text
 
     @staticmethod
@@ -784,37 +824,25 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             raise first_error
 
     @staticmethod
-    def _get_podcast_metadata(item: dl.Item) -> Dict:
+    def _get_podcast_metadata(item: dl.Item) -> PodcastMetadata:
         """
-        Get the metadata from the item.
+        Get typed podcast metadata from the item.
+
+        Returns:
+            PodcastMetadata: Validated metadata model instance.
         """
-        metadata = item.metadata.get("user", {}).get("podcast", None)
-        if metadata is None:
+        raw = item.metadata.get("user", {}).get("podcast", None)
+        if raw is None:
             raise ValueError(
-                f"No podcast metadata found in the prompt item. Please check that item was prepared correctly."
+                f"No podcast metadata found in item {item.id}. "
+                f"Please check that item was prepared correctly."
             )
-        if metadata.get("pdf_name") is None:
+        if raw.get("pdf_name") is None:
             raise ValueError(
-                f"No pdf_name found in the prompt item. Please check that item was prepared correctly."
+                f"No pdf_name found in item {item.id}. "
+                f"Please check that item was prepared correctly."
             )
-
-        # take all the metadata fields and check whether they exist, if not set default values
-        podcast_metadata = {
-            "pdf_name": metadata.get("pdf_name"),
-            "monologue": metadata.get("monologue", False),
-            "focus": metadata.get("focus", None),
-            "with_references": metadata.get("with_references", False),
-            "speaker_1_name": metadata.get("speaker_1_name", DEFAULT_SPEAKER_1_NAME),
-            "speaker_2_name": metadata.get("speaker_2_name", DEFAULT_SPEAKER_2_NAME),
-            "duration": metadata.get("duration", 10),
-            "references": metadata.get("references", None),
-            "summary_item_id": metadata.get("summary_item_id", None),
-            "outline_item_id": metadata.get("outline_item_id", None),
-            "segment_idx": metadata.get("segment_idx", None),
-            "total_segments": metadata.get("total_segments", None),
-        }
-
-        return podcast_metadata
+        return PodcastMetadata.model_validate(raw)
 
     @staticmethod
     def _get_hidden_dir(item: dl.Item) -> str:
@@ -822,17 +850,17 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         Get the hidden directory for the item.
 
         If the item is already in the hidden directory, return the item.dir.
-        Otherwise, return the hidden subdirectory.
+        Otherwise, always return the root-level hidden directory.
         """
-        HIDDEN_DIR = ".pdf2podcast"
-        if item.dir == "/":
-            hidden_dir = f"/{HIDDEN_DIR}"
-        else:
-            if HIDDEN_DIR in item.dir:
-                hidden_dir = item.dir
-            else:
-                hidden_dir = f"{item.dir}/{HIDDEN_DIR}"
-        return hidden_dir
+        if HIDDEN_DIR_NAME in item.dir:
+            return item.dir
+        return f"/{HIDDEN_DIR_NAME}"
+
+    @staticmethod
+    def _get_segment_dir(item: dl.Item, pdf_name: str, stage: str) -> str:
+        """Build the segment directory path for a given stage (e.g. 'prompt4', 'prompt5')."""
+        working_dir = SharedServiceRunner._get_hidden_dir(item=item)
+        return f"{working_dir}/{pdf_name}/{stage}"
 
     @staticmethod
     def _create_and_upload_prompt_item(
