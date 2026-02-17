@@ -850,16 +850,11 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         Get the hidden directory for the item.
 
         If the item is already in the hidden directory, return the item.dir.
-        Otherwise, return the hidden subdirectory.
+        Otherwise, always return the root-level hidden directory.
         """
-        if item.dir == "/":
-            hidden_dir = f"/{HIDDEN_DIR_NAME}"
-        else:
-            if HIDDEN_DIR_NAME in item.dir:
-                hidden_dir = item.dir
-            else:
-                hidden_dir = f"{item.dir}/{HIDDEN_DIR_NAME}"
-        return hidden_dir
+        if HIDDEN_DIR_NAME in item.dir:
+            return item.dir
+        return f"/{HIDDEN_DIR_NAME}"
 
     @staticmethod
     def _get_segment_dir(item: dl.Item, pdf_name: str, stage: str) -> str:
