@@ -313,29 +313,14 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
                         logger.error(f"RAG execution failed")
                         return ""
 
-            # Read the response
+            # Read the response — NIM predict nodes write to annotations
             rag_prompt_item = dl.items.get(item_id=rag_prompt_item.id)
-            updated_prompt = dl.PromptItem.from_item(rag_prompt_item)
-            prompts_json = updated_prompt.to_json().get('prompts', {})
             rag_answer = ''
-            for key in prompts_json:
-                for msg in prompts_json[key]:
-                    if msg.get('mimetype') == 'application/text' and msg.get('role', '') != 'user':
-                        rag_answer = msg.get('value', '')
+            annotations = rag_prompt_item.annotations.list()
+            if annotations:
+                rag_answer = str(annotations[-1].coordinates)
 
-            if not rag_answer:
-                annotations = rag_prompt_item.annotations.list()
-                for annotation in annotations:
-                    ann_data = annotation.to_json()
-                    coordinates = ann_data.get('coordinates', {})
-                    if isinstance(coordinates, dict):
-                        for key in ['response', 'text', 'value']:
-                            if key in coordinates:
-                                rag_answer = str(coordinates[key])
-                                break
-                    if rag_answer:
-                        break
-
+            logger.info(f"RAG response extracted ({len(rag_answer)} chars): '{rag_answer[:100]}...'")
             return rag_answer
 
         except Exception as e:
@@ -416,8 +401,12 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         # Step 1: RAG search (if configured)
         if rag_pipeline_id:
             rag_answer = self._execute_rag_query(query_text, rag_pipeline_id, dataset, main_item_id)
+            # Guard: if RAG returned the query itself, treat as empty
+            if rag_answer and rag_answer.strip() == query_text.strip():
+                logger.warning("RAG returned the query text itself — treating as empty")
+                rag_answer = ""
             if rag_answer:
-                rag_citation = f"---\nQUERY:\n{query_text}\n\nANSWER:\n{rag_answer}\n\nCITATION:\nRAG Pipeline\n"
+                rag_citation = f"---\nQUERY:\n{query_text}\n\nANSWER:\n{rag_answer[:500]}\n\nCITATION:\nRAG Pipeline\n"
                 logger.info(f"RAG returned answer length: {len(rag_answer)}")
 
                 # Step 2: LLM-as-judge relevancy check
