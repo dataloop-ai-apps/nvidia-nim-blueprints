@@ -406,7 +406,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
                 logger.warning("RAG returned the query text itself — treating as empty")
                 rag_answer = ""
             if rag_answer:
-                rag_citation = f"---\nQUERY:\n{query_text}\n\nANSWER:\n{rag_answer[:500]}\n\nCITATION:\nRAG Pipeline\n"
+                rag_citation = f"---\nQUERY:\n{query_text}\n\nANSWER:\n{rag_answer}\n\nCITATION:\nRAG Pipeline\n"
                 logger.info(f"RAG returned answer length: {len(rag_answer)}")
 
                 # Step 2: LLM-as-judge relevancy check
