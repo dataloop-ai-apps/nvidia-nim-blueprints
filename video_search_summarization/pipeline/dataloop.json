@@ -41,7 +41,7 @@
   "components": {
     "pipelineTemplates": [
       {
-        "name": "Video Search and Summarization NVIDIA Blueprint",
+        "name": "VSS NVIDIA Blueprint",
         "description": "NVIDIA blueprint for video search and summarization",
         "connections": [
           {
