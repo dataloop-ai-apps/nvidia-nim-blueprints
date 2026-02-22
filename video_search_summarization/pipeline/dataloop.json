@@ -1,0 +1,518 @@
+{
+  "name": "video-search-summarization-bp",
+  "displayName": "Video Search and Summarization NVIDIA Blueprint",
+  "description": "NVIDIA blueprint for video search and summarization. Ingest videos, split them into chunks, extract key frames, describe frames using a Vision Language Model, embed the descriptions, and store them for downstream search and Q&A. Setup: (1) Install this app — requires an NVIDIA NGC API key. (2) Create a pipeline from the 'Video Search and Summarization NVIDIA Blueprint' template. (3) The VLM variable is preset to Phi-4 Multimodal Instruct and the embedding variable to Llama 3.2 NeMoRetriever 300M Embed v2. To use different models, update the pipeline Variables panel. (4) Configure the target dataset in the Clone to Dataset node. (5) Upload videos to your dataset and execute the pipeline.",
+  "version": "0.0.52",
+  "scope": "public",
+  "attributes": {
+    "Hub": [
+      "Nvidia",
+      "Dataloop"
+    ],
+    "Category": [
+      "Pipeline",
+      "Blueprint"
+    ],
+    "Pipeline Type": "GenAI",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop",
+    "Media Type": [
+      "Video",
+      "Text"
+    ]
+  },
+  "dependencies": [
+    {
+      "name": "video-utils-splitting"
+    },
+    {
+      "name": "llm-tools-frames-to-prompt"
+    },
+    {
+      "name": "prompt_to_text"
+    },
+    {
+      "name": "nim-phi-4-multimodal-instruct"
+    },
+    {
+      "name": "nim-llama-3-2-nemoretriever-300m-embed-v2"
+    }
+  ],
+  "components": {
+    "pipelineTemplates": [
+      {
+        "name": "Video Search and Summarization NVIDIA Blueprint",
+        "description": "NVIDIA blueprint for video search and summarization",
+        "connections": [
+          {
+            "src": {
+              "nodeId": "b1a00001-0001-4000-8000-000000000001",
+              "portId": "b1a00001-0001-4000-8000-200000000001"
+            },
+            "tgt": {
+              "nodeId": "b1a00002-0002-4000-8000-000000000002",
+              "portId": "b1a00002-0002-4000-8000-100000000002"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "b1a00002-0002-4000-8000-000000000002",
+              "portId": "b1a00002-0002-4000-8000-200000000002"
+            },
+            "tgt": {
+              "nodeId": "b1a00003-0003-4000-8000-000000000003",
+              "portId": "b1a00003-0003-4000-8000-100000000003"
+            },
+            "condition": "{\"filter\":{\"$and\":[{\"metadata.splliting_frame_index\":0}]},\"resource\":\"items\"}"
+          },
+          {
+            "src": {
+              "nodeId": "b1a00003-0003-4000-8000-000000000003",
+              "portId": "b1a00003-0003-4000-8000-200000000003"
+            },
+            "tgt": {
+              "nodeId": "b1a00004-0004-4000-8000-000000000004",
+              "portId": "b1a00004-0004-4000-8000-100000000004"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "b1a00004-0004-4000-8000-000000000004",
+              "portId": "b1a00004-0004-4000-8000-200000000004"
+            },
+            "tgt": {
+              "nodeId": "b1a00005-0005-4000-8000-000000000005",
+              "portId": "b1a00005-0005-4000-8000-100000000005"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "b1a00005-0005-4000-8000-000000000005",
+              "portId": "b1a00005-0005-4000-8000-200000000005"
+            },
+            "tgt": {
+              "nodeId": "b1a00006-0006-4000-8000-000000000006",
+              "portId": "b1a00006-0006-4000-8000-100000000006"
+            },
+            "condition": "{}"
+          },
+          {
+            "src": {
+              "nodeId": "b1a00006-0006-4000-8000-000000000006",
+              "portId": "b1a00006-0006-4000-8000-200000000006"
+            },
+            "tgt": {
+              "nodeId": "b1a00007-0007-4000-8000-000000000007",
+              "portId": "b1a00007-0007-4000-8000-100000000007"
+            },
+            "condition": "{}"
+          }
+        ],
+        "startNodes": [
+          {
+            "nodeId": "b1a00001-0001-4000-8000-000000000001",
+            "type": "root",
+            "id": "b1a0start-0000-4000-8000-000000000000"
+          }
+        ],
+        "variables": [
+          {
+            "name": "vlm_model",
+            "type": "Model",
+            "description": "Vision Language Model used to describe video frame groups. Preset: Phi-4 Multimodal Instruct (nim-phi-4-multimodal-instruct).",
+            "value": "$var(vlm_model__model)"
+          },
+          {
+            "name": "embedding_model",
+            "type": "Model",
+            "description": "Embedding model used to embed text descriptions for vector search. Preset: Llama 3.2 NeMoRetriever 300M Embed v2 (nim-llama-3-2-nemoretriever-300m-embed-v2).",
+            "value": "$var(embedding_model__model)"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "b1a00001-0001-4000-8000-000000000001",
+            "inputs": [
+              {
+                "portId": "b1a00001-0001-4000-8000-100000000001",
+                "nodeId": "b1a00001-0001-4000-8000-100000000001",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00001-0001-4000-8000-200000000001",
+                "nodeId": "b1a00001-0001-4000-8000-200000000001",
+                "type": "Item[]",
+                "name": "items",
+                "displayName": "items",
+                "io": "output"
+              }
+            ],
+            "name": "Video to Videos",
+            "type": "custom",
+            "namespace": {
+              "functionName": "video_to_videos",
+              "serviceName": "video-to-videos",
+              "moduleName": "video-to-videos",
+              "packageName": "video-utils-splitting"
+            },
+            "appName": "[Video Utils] - Splitting",
+            "dpkName": "video-utils-splitting",
+            "metadata": {
+              "position": {
+                "x": 10000,
+                "y": 10450,
+                "z": 0
+              },
+              "componentGroupName": "video-utils",
+              "customNodeConfig": {
+                "output_dir": "output_split_videos",
+                "split_type": "num_frames",
+                "splitter_arg": 250,
+                "n_overlap": 0,
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "video-to-videos"
+            }
+          },
+          {
+            "id": "b1a00002-0002-4000-8000-000000000002",
+            "inputs": [
+              {
+                "portId": "b1a00002-0002-4000-8000-100000000002",
+                "nodeId": "b1a00002-0002-4000-8000-100000000002",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00002-0002-4000-8000-200000000002",
+                "nodeId": "b1a00002-0002-4000-8000-200000000002",
+                "type": "Item[]",
+                "name": "items",
+                "displayName": "items",
+                "io": "output"
+              }
+            ],
+            "name": "Smart Frames Splitting",
+            "type": "custom",
+            "namespace": {
+              "functionName": "video_to_frames",
+              "serviceName": "video-to-frames",
+              "moduleName": "video-to-frames",
+              "packageName": "video-utils-splitting"
+            },
+            "appName": "[Video Utils] - Splitting",
+            "dpkName": "video-utils-splitting",
+            "metadata": {
+              "position": {
+                "x": 10300,
+                "y": 10450,
+                "z": 0
+              },
+              "componentGroupName": "video-utils",
+              "customNodeConfig": {
+                "output_dir": "output",
+                "split_type": "structural_similarity_sampling",
+                "min_interval": 0.02,
+                "window_size": 7,
+                "threshold": 0.1,
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "smart-frames-splitting"
+            }
+          },
+          {
+            "id": "b1a00003-0003-4000-8000-000000000003",
+            "inputs": [
+              {
+                "portId": "b1a00003-0003-4000-8000-100000000003",
+                "nodeId": "b1a00003-0003-4000-8000-100000000003",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00003-0003-4000-8000-200000000003",
+                "nodeId": "b1a00003-0003-4000-8000-200000000003",
+                "type": "Item[]",
+                "name": "items",
+                "displayName": "items",
+                "io": "output"
+              }
+            ],
+            "name": "Frames to Prompt",
+            "type": "custom",
+            "namespace": {
+              "functionName": "run",
+              "serviceName": "frames-to-prompt-service",
+              "moduleName": "frames-to-prompt-module",
+              "packageName": "llm-tools-frames-to-prompt"
+            },
+            "appName": "Frames to Prompt",
+            "dpkName": "llm-tools-frames-to-prompt",
+            "metadata": {
+              "position": {
+                "x": 10600,
+                "y": 10450,
+                "z": 0
+              },
+              "componentGroupName": "prompt-utils",
+              "customNodeConfig": {
+                "group_size": 4,
+                "prompt_dir": "/prompt_items_dir",
+                "prompt_instruction": "Provide a detailed description of this video segment: describe the scene, setting, and environment; describe the actions, movements, and interactions taking place; note any changes or progression between frames; ",
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "frames-to-prompt"
+            }
+          },
+          {
+            "id": "b1a00004-0004-4000-8000-000000000004",
+            "inputs": [
+              {
+                "portId": "b1a00004-0004-4000-8000-100000000004",
+                "nodeId": "b1a00004-0004-4000-8000-100000000004",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00004-0004-4000-8000-200000000004",
+                "nodeId": "b1a00004-0004-4000-8000-200000000004",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "b1a00004-0004-4000-8000-300000000004",
+                "nodeId": "b1a00004-0004-4000-8000-300000000004",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "phi-4-multimodal-instruct",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "serviceName": "",
+              "moduleName": "",
+              "packageName": "nim-phi-4-multimodal-instruct"
+            },
+            "appName": "Phi 4 Multimodal Instruct",
+            "dpkName": "nim-phi-4-multimodal-instruct",
+            "metadata": {
+              "position": {
+                "x": 10900,
+                "y": 10450,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "microsoft/phi-4-multimodal-instruct",
+                "max_tokens": 512,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "stream": true,
+                "base_url": "https://integrate.api.nvidia.com/v1",
+                "system_prompt": "",
+                "add_metadata": [
+                  "system.document.source"
+                ]
+              },
+              "componentGroupName": "models",
+              "variableModel": "vlm_model",
+              "repeatable": true,
+              "pipelineNodeName": "nim-phi-4-multimodal-instruct",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "b1a00005-0005-4000-8000-000000000005",
+            "inputs": [
+              {
+                "portId": "b1a00005-0005-4000-8000-100000000005",
+                "nodeId": "b1a00005-0005-4000-8000-100000000005",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00005-0005-4000-8000-200000000005",
+                "nodeId": "b1a00005-0005-4000-8000-200000000005",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Prompt to Text",
+            "type": "custom",
+            "namespace": {
+              "functionName": "run",
+              "serviceName": "prompt-to-text-service",
+              "moduleName": "prompt-to-text-module",
+              "packageName": "prompt_to_text"
+            },
+            "appName": "Prompt to Text",
+            "dpkName": "prompt_to_text",
+            "metadata": {
+              "position": {
+                "x": 11200,
+                "y": 10450,
+                "z": 0
+              },
+              "componentGroupName": "text-utils",
+              "customNodeConfig": {
+                "output_dir": "/text_responses_dir",
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "prompt-to-text"
+            }
+          },
+          {
+            "id": "b1a00006-0006-4000-8000-000000000006",
+            "inputs": [
+              {
+                "portId": "b1a00006-0006-4000-8000-100000000006",
+                "nodeId": "b1a00006-0006-4000-8000-100000000006",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00006-0006-4000-8000-200000000006",
+                "nodeId": "b1a00006-0006-4000-8000-200000000006",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Clone to Dataset",
+            "type": "storage",
+            "namespace": {
+              "functionName": "clone_item",
+              "projectName": "DataloopTasks",
+              "serviceName": "pipeline-utils",
+              "moduleName": "default_module",
+              "packageName": "pipeline-utils"
+            },
+            "metadata": {
+              "position": {
+                "x": 11500,
+                "y": 10450,
+                "z": 0
+              },
+              "datasetId": "",
+              "dir": "/",
+              "componentGroupName": "data",
+              "repeatable": true
+            }
+          },
+          {
+            "id": "b1a00007-0007-4000-8000-000000000007",
+            "inputs": [
+              {
+                "portId": "b1a00007-0007-4000-8000-100000000007",
+                "nodeId": "b1a00007-0007-4000-8000-100000000007",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00007-0007-4000-8000-200000000007",
+                "nodeId": "b1a00007-0007-4000-8000-200000000007",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "b1a00007-0007-4000-8000-300000000007",
+                "nodeId": "b1a00007-0007-4000-8000-300000000007",
+                "type": "Json",
+                "name": "json",
+                "displayName": "json",
+                "io": "output"
+              }
+            ],
+            "name": "Embedding",
+            "type": "ml",
+            "namespace": {
+              "functionName": "embed",
+              "serviceName": "",
+              "moduleName": "",
+              "packageName": "nim-llama-3-2-nemoretriever-300m-embed-v2"
+            },
+            "dpkName": "nim-llama-3-2-nemoretriever-300m-embed-v2",
+            "metadata": {
+              "position": {
+                "x": 11800,
+                "y": 10450,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "nvidia/llama-3.2-nemoretriever-300m-embed-v2",
+                "embeddings_size": 2048,
+                "hyde_model_name": "",
+                "base_url": "https://integrate.api.nvidia.com/v1"
+              },
+              "componentGroupName": "models",
+              "variableModel": "embedding_model",
+              "repeatable": true,
+              "mlType": "embeddings"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "variables": {
+    "vlm_model__model": "nim-phi-4-multimodal-instruct.models.nim-phi-4-multimodal-instruct",
+    "embedding_model__model": "nim-llama-3-2-nemoretriever-300m-embed-v2.models.nim-llama-3-2-nemoretriever-300m-embed-v2"
+  }
+}
