@@ -372,12 +372,12 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
         pdf_name = podcast_metadata.pdf_name
         monologue = podcast_metadata.monologue
-        item_id = item.metadata.get("user", {}).get("original_item_id", None)
-        if item_id is None:
-            item_id = item.metadata.get("user", {}).get("podcast", {}).get("outline_item_id", {})
-        if item_id is None:
-            raise ValueError(f"No original item id found in the final transcript item {item.id}. Please check that item was prepared correctly.")
-        original_item = dl.items.get(item_id=item_id)
+        if podcast_metadata.pdf_id is None:
+            raise ValueError(
+                f"No pdf_id found in item {item.id} metadata. "
+                f"Please check that item was prepared correctly."
+            )
+        original_item = dl.items.get(item_id=podcast_metadata.pdf_id)
         
         if monologue is True:
             output_file_name = Path(pdf_name).stem + "_monologue.mp3"
@@ -851,9 +851,10 @@ class SharedServiceRunner(dl.BaseServiceRunner):
 
         If the item is already in the hidden directory, return the item.dir.
         Otherwise, always return the root-level hidden directory.
+        Always returns without trailing slash to avoid double-slash in path joins.
         """
         if HIDDEN_DIR_NAME in item.dir:
-            return item.dir
+            return item.dir.rstrip("/")
         return f"/{HIDDEN_DIR_NAME}"
 
     @staticmethod
