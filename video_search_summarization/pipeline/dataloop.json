@@ -283,8 +283,6 @@
                 "group_size": 4,
                 "prompt_dir": "/prompt_items_dir",
                 "prompt_instruction": "Analyze these sequential video frames and provide a detailed, search-friendly description. Include: (1) Key objects, people, and entities visible; (2) Actions, movements, and events occurring; (3) Scene setting, location type, and environment; (4) Any text, signs, or identifiable information; (5) Notable changes or transitions between frames. Be specific and factual — mention colors, positions, counts, and directions where applicable.",
-                "frames_per_chunk": 250,
-                "n_overlap": 25,
                 "validation": {
                   "valid": true,
                   "errors": []
