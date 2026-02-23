@@ -176,7 +176,7 @@
                 "output_dir": "output_split_videos",
                 "split_type": "num_frames",
                 "splitter_arg": 250,
-                "n_overlap": 0,
+                "n_overlap": 25,
                 "validation": {
                   "valid": true,
                   "errors": []
@@ -228,9 +228,9 @@
               "customNodeConfig": {
                 "output_dir": "output",
                 "split_type": "structural_similarity_sampling",
-                "min_interval": 0.02,
+                "min_interval": 2,
                 "window_size": 7,
-                "threshold": 0.1,
+                "threshold": 0.25,
                 "validation": {
                   "valid": true,
                   "errors": []
@@ -282,7 +282,9 @@
               "customNodeConfig": {
                 "group_size": 4,
                 "prompt_dir": "/prompt_items_dir",
-                "prompt_instruction": "Provide a detailed description of this video segment: describe the scene, setting, and environment; describe the actions, movements, and interactions taking place; note any changes or progression between frames; ",
+                "prompt_instruction": "Analyze these sequential video frames and provide a detailed, search-friendly description. Include: (1) Key objects, people, and entities visible; (2) Actions, movements, and events occurring; (3) Scene setting, location type, and environment; (4) Any text, signs, or identifiable information; (5) Notable changes or transitions between frames. Be specific and factual — mention colors, positions, counts, and directions where applicable.",
+                "frames_per_chunk": 250,
+                "n_overlap": 25,
                 "validation": {
                   "valid": true,
                   "errors": []
@@ -340,12 +342,12 @@
               },
               "modelConfig": {
                 "nim_model_name": "microsoft/phi-4-multimodal-instruct",
-                "max_tokens": 512,
+                "max_tokens": 1024,
                 "temperature": 0.2,
                 "top_p": 0.7,
                 "stream": true,
                 "base_url": "https://integrate.api.nvidia.com/v1",
-                "system_prompt": "",
+                "system_prompt": "You are a precise video analysis system. Your descriptions will be embedded and used for semantic search. Be factual, specific, and concise. Describe what is visible, not what might be happening.",
                 "add_metadata": [
                   "system.document.source"
                 ]
