@@ -25,7 +25,22 @@
       "name": "report-generation"
     },
     {
-      "name": "nim-llama-3-3-70b-instruct"
+      "name": "nim-llama-3-3-70b-instruct",
+      "components": {
+        "models": [
+          {
+            "name": "nim-llama-3-3-70b-instruct",
+            "configuration": {
+              "nim_model_name": "meta/llama-3.3-70b-instruct",
+              "system_prompt": "",
+              "max_tokens": 20000,
+              "temperature": 0.2,
+              "top_p": 0.7,
+              "stream": true
+            }
+          }
+        ]
+      }
     },
     {
       "name": "wait-node"
