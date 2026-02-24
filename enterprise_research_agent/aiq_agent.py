@@ -68,7 +68,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
             api_key=nvidia_api_key,
             base_url=base_url,
             temperature=0.5,
-            max_tokens=5000,
+            max_tokens=16000,
         )
 
     # ─── Helpers ──────────────────────────────────────────────────────────────
