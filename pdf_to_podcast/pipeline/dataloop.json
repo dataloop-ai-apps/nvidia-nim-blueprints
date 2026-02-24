@@ -32,13 +32,58 @@
       "name": "wait-node"
     },
     {
-      "name": "nim-llama-3-1-405b-instruct"
+      "name": "nim-llama-3-1-405b-instruct",
+      "components": {
+        "models": [
+          {
+            "name": "nim-llama-3-1-405b-instruct",
+            "configuration": {
+              "nim_model_name": "meta/llama-3.1-405b-instruct",
+              "system_prompt": "",
+              "max_tokens": 1024,
+              "temperature": 0.2,
+              "top_p": 0.7,
+              "stream": true
+            }
+          }
+        ]
+      }
     },
     {
-      "name": "nim-llama-3-1-70b-instruct"
+      "name": "nim-llama-3-1-70b-instruct",
+      "components": {
+        "models": [
+          {
+            "name": "nim-llama-3-1-70b-instruct",
+            "configuration": {
+              "nim_model_name": "meta/llama-3.1-70b-instruct",
+              "system_prompt": "",
+              "max_tokens": 1024,
+              "temperature": 0.2,
+              "top_p": 0.7,
+              "stream": true
+            }
+          }
+        ]
+      }
     },
     {
-      "name": "nim-llama-3-1-8b-instruct"
+      "name": "nim-llama-3-1-8b-instruct",
+      "components": {
+        "models": [
+          {
+            "name": "nim-llama-3-1-8b-instruct",
+            "configuration": {
+              "nim_model_name": "meta/llama-3.1-8b-instruct",
+              "system_prompt": "",
+              "max_tokens": 2048,
+              "temperature": 0.2,
+              "top_p": 0.7,
+              "stream": true
+            }
+          }
+        ]
+      }
     }
   ],
   "components": {

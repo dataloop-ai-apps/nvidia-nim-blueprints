@@ -300,10 +300,36 @@
   },
   "dependencies": [
     {
-      "name": "nim-llama-3-2-nemoretriever-300m-embed-v2"
+      "name": "nim-llama-3-2-nemoretriever-300m-embed-v2",
+      "components": {
+        "models": [
+          {
+            "name": "nim-llama-3-2-nemoretriever-300m-embed-v2",
+            "configuration": {
+              "nim_model_name": "nvidia/llama-3.2-nemoretriever-300m-embed-v2",
+              "embeddings_size": 2048
+            }
+          }
+        ]
+      }
     },
     {
-      "name": "nim-llama-3-1-8b-instruct"
+      "name": "nim-llama-3-1-8b-instruct",
+      "components": {
+        "models": [
+          {
+            "name": "nim-llama-3-1-8b-instruct",
+            "configuration": {
+              "nim_model_name": "meta/llama-3.1-8b-instruct",
+              "system_prompt": "",
+              "max_tokens": 1024,
+              "temperature": 0.2,
+              "top_p": 0.7,
+              "stream": true
+            }
+          }
+        ]
+      }
     },
     {
       "name": "llm-tools-retriever"
