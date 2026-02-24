@@ -620,24 +620,14 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         - Llama's response is annotated on prompt #1 (the only prompt)
         """
 
-        # Compile research document: instruction + draft + citations
-        # The instruction is embedded here so Llama gets it via nearestItems context
-        research_doc = f"""## Instructions
-                        Based on the following research draft, write a comprehensive, publication-ready
-                        long-form report. Use proper markdown formatting (# title, ## sections,
-                        ### subsections). Write in detailed paragraphs, not bullet points. Do not
-                        include source citations (added in post-processing). Do not add
-                        meta-commentary. Return only the final report.
+        # The system prompt already tells Llama how to write the report.
+        # The nearestItems document should contain only the research content
+        # to avoid duplicating instructions and wasting input tokens.
+        research_doc = f"""## Report Organization
+{state['report_organization']}
 
-                        ## Report Organization
-                        {state['report_organization']}
-
-                        ## Research Draft
-                        {state['running_summary']}
-
-                        ## Sources & Citations
-                        {state.get('citations', 'No sources collected.')}
-                        """
+## Research Draft
+{state['running_summary']}"""
 
         # Upload research document
         safe_topic = re.sub(r'[^\w\s-]', '', state['topic'])[:40].strip().replace(' ', '_')
