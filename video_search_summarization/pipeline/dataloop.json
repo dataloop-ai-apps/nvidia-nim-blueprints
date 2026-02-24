@@ -90,7 +90,7 @@
               "nodeId": "b1a00003-0003-4000-8000-000000000003",
               "portId": "b1a00003-0003-4000-8000-100000000003"
             },
-            "condition": "{\"filter\":{\"$and\":[{\"metadata.splliting_frame_index\":0}]},\"resource\":\"items\"}"
+            "condition": "{\"filter\":{\"$and\":[{\"metadata.spliting_frame_index\":0}]},\"resource\":\"items\"}"
           },
           {
             "src": {
