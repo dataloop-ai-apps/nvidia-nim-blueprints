@@ -1,6 +1,6 @@
 {
   "name": "nim-rag-bp",
-  "version": "0.0.66",
+  "version": "0.0.67",
   "attributes": {
     "Category": [
       "Pipeline",
