@@ -32,6 +32,9 @@
       "name": "prompt_to_text"
     },
     {
+      "name": "video-search-summarization"
+    },
+    {
       "name": "nim-phi-4-multimodal-instruct",
       "components": {
         "models": [
@@ -42,6 +45,24 @@
               "system_prompt": "You are a precise video analysis system. Your descriptions will be embedded and used for semantic search. Be factual, specific, and concise. Describe what is visible, not what might be happening.",
               "max_tokens": 1024,
               "temperature": 0.2,
+              "top_p": 0.7,
+              "stream": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "nim-llama-3-3-70b-instruct",
+      "components": {
+        "models": [
+          {
+            "name": "nim-llama-3-3-70b-instruct",
+            "configuration": {
+              "nim_model_name": "meta/llama-3.3-70b-instruct",
+              "system_prompt": "",
+              "max_tokens": 2048,
+              "temperature": 0.1,
               "top_p": 0.7,
               "stream": true
             }
@@ -71,69 +92,68 @@
         "description": "NVIDIA blueprint for video search and summarization",
         "connections": [
           {
-            "src": {
-              "nodeId": "b1a00001-0001-4000-8000-000000000001",
-              "portId": "b1a00001-0001-4000-8000-200000000001"
-            },
-            "tgt": {
-              "nodeId": "b1a00002-0002-4000-8000-000000000002",
-              "portId": "b1a00002-0002-4000-8000-100000000002"
-            },
+            "src": { "nodeId": "b1a00001-0001-4000-8000-000000000001", "portId": "b1a00001-0001-4000-8000-200000000001" },
+            "tgt": { "nodeId": "b1a00002-0002-4000-8000-000000000002", "portId": "b1a00002-0002-4000-8000-100000000002" },
             "condition": "{}"
           },
           {
-            "src": {
-              "nodeId": "b1a00002-0002-4000-8000-000000000002",
-              "portId": "b1a00002-0002-4000-8000-200000000002"
-            },
-            "tgt": {
-              "nodeId": "b1a00003-0003-4000-8000-000000000003",
-              "portId": "b1a00003-0003-4000-8000-100000000003"
-            },
+            "src": { "nodeId": "b1a00002-0002-4000-8000-000000000002", "portId": "b1a00002-0002-4000-8000-200000000002" },
+            "tgt": { "nodeId": "b1a00003-0003-4000-8000-000000000003", "portId": "b1a00003-0003-4000-8000-100000000003" },
             "condition": "{\"filter\":{\"$and\":[{\"metadata.splitting_frame_index\":0}]},\"resource\":\"items\"}"
           },
           {
-            "src": {
-              "nodeId": "b1a00003-0003-4000-8000-000000000003",
-              "portId": "b1a00003-0003-4000-8000-200000000003"
-            },
-            "tgt": {
-              "nodeId": "b1a00004-0004-4000-8000-000000000004",
-              "portId": "b1a00004-0004-4000-8000-100000000004"
-            },
+            "src": { "nodeId": "b1a00003-0003-4000-8000-000000000003", "portId": "b1a00003-0003-4000-8000-200000000003" },
+            "tgt": { "nodeId": "b1a00004-0004-4000-8000-000000000004", "portId": "b1a00004-0004-4000-8000-100000000004" },
             "condition": "{}"
           },
           {
-            "src": {
-              "nodeId": "b1a00004-0004-4000-8000-000000000004",
-              "portId": "b1a00004-0004-4000-8000-200000000004"
-            },
-            "tgt": {
-              "nodeId": "b1a00005-0005-4000-8000-000000000005",
-              "portId": "b1a00005-0005-4000-8000-100000000005"
-            },
+            "src": { "nodeId": "b1a00004-0004-4000-8000-000000000004", "portId": "b1a00004-0004-4000-8000-200000000004" },
+            "tgt": { "nodeId": "b1a00005-0005-4000-8000-000000000005", "portId": "b1a00005-0005-4000-8000-100000000005" },
             "condition": "{}"
           },
           {
-            "src": {
-              "nodeId": "b1a00005-0005-4000-8000-000000000005",
-              "portId": "b1a00005-0005-4000-8000-200000000005"
-            },
-            "tgt": {
-              "nodeId": "b1a00006-0006-4000-8000-000000000006",
-              "portId": "b1a00006-0006-4000-8000-100000000006"
-            },
+            "src": { "nodeId": "b1a00005-0005-4000-8000-000000000005", "portId": "b1a00005-0005-4000-8000-200000000005" },
+            "tgt": { "nodeId": "b1a0000b-000b-4000-8000-00000000000b", "portId": "b1a0000b-000b-4000-8000-10000000000b" },
             "condition": "{}"
           },
           {
-            "src": {
-              "nodeId": "b1a00006-0006-4000-8000-000000000006",
-              "portId": "b1a00006-0006-4000-8000-200000000006"
-            },
-            "tgt": {
-              "nodeId": "b1a00007-0007-4000-8000-000000000007",
-              "portId": "b1a00007-0007-4000-8000-100000000007"
-            },
+            "src": { "nodeId": "b1a00001-0001-4000-8000-000000000001", "portId": "b1a00001-0001-4000-8000-200000000001" },
+            "tgt": { "nodeId": "b1a00008-0008-4000-8000-000000000008", "portId": "b1a00008-0008-4000-8000-100000000008" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "b1a00008-0008-4000-8000-000000000008", "portId": "b1a00008-0008-4000-8000-200000000008" },
+            "tgt": { "nodeId": "b1a00009-0009-4000-8000-000000000009", "portId": "b1a00009-0009-4000-8000-100000000009" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "b1a00009-0009-4000-8000-000000000009", "portId": "b1a00009-0009-4000-8000-200000000009" },
+            "tgt": { "nodeId": "b1a0000a-000a-4000-8000-00000000000a", "portId": "b1a0000a-000a-4000-8000-10000000000a" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "b1a0000a-000a-4000-8000-00000000000a", "portId": "b1a0000a-000a-4000-8000-20000000000a" },
+            "tgt": { "nodeId": "b1a0000b-000b-4000-8000-00000000000b", "portId": "b1a0000b-000b-4000-8000-10000000000b" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "b1a0000b-000b-4000-8000-00000000000b", "portId": "b1a0000b-000b-4000-8000-20000000000b" },
+            "tgt": { "nodeId": "b1a0000c-000c-4000-8000-00000000000c", "portId": "b1a0000c-000c-4000-8000-10000000000c" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "b1a0000c-000c-4000-8000-00000000000c", "portId": "b1a0000c-000c-4000-8000-20000000000c" },
+            "tgt": { "nodeId": "b1a0000d-000d-4000-8000-00000000000d", "portId": "b1a0000d-000d-4000-8000-10000000000d" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "b1a0000d-000d-4000-8000-00000000000d", "portId": "b1a0000d-000d-4000-8000-20000000000d" },
+            "tgt": { "nodeId": "b1a00006-0006-4000-8000-000000000006", "portId": "b1a00006-0006-4000-8000-100000000006" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "b1a00006-0006-4000-8000-000000000006", "portId": "b1a00006-0006-4000-8000-200000000006" },
+            "tgt": { "nodeId": "b1a00007-0007-4000-8000-000000000007", "portId": "b1a00007-0007-4000-8000-100000000007" },
             "condition": "{}"
           }
         ],
@@ -156,6 +176,12 @@
             "type": "Model",
             "description": "Embedding model used to embed text descriptions for vector search. Preset: Llama 3.2 NeMoRetriever 300M Embed v2 (nim-llama-3-2-nemoretriever-300m-embed-v2).",
             "value": "$var(embedding_model__model)"
+          },
+          {
+            "name": "graph_llm",
+            "type": "Model",
+            "description": "LLM used for graph entity/relationship extraction. Preset: Llama 3.3 70B Instruct (nim-llama-3-3-70b-instruct).",
+            "value": "$var(graph_llm__model)"
           }
         ],
         "nodes": [
@@ -306,7 +332,7 @@
               },
               "componentGroupName": "prompt-utils",
               "customNodeConfig": {
-                "group_size": 4,
+                "group_size": 999,
                 "prompt_dir": "/prompt_items_dir",
                 "prompt_instruction": "Analyze these sequential video frames and provide a detailed, search-friendly description. Include: (1) Key objects, people, and entities visible; (2) Actions, movements, and events occurring; (3) Scene setting, location type, and environment; (4) Any text, signs, or identifiable information; (5) Notable changes or transitions between frames. Be specific and factual — mention colors, positions, counts, and directions where applicable.",
                 "validation": {
@@ -424,6 +450,8 @@
               "componentGroupName": "text-utils",
               "customNodeConfig": {
                 "output_dir": "/text_responses_dir",
+                "text_prefix": "Video description: ",
+                "source_type": "vlm_caption",
                 "validation": {
                   "valid": true,
                   "errors": []
@@ -517,8 +545,8 @@
             "dpkName": "nim-llama-3-2-nemoretriever-300m-embed-v2",
             "metadata": {
               "position": {
-                "x": 11800,
-                "y": 10450,
+                "x": 12400,
+                "y": 10250,
                 "z": 0
               },
               "modelConfig": {
@@ -532,6 +560,324 @@
               "repeatable": true,
               "mlType": "embeddings"
             }
+          },
+          {
+            "id": "b1a00008-0008-4000-8000-000000000008",
+            "inputs": [
+              {
+                "portId": "b1a00008-0008-4000-8000-100000000008",
+                "nodeId": "b1a00008-0008-4000-8000-000000000008",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00008-0008-4000-8000-200000000008",
+                "nodeId": "b1a00008-0008-4000-8000-000000000008",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Audio Extract",
+            "type": "custom",
+            "namespace": {
+              "functionName": "extract_audio",
+              "serviceName": "vss-compute-config",
+              "moduleName": "vss-audio-module",
+              "packageName": "video-search-summarization"
+            },
+            "appName": "Video Search and Summarization",
+            "dpkName": "video-search-summarization",
+            "metadata": {
+              "position": {
+                "x": 10300,
+                "y": 10750,
+                "z": 0
+              },
+              "componentGroupName": "Video Search and Summarization",
+              "customNodeConfig": {
+                "output_dir": "/audio_prompt_items",
+                "sample_rate": 16000,
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "audio-extract-node"
+            }
+          },
+          {
+            "id": "b1a00009-0009-4000-8000-000000000009",
+            "inputs": [
+              {
+                "portId": "b1a00009-0009-4000-8000-100000000009",
+                "nodeId": "b1a00009-0009-4000-8000-000000000009",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00009-0009-4000-8000-200000000009",
+                "nodeId": "b1a00009-0009-4000-8000-000000000009",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "ASR Inference",
+            "type": "custom",
+            "namespace": {
+              "functionName": "predict",
+              "serviceName": "vss-compute-config",
+              "moduleName": "vss-audio-module",
+              "packageName": "video-search-summarization"
+            },
+            "appName": "Video Search and Summarization",
+            "dpkName": "video-search-summarization",
+            "metadata": {
+              "position": {
+                "x": 10600,
+                "y": 10750,
+                "z": 0
+              },
+              "componentGroupName": "Video Search and Summarization",
+              "customNodeConfig": {
+                "asr_base_url": "https://integrate.api.nvidia.com/v1",
+                "asr_model_name": "nvidia/parakeet-ctc-1.1b-asr",
+                "language_code": "en-US",
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "asr-inference-node"
+            }
+          },
+          {
+            "id": "b1a0000a-000a-4000-8000-00000000000a",
+            "inputs": [
+              {
+                "portId": "b1a0000a-000a-4000-8000-10000000000a",
+                "nodeId": "b1a0000a-000a-4000-8000-00000000000a",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a0000a-000a-4000-8000-20000000000a",
+                "nodeId": "b1a0000a-000a-4000-8000-00000000000a",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Transcript to Text",
+            "type": "custom",
+            "namespace": {
+              "functionName": "transcript_to_text",
+              "serviceName": "vss-compute-config",
+              "moduleName": "vss-audio-module",
+              "packageName": "video-search-summarization"
+            },
+            "appName": "Video Search and Summarization",
+            "dpkName": "video-search-summarization",
+            "metadata": {
+              "position": {
+                "x": 10900,
+                "y": 10750,
+                "z": 0
+              },
+              "componentGroupName": "Video Search and Summarization",
+              "customNodeConfig": {
+                "output_dir": "/text_responses_dir",
+                "text_prefix": "Audio transcript: ",
+                "source_type": "audio_transcript",
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "transcript-to-text-node"
+            }
+          },
+          {
+            "id": "b1a0000b-000b-4000-8000-00000000000b",
+            "inputs": [
+              {
+                "portId": "b1a0000b-000b-4000-8000-10000000000b",
+                "nodeId": "b1a0000b-000b-4000-8000-00000000000b",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a0000b-000b-4000-8000-20000000000b",
+                "nodeId": "b1a0000b-000b-4000-8000-00000000000b",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Prepare Graph Prompt",
+            "type": "custom",
+            "namespace": {
+              "functionName": "prepare_graph_prompt",
+              "serviceName": "vss-compute-config",
+              "moduleName": "vss-graph-module",
+              "packageName": "video-search-summarization"
+            },
+            "appName": "Video Search and Summarization",
+            "dpkName": "video-search-summarization",
+            "metadata": {
+              "position": {
+                "x": 11200,
+                "y": 10600,
+                "z": 0
+              },
+              "componentGroupName": "Video Search and Summarization",
+              "customNodeConfig": {
+                "entity_types": "[\"Person\", \"Vehicle\", \"Location\", \"Object\", \"Organization\", \"Event\"]",
+                "output_dir": "/graph_prompt_items",
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "prepare-graph-prompt-node"
+            }
+          },
+          {
+            "id": "b1a0000c-000c-4000-8000-00000000000c",
+            "inputs": [
+              {
+                "portId": "b1a0000c-000c-4000-8000-10000000000c",
+                "nodeId": "b1a0000c-000c-4000-8000-00000000000c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a0000c-000c-4000-8000-20000000000c",
+                "nodeId": "b1a0000c-000c-4000-8000-00000000000c",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "b1a0000c-000c-4000-8000-30000000000c",
+                "nodeId": "b1a0000c-000c-4000-8000-00000000000c",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "Graph LLM",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "serviceName": "",
+              "moduleName": "",
+              "packageName": "nim-llama-3-3-70b-instruct"
+            },
+            "appName": "Llama 3.3 70B Instruct",
+            "dpkName": "nim-llama-3-3-70b-instruct",
+            "metadata": {
+              "position": {
+                "x": 11500,
+                "y": 10600,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.3-70b-instruct",
+                "max_tokens": 2048,
+                "temperature": 0.1,
+                "top_p": 0.7,
+                "stream": true,
+                "base_url": "https://integrate.api.nvidia.com/v1",
+                "system_prompt": "You are a precise entity and relationship extraction system. Always respond with valid JSON only."
+              },
+              "componentGroupName": "models",
+              "variableModel": "graph_llm",
+              "repeatable": true,
+              "pipelineNodeName": "nim-llama-3-3-70b-instruct",
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "b1a0000d-000d-4000-8000-00000000000d",
+            "inputs": [
+              {
+                "portId": "b1a0000d-000d-4000-8000-10000000000d",
+                "nodeId": "b1a0000d-000d-4000-8000-00000000000d",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a0000d-000d-4000-8000-20000000000d",
+                "nodeId": "b1a0000d-000d-4000-8000-00000000000d",
+                "type": "Item[]",
+                "name": "items",
+                "displayName": "items",
+                "io": "output"
+              }
+            ],
+            "name": "Process Graph Response",
+            "type": "custom",
+            "namespace": {
+              "functionName": "process_graph_response",
+              "serviceName": "vss-compute-config",
+              "moduleName": "vss-graph-module",
+              "packageName": "video-search-summarization"
+            },
+            "appName": "Video Search and Summarization",
+            "dpkName": "video-search-summarization",
+            "metadata": {
+              "position": {
+                "x": 11800,
+                "y": 10600,
+                "z": 0
+              },
+              "componentGroupName": "Video Search and Summarization",
+              "customNodeConfig": {
+                "graph_dir": "/.graph/entities",
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "process-graph-response-node"
+            }
           }
         ]
       }
@@ -539,6 +885,7 @@
   },
   "variables": {
     "vlm_model__model": "nim-phi-4-multimodal-instruct.models.nim-phi-4-multimodal-instruct",
-    "embedding_model__model": "nim-llama-3-2-nemoretriever-300m-embed-v2.models.nim-llama-3-2-nemoretriever-300m-embed-v2"
+    "embedding_model__model": "nim-llama-3-2-nemoretriever-300m-embed-v2.models.nim-llama-3-2-nemoretriever-300m-embed-v2",
+    "graph_llm__model": "nim-llama-3-3-70b-instruct.models.nim-llama-3-3-70b-instruct"
   }
 }

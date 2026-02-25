@@ -1,0 +1,182 @@
+{
+  "name": "video-search-summarization",
+  "displayName": "Video Search and Summarization",
+  "description": "Custom nodes for the VSS NVIDIA Blueprint: audio extraction, ASR inference, transcript-to-text, graph extraction (prepare prompt + process response), and graph context expansion for retrieval.",
+  "version": "0.0.55",
+  "scope": "public",
+  "attributes": {
+    "Hub": ["Nvidia", "Dataloop"],
+    "Category": ["Application"],
+    "Application Type": "GenAI",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop"
+  },
+  "components": {
+    "computeConfigs": [
+      {
+        "name": "vss-compute-config",
+        "runtime": {
+          "podType": "regular-xs",
+          "concurrency": 10,
+          "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints:0.0.3",
+          "autoscaler": {
+            "type": "rabbitmq",
+            "minReplicas": 0,
+            "maxReplicas": 2
+          }
+        }
+      }
+    ],
+    "pipelineNodes": [
+      {
+        "name": "audio-extract-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "vss-compute-config.vss-audio-module.extract_audio"
+        },
+        "categories": ["Video Search and Summarization"],
+        "scope": "project"
+      },
+      {
+        "name": "asr-inference-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "vss-compute-config.vss-audio-module.predict"
+        },
+        "categories": ["Video Search and Summarization"],
+        "scope": "project"
+      },
+      {
+        "name": "transcript-to-text-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "vss-compute-config.vss-audio-module.transcript_to_text"
+        },
+        "categories": ["Video Search and Summarization"],
+        "scope": "project"
+      },
+      {
+        "name": "prepare-graph-prompt-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "vss-compute-config.vss-graph-module.prepare_graph_prompt"
+        },
+        "categories": ["Video Search and Summarization"],
+        "scope": "project"
+      },
+      {
+        "name": "process-graph-response-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "vss-compute-config.vss-graph-module.process_graph_response"
+        },
+        "categories": ["Video Search and Summarization"],
+        "scope": "project"
+      },
+      {
+        "name": "graph-context-expansion-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "vss-compute-config.vss-retrieval-module.graph_context_expansion"
+        },
+        "categories": ["Video Search and Summarization"],
+        "scope": "project"
+      }
+    ],
+    "modules": [
+      {
+        "name": "vss-audio-module",
+        "computeConfig": "vss-compute-config",
+        "entryPoint": "video_search_summarization/vss_nodes/audio_extraction.py",
+        "className": "AudioExtraction",
+        "integrations": [
+          "dl-ngc-api-key"
+        ],
+        "functions": [
+          {
+            "name": "extract_audio",
+            "input": [
+              {"name": "item", "type": "Item"}
+            ],
+            "output": [
+              {"name": "item", "type": "Item"}
+            ],
+            "displayName": "Audio Extract"
+          },
+          {
+            "name": "predict",
+            "entryPoint": "video_search_summarization/vss_nodes/asr_inference.py",
+            "className": "ASRInference",
+            "input": [
+              {"name": "item", "type": "Item"}
+            ],
+            "output": [
+              {"name": "item", "type": "Item"}
+            ],
+            "displayName": "ASR Inference"
+          },
+          {
+            "name": "transcript_to_text",
+            "entryPoint": "video_search_summarization/vss_nodes/transcript_to_text.py",
+            "className": "TranscriptToText",
+            "input": [
+              {"name": "item", "type": "Item"}
+            ],
+            "output": [
+              {"name": "item", "type": "Item"}
+            ],
+            "displayName": "Transcript to Text"
+          }
+        ]
+      },
+      {
+        "name": "vss-graph-module",
+        "computeConfig": "vss-compute-config",
+        "entryPoint": "video_search_summarization/vss_nodes/prepare_graph_prompt.py",
+        "className": "PrepareGraphPrompt",
+        "functions": [
+          {
+            "name": "prepare_graph_prompt",
+            "input": [
+              {"name": "item", "type": "Item"}
+            ],
+            "output": [
+              {"name": "item", "type": "Item"}
+            ],
+            "displayName": "Prepare Graph Prompt"
+          },
+          {
+            "name": "process_graph_response",
+            "entryPoint": "video_search_summarization/vss_nodes/process_graph_response.py",
+            "className": "ProcessGraphResponse",
+            "input": [
+              {"name": "item", "type": "Item"}
+            ],
+            "output": [
+              {"name": "items", "type": "Item[]"}
+            ],
+            "displayName": "Process Graph Response"
+          }
+        ]
+      },
+      {
+        "name": "vss-retrieval-module",
+        "computeConfig": "vss-compute-config",
+        "entryPoint": "video_search_summarization/vss_nodes/graph_context_expansion.py",
+        "className": "GraphContextExpansion",
+        "functions": [
+          {
+            "name": "graph_context_expansion",
+            "input": [
+              {"name": "item", "type": "Item"}
+            ],
+            "output": [
+              {"name": "item", "type": "Item"}
+            ],
+            "displayName": "Graph Context Expansion"
+          }
+        ]
+      }
+    ]
+  }
+}
