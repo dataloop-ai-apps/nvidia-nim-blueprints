@@ -15,7 +15,7 @@
   "components": {
     "pipelineTemplates": [
       {
-        "name": "VSS Retrieval Pipeline NVIDIA Blueprint",
+        "name": "VSS Retrieval Pipeline",
         "description": "NVIDIA blueprint for video search and summarization — retrieval with graph context expansion.",
         "connections": [
           {
