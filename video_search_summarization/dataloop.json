@@ -2,7 +2,7 @@
   "name": "video-search-summarization",
   "displayName": "Video Search and Summarization",
   "description": "Custom nodes for the VSS NVIDIA Blueprint: audio extraction, ASR inference, transcript-to-text, graph extraction (prepare prompt + process response), and graph context expansion for retrieval.",
-  "version": "0.0.55",
+  "version": "0.0.64",
   "scope": "public",
   "attributes": {
     "Hub": ["Nvidia", "Dataloop"],

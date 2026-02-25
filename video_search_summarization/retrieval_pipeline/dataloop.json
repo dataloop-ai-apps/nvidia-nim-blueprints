@@ -2,7 +2,7 @@
   "name": "vss-retrieval-bp",
   "displayName": "VSS Retrieval Pipeline NVIDIA Blueprint",
   "description": "Retrieval pipeline for Video Search and Summarization. Embeds user queries, retrieves nearest video chunk descriptions, expands context using graph entities/relationships and adjacent temporal chunks (CA-RAG), then generates a response via LLM. Pair with the VSS Ingestion pipeline. Setup: (1) Install this app. (2) Create a pipeline from the template. (3) Set 'retrieval_dataset' to the dataset containing your ingested VSS embeddings. (4) Adjust 'k_nearest_items' if needed (default: 15). (5) Execute.",
-  "version": "0.0.55",
+  "version": "0.0.64",
   "scope": "public",
   "attributes": {
     "Hub": ["Nvidia", "Dataloop"],
