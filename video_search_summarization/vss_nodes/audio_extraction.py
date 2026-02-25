@@ -40,28 +40,32 @@ class AudioExtraction(dl.BaseServiceRunner):
             prompt_item = dl.PromptItem(name=prompt_item_name)
 
             if has_audio and os.path.exists(audio_path) and os.path.getsize(audio_path) > 0:
-                audio_element = {
-                    'mimetype': 'audio/wav',
-                    'value': audio_path
-                }
-                prompt_item.prompts.append(
-                    dl.Prompt(key='audio', messages=[
-                        {'role': 'user', 'content': [audio_element]}
-                    ])
+                audio_item = dataset.items.upload(
+                    local_path=audio_path,
+                    remote_path=f"{output_dir}/audio_files",
+                    remote_name=f"{base_name}.wav",
+                    overwrite=True,
+                )
+                logger.info(f"Uploaded audio WAV item: {audio_item.id}")
+                prompt_item.add(
+                    message={
+                        'role': 'user',
+                        'content': [{'mimetype': dl.PromptType.AUDIO, 'value': audio_item.stream}]
+                    }
                 )
             else:
                 logger.warning(f"No audio track found in {item.name}, creating placeholder prompt")
-                prompt_item.prompts.append(
-                    dl.Prompt(key='audio', messages=[
-                        {'role': 'user', 'content': [
-                            {'mimetype': dl.PromptType.TEXT, 'value': 'No audio available for this video segment.'}
-                        ]}
-                    ])
+                prompt_item.add(
+                    message={
+                        'role': 'user',
+                        'content': [{'mimetype': dl.PromptType.TEXT, 'value': 'No audio available for this video segment.'}]
+                    }
                 )
 
             uploaded = dataset.items.upload(
                 local_path=prompt_item,
                 remote_path=output_dir,
+                overwrite=True,
             )
             logger.info(f"Uploaded audio PromptItem: {uploaded.id}")
 

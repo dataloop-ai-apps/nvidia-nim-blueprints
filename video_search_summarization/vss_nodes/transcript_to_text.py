@@ -11,7 +11,7 @@ DEFAULT_OUTPUT_DIR = '/text_responses_dir'
 
 class TranscriptToText(dl.BaseServiceRunner):
 
-    def run(self, item: dl.Item, context: dl.Context) -> dl.Item:
+    def transcript_to_text(self, item: dl.Item, context: dl.Context) -> dl.Item:
         """
         Extract transcript from an ASR-processed PromptItem, create a text item.
         Mirrors the Prompt to Text node for the audio branch.
@@ -26,12 +26,10 @@ class TranscriptToText(dl.BaseServiceRunner):
         prompt_item = dl.PromptItem.from_item(item=item)
 
         response_texts = []
-        for prompt in prompt_item.prompts:
-            for msg in prompt.messages:
-                if msg.get('role') == 'assistant':
-                    for element in msg.get('content', []):
-                        if element.get('mimetype') == dl.PromptType.TEXT:
-                            response_texts.append(element['value'])
+        for prompt in prompt_item.assistant_prompts:
+            for element in prompt.elements:
+                if element['mimetype'] == dl.PromptType.TEXT:
+                    response_texts.append(element['value'])
 
         if not response_texts:
             raise ValueError(f"No assistant response found in prompt item {item.id}")
@@ -54,6 +52,7 @@ class TranscriptToText(dl.BaseServiceRunner):
         uploaded_item = dataset.items.upload(
             local_path=buffer,
             remote_path=output_dir,
+            overwrite=True,
         )
         logger.info(f"Uploaded transcript text item: {uploaded_item.id}")
 
