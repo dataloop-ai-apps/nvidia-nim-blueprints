@@ -1,8 +1,8 @@
 {
   "name": "video-search-summarization-bp",
   "displayName": "VSS NVIDIA Blueprint",
-  "description": "NVIDIA blueprint for video search and summarization. Ingest videos, split into chunks, extract key frames and audio, describe frames with a VLM, transcribe audio with ASR, embed both description and transcript, and store for downstream search and Q&A.",
-  "version": "0.0.64",
+  "description": "NVIDIA blueprint for video search and summarization. Ingest videos, split them into chunks, extract key frames, describe frames using a Vision Language Model, embed the descriptions, and store them for downstream search and Q&A. Setup: (1) Install this app — requires an NVIDIA NGC API key. (2) Create a pipeline from the 'Video Search and Summarization NVIDIA Blueprint' template. (3) The VLM variable is preset to Phi-4 Multimodal Instruct and the embedding variable to Llama 3.2 NeMoRetriever 300M Embed v2. To use different models, update the pipeline Variables panel. (4) Configure the target dataset in the Clone to Dataset node. (5) Upload videos to your dataset and execute the pipeline.",
+  "version": "0.0.67",
   "scope": "public",
   "attributes": {
     "Hub": [
