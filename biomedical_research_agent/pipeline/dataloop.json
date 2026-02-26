@@ -1,0 +1,323 @@
+{
+  "name": "nvidia-biomedical-research-bp",
+  "displayName": "Biomedical AI-Q Research Agent",
+  "description": "Biomedical research agent pipeline adapted from NVIDIA Biomedical AI-Q Research Agent Blueprint. Agent orchestrates RAG-first search with LLM-as-judge, web search fallback, and virtual screening (MolMIM + DiffDock) in a Plan-Execute-Reflect loop, then NIM Llama 3.3 70B generates the final report.",
+  "version": "0.0.67",
+  "scope": "public",
+  "codebase": {
+    "type": "item"
+  },
+  "attributes": {
+    "Hub": ["Nvidia", "Dataloop"],
+    "Category": ["Pipeline", "Blueprint"],
+    "Pipeline Type": "GenAI",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop",
+    "Media Type": ["Text"]
+  },
+  "dependencies": [
+    { "name": "nvidia-biomedical-research" },
+    {
+      "name": "nim-llama-3-3-70b-instruct",
+      "components": {
+        "models": [
+          {
+            "name": "nim-llama-3-3-70b-instruct",
+            "configuration": {
+              "nim_model_name": "meta/llama-3.3-70b-instruct",
+              "system_prompt": "You are a report formatter. You receive a research draft in the context and your ONLY job is to reformat it into a polished, publication-ready report. You must NOT rewrite, summarize, or shorten the draft.\n\nCRITICAL RULES:\n- The research draft in the context is your SOLE source of information. Do NOT add any facts, citations, or claims from your own knowledge.\n- Reproduce ALL content from the research draft. Every section, every paragraph, every data point must appear in your output.\n- The output MUST be at least as long as the research draft. If the draft is 10,000 words, your report must be at least 10,000 words.\n- If a Virtual Screening section exists in the draft, you MUST include it in full with ALL technical details: target protein, seed molecule, PDB IDs, SMILES strings, generated ligands, DiffDock confidence scores, and uploaded artifact file names. Copy these verbatim.\n\nFormatting guidelines:\n- Use ## for sections, ### for subsections.\n- Write in coherent paragraphs with smooth transitions between sections.\n- Begin with an engaging introduction that frames the scope.\n- Arrange sections logically following the report organization provided.\n- Avoid bullet lists unless the draft uses them.\n- Do NOT refer to yourself as the writer. Do not add meta-commentary.\n- Do not add a sources section (added in post-processing).\n- Do NOT wrap the report in markdown code blocks.\n- Write the report in the same language as the user's message.\n- Return only the final report.",
+              "max_tokens": 20000,
+              "temperature": 0.0,
+              "top_p": 0.7,
+              "stream": true
+            }
+          }
+        ]
+      }
+    },
+    { "name": "nim-rag-bp" }
+  ],
+  "variables": {
+    "report_writer_model__model": "nim-llama-3-3-70b-instruct.models.nim-llama-3-3-70b-instruct"
+  },
+  "components": {
+    "pipelineTemplates": [
+      {
+        "name": "Biomedical AI-Q Research Agent",
+        "description": "Agent -> Research (RAG-first + Web fallback, cycle) -> Virtual Screening (MolMIM + DiffDock, conditional) -> NIM Llama 3.3 Report Generation",
+        "connections": [
+          {
+            "src": { "nodeId": "node-init", "portId": "port-init-out" },
+            "tgt": { "nodeId": "node-agent", "portId": "port-agent-in" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "node-agent", "portId": "port-agent-out" },
+            "tgt": { "nodeId": "node-research", "portId": "port-research-in" },
+            "condition": "{}",
+            "action": "research"
+          },
+          {
+            "src": { "nodeId": "node-research", "portId": "port-research-out" },
+            "tgt": { "nodeId": "node-agent", "portId": "port-agent-in" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "node-agent", "portId": "port-agent-out" },
+            "tgt": { "nodeId": "node-vs", "portId": "port-vs-in" },
+            "condition": "{}",
+            "action": "virtual_screening"
+          },
+          {
+            "src": { "nodeId": "node-vs", "portId": "port-vs-out" },
+            "tgt": { "nodeId": "node-agent", "portId": "port-agent-in" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "node-agent", "portId": "port-agent-out" },
+            "tgt": { "nodeId": "node-llama", "portId": "port-llama-in" },
+            "condition": "{}",
+            "action": "generate_report"
+          }
+        ],
+        "startNodes": [
+          {
+            "nodeId": "node-init",
+            "type": "root",
+            "id": "start-node-1"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "node-init",
+            "inputs": [
+              {
+                "portId": "port-init-in",
+                "nodeId": "port-init-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              },
+              {
+                "portId": "port-init-rag-pipeline",
+                "nodeId": "port-init-rag-pipeline",
+                "type": "String",
+                "name": "rag_pipeline_id",
+                "displayName": "RAG Pipeline ID",
+                "variableName": "rag_pipeline_id",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-init-out",
+                "nodeId": "port-init-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Init",
+            "type": "custom",
+            "namespace": {
+              "functionName": "init_research",
+              "serviceName": "biomedical-research-compute",
+              "moduleName": "biomedical-research-module",
+              "packageName": "nvidia-biomedical-research"
+            },
+            "appName": "NVIDIA Biomedical AI-Q Research Agent",
+            "dpkName": "nvidia-biomedical-research",
+            "metadata": {
+              "position": { "x": 9600, "y": 10274, "z": 0 },
+              "componentGroupName": "NVIDIA Biomedical Research",
+              "repeatable": true,
+              "pipelineNodeName": "biomed-init-node"
+            }
+          },
+          {
+            "id": "node-agent",
+            "inputs": [
+              {
+                "portId": "port-agent-in",
+                "nodeId": "port-agent-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-agent-out",
+                "nodeId": "port-agent-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": ["research", "virtual_screening", "generate_report"],
+                "io": "output"
+              }
+            ],
+            "name": "Biomedical AIQ Agent",
+            "type": "custom",
+            "namespace": {
+              "functionName": "run_agent",
+              "serviceName": "biomedical-research-compute",
+              "moduleName": "biomedical-research-module",
+              "packageName": "nvidia-biomedical-research"
+            },
+            "appName": "NVIDIA Biomedical AI-Q Research Agent",
+            "dpkName": "nvidia-biomedical-research",
+            "metadata": {
+              "position": { "x": 10000, "y": 10274, "z": 0 },
+              "componentGroupName": "NVIDIA Biomedical Research",
+              "repeatable": true,
+              "pipelineNodeName": "biomed-agent-node"
+            }
+          },
+          {
+            "id": "node-research",
+            "inputs": [
+              {
+                "portId": "port-research-in",
+                "nodeId": "port-research-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-research-out",
+                "nodeId": "port-research-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Biomedical Research",
+            "type": "custom",
+            "namespace": {
+              "functionName": "research",
+              "serviceName": "biomedical-research-compute",
+              "moduleName": "biomedical-research-module",
+              "packageName": "nvidia-biomedical-research"
+            },
+            "appName": "NVIDIA Biomedical AI-Q Research Agent",
+            "dpkName": "nvidia-biomedical-research",
+            "metadata": {
+              "position": { "x": 10400, "y": 10074, "z": 0 },
+              "componentGroupName": "NVIDIA Biomedical Research",
+              "repeatable": true,
+              "pipelineNodeName": "biomed-research-node"
+            }
+          },
+          {
+            "id": "node-vs",
+            "inputs": [
+              {
+                "portId": "port-vs-in",
+                "nodeId": "port-vs-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-vs-out",
+                "nodeId": "port-vs-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Virtual Screening",
+            "type": "custom",
+            "namespace": {
+              "functionName": "virtual_screening",
+              "serviceName": "biomedical-research-compute",
+              "moduleName": "biomedical-research-module",
+              "packageName": "nvidia-biomedical-research"
+            },
+            "appName": "NVIDIA Biomedical AI-Q Research Agent",
+            "dpkName": "nvidia-biomedical-research",
+            "metadata": {
+              "position": { "x": 10400, "y": 10274, "z": 0 },
+              "componentGroupName": "NVIDIA Biomedical Research",
+              "repeatable": true,
+              "pipelineNodeName": "biomed-vs-node"
+            }
+          },
+          {
+            "id": "node-llama",
+            "inputs": [
+              {
+                "portId": "port-llama-in",
+                "nodeId": "port-llama-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-llama-out",
+                "nodeId": "port-llama-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "port-llama-annotations",
+                "nodeId": "port-llama-annotations",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "NIM Llama 3.3 70B - Report Writer",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "serviceName": "",
+              "moduleName": "",
+              "packageName": "nim-llama-3-3-70b-instruct"
+            },
+            "appName": "NIM Llama 3.3 70B Instruct",
+            "dpkName": "nim-llama-3-3-70b-instruct",
+            "metadata": {
+              "position": { "x": 10400, "y": 10574, "z": 0 },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "variableModel": "report_writer_model",
+              "pipelineNodeName": "nim-llama-70b-report-writer",
+              "mlType": "genAi"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "report_writer_model",
+            "type": "Model",
+            "description": "LLM model for generating the final research report. Preset: NIM Llama 3.3 70B Instruct.",
+            "value": "$var(report_writer_model__model)"
+          },
+          {
+            "name": "rag_pipeline_id",
+            "type": "String",
+            "description": "Optional: Pipeline ID of a configured 'RAG Pipeline NVIDIA Blueprint' instance. Create a pipeline from the nim-rag-bp template, configure its dataset and models, then paste its ID here. Leave empty to skip RAG retrieval and use web search only."
+          }
+        ]
+      }
+    ]
+  }
+}
