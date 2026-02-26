@@ -54,33 +54,6 @@
         },
         "categories": ["Video Search and Summarization"],
         "scope": "project"
-      },
-      {
-        "name": "prepare-graph-prompt-node",
-        "invoke": {
-          "type": "function",
-          "namespace": "vss-compute-config.vss-graph-module.prepare_graph_prompt"
-        },
-        "categories": ["Video Search and Summarization"],
-        "scope": "project"
-      },
-      {
-        "name": "process-graph-response-node",
-        "invoke": {
-          "type": "function",
-          "namespace": "vss-compute-config.vss-graph-module.process_graph_response"
-        },
-        "categories": ["Video Search and Summarization"],
-        "scope": "project"
-      },
-      {
-        "name": "graph-context-expansion-node",
-        "invoke": {
-          "type": "function",
-          "namespace": "vss-compute-config.vss-retrieval-module.graph_context_expansion"
-        },
-        "categories": ["Video Search and Summarization"],
-        "scope": "project"
       }
     ],
     "modules": [
@@ -126,54 +99,6 @@
               {"name": "item", "type": "Item"}
             ],
             "displayName": "Transcript to Text"
-          }
-        ]
-      },
-      {
-        "name": "vss-graph-module",
-        "computeConfig": "vss-compute-config",
-        "entryPoint": "video_search_summarization/vss_nodes/prepare_graph_prompt.py",
-        "className": "PrepareGraphPrompt",
-        "functions": [
-          {
-            "name": "prepare_graph_prompt",
-            "input": [
-              {"name": "item", "type": "Item"}
-            ],
-            "output": [
-              {"name": "item", "type": "Item"}
-            ],
-            "displayName": "Prepare Graph Prompt"
-          },
-          {
-            "name": "process_graph_response",
-            "entryPoint": "video_search_summarization/vss_nodes/process_graph_response.py",
-            "className": "ProcessGraphResponse",
-            "input": [
-              {"name": "item", "type": "Item"}
-            ],
-            "output": [
-              {"name": "items", "type": "Item[]"}
-            ],
-            "displayName": "Process Graph Response"
-          }
-        ]
-      },
-      {
-        "name": "vss-retrieval-module",
-        "computeConfig": "vss-compute-config",
-        "entryPoint": "video_search_summarization/vss_nodes/graph_context_expansion.py",
-        "className": "GraphContextExpansion",
-        "functions": [
-          {
-            "name": "graph_context_expansion",
-            "input": [
-              {"name": "item", "type": "Item"}
-            ],
-            "output": [
-              {"name": "item", "type": "Item"}
-            ],
-            "displayName": "Graph Context Expansion"
           }
         ]
       }
