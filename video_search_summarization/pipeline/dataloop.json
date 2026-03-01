@@ -23,6 +23,9 @@
   },
   "dependencies": [
     {
+      "name": "audio-utils"
+    },
+    {
       "name": "video-utils-splitting"
     },
     {
@@ -81,7 +84,7 @@
           {
             "src": { "nodeId": "b1a00002-0002-4000-8000-000000000002", "portId": "b1a00002-0002-4000-8000-200000000002" },
             "tgt": { "nodeId": "b1a00003-0003-4000-8000-000000000003", "portId": "b1a00003-0003-4000-8000-100000000003" },
-            "condition": "{\"filter\":{\"$and\":[{\"metadata.splitting_frame_index\":0}]},\"resource\":\"items\"}"
+            "condition": "{\"filter\":{\"$and\":[{\"metadata.user.splitting_frame_index\":0}]},\"resource\":\"items\"}"
           },
           {
             "src": { "nodeId": "b1a00003-0003-4000-8000-000000000003", "portId": "b1a00003-0003-4000-8000-200000000003" },
@@ -187,9 +190,11 @@
               "componentGroupName": "video-utils",
               "customNodeConfig": {
                 "output_dir": "output_split_videos",
-                "split_type": "num_frames",
-                "splitter_arg": 250,
-                "n_overlap": 25,
+                "split_type": "out_length",
+                "splitter_arg": 30,
+                "n_overlap": 0,
+                "use_ffmpeg": true,
+                "carry_annotations": false,
                 "validation": {
                   "valid": true,
                   "errors": []
@@ -221,7 +226,7 @@
                 "io": "output"
               }
             ],
-            "name": "Smart Frames Splitting",
+            "name": "Uniform Frame Sampling",
             "type": "custom",
             "namespace": {
               "functionName": "video_to_frames",
@@ -240,17 +245,16 @@
               "componentGroupName": "video-utils",
               "customNodeConfig": {
                 "output_dir": "output",
-                "split_type": "structural_similarity_sampling",
-                "min_interval": 2,
-                "window_size": 7,
-                "threshold": 0.25,
+                "split_type": "num_frames",
+                "splitter_arg": 8,
+                "carry_annotations": false,
                 "validation": {
                   "valid": true,
                   "errors": []
                 }
               },
               "repeatable": true,
-              "pipelineNodeName": "smart-frames-splitting"
+              "pipelineNodeName": "video-to-frames"
             }
           },
           {
@@ -503,6 +507,7 @@
               "moduleName": "",
               "packageName": "nim-llama-3-2-nemoretriever-300m-embed-v2"
             },
+            "appName": "Llama 3.2 NeMoRetriever 300M Embed v2",
             "dpkName": "nim-llama-3-2-nemoretriever-300m-embed-v2",
             "metadata": {
               "position": {
@@ -548,19 +553,19 @@
             "type": "custom",
             "namespace": {
               "functionName": "extract_audio",
-              "serviceName": "vss-compute-config",
-              "moduleName": "vss-audio-module",
-              "packageName": "video-search-summarization"
+              "serviceName": "audio-extraction",
+              "moduleName": "audio-extraction",
+              "packageName": "audio-utils"
             },
-            "appName": "Video Search and Summarization",
-            "dpkName": "video-search-summarization",
+            "appName": "[Audio Utils] - Extraction",
+            "dpkName": "audio-utils",
             "metadata": {
               "position": {
                 "x": 10300,
                 "y": 10700,
                 "z": 0
               },
-              "componentGroupName": "Video Search and Summarization",
+              "componentGroupName": "audio-utils",
               "customNodeConfig": {
                 "output_dir": "/audio_prompt_items",
                 "sample_rate": 16000,
@@ -570,7 +575,7 @@
                 }
               },
               "repeatable": true,
-              "pipelineNodeName": "audio-extract-node"
+              "pipelineNodeName": "audio-extraction"
             }
           },
           {
@@ -613,8 +618,8 @@
               },
               "componentGroupName": "Video Search and Summarization",
               "customNodeConfig": {
-                "asr_base_url": "https://integrate.api.nvidia.com/v1",
-                "asr_model_name": "nvidia/parakeet-ctc-1.1b-asr",
+                "asr_function_id": "71203149-d3b7-4460-8231-1be2543a1fca",
+                "asr_grpc_uri": "grpc.nvcf.nvidia.com:443",
                 "language_code": "en-US",
                 "validation": {
                   "valid": true,
@@ -650,20 +655,20 @@
             "name": "Transcript to Text",
             "type": "custom",
             "namespace": {
-              "functionName": "transcript_to_text",
-              "serviceName": "vss-compute-config",
-              "moduleName": "vss-audio-module",
-              "packageName": "video-search-summarization"
+              "functionName": "run",
+              "serviceName": "prompt-to-text-service",
+              "moduleName": "prompt-to-text-module",
+              "packageName": "prompt_to_text"
             },
-            "appName": "Video Search and Summarization",
-            "dpkName": "video-search-summarization",
+            "appName": "Prompt to Text",
+            "dpkName": "prompt_to_text",
             "metadata": {
               "position": {
                 "x": 10900,
                 "y": 10700,
                 "z": 0
               },
-              "componentGroupName": "Video Search and Summarization",
+              "componentGroupName": "text-utils",
               "customNodeConfig": {
                 "output_dir": "/text_responses_dir",
                 "text_prefix": "Audio transcript: ",
@@ -674,7 +679,7 @@
                 }
               },
               "repeatable": true,
-              "pipelineNodeName": "transcript-to-text-node"
+              "pipelineNodeName": "prompt-to-text"
             }
           }
         ]

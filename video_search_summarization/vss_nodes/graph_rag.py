@@ -332,7 +332,7 @@ class ServiceRunner(dl.BaseServiceRunner):
     # ------------------------------------------------------------------ #
     #  2. Retrieve from graph — keyword search, returns LLM-ready context #
     # ------------------------------------------------------------------ #
-    def query_graph(self, item: dl.Item, dataset: dl.Dataset) -> dl.Item:
+    def query_graph(self, item: dl.Item) -> dl.Item:
         """
         Pipeline node — receives a prompt item, extracts the last user
         message, searches the dataset graph for matching entities within
@@ -347,6 +347,7 @@ class ServiceRunner(dl.BaseServiceRunner):
             logger.warning(f"No user message found in prompt item {item.id}")
             return item
 
+        dataset = item.dataset
         G = self._load_graph(dataset)
         if G.number_of_nodes() == 0:
             logger.warning("No graph data available in this dataset.")

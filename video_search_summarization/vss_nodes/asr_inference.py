@@ -1,33 +1,58 @@
 import logging
 import os
-import base64
+import tempfile
 
 import dtlpy as dl
-import requests
 
 logger = logging.getLogger('vss-nodes.asr-inference')
+
+NVCF_GRPC_URI = 'grpc.nvcf.nvidia.com:443'
+PARAKEET_RNNT_FUNCTION_ID = '71203149-d3b7-4460-8231-1be2543a1fca'
 
 
 class ASRInference(dl.BaseServiceRunner):
     """
-    Placeholder ASR inference node. Calls an ASR API endpoint and writes the
-    transcript as an assistant response in the PromptItem.
+    ASR inference node using NVIDIA Riva ASR gRPC hosted endpoint.
 
-    When a proper ASR NIM DPK becomes available, replace this custom node
-    with an ml-type node in the pipeline template. The surrounding nodes
-    (Audio Extract and Transcript to Text) require no changes since this
-    node preserves the PromptItem in/out contract.
+    Connects to the hosted NVIDIA Riva ASR service at grpc.nvcf.nvidia.com:443
+    via the nvidia-riva-client library. When a proper ASR NIM DPK becomes
+    available, replace this custom node with an ml-type node in the pipeline
+    template. The surrounding nodes (Audio Extract, Transcript to Text) require
+    no changes since this node preserves the PromptItem in/out contract.
     """
 
+    def __init__(self):
+        self._asr_service = None
+        self._current_function_id = None
+
+    def _get_asr_service(self, function_id: str, grpc_uri: str):
+        import riva.client
+
+        if self._asr_service is not None and self._current_function_id == function_id:
+            return self._asr_service
+
+        api_key = os.environ.get('NGC_API_KEY', '')
+        if not api_key:
+            raise ValueError("Missing NGC_API_KEY environment variable.")
+
+        auth = riva.client.Auth(
+            use_ssl=True,
+            uri=grpc_uri,
+            metadata_args=[
+                ["function-id", function_id],
+                ["authorization", f"Bearer {api_key}"],
+            ],
+        )
+        self._asr_service = riva.client.ASRService(auth)
+        self._current_function_id = function_id
+        return self._asr_service
+
     def predict(self, item: dl.Item, context: dl.Context) -> dl.Item:
-        """
-        Reads audio from PromptItem, calls ASR endpoint, writes transcript back.
-        """
         logger.info(f"ASR inference on prompt item: {item.id} ({item.name})")
 
         node_config = context.node.metadata.get('customNodeConfig', {})
-        asr_base_url = node_config.get('asr_base_url', 'https://integrate.api.nvidia.com/v1')
-        asr_model_name = node_config.get('asr_model_name', 'nvidia/parakeet-ctc-1.1b-asr')
+        function_id = node_config.get('asr_function_id', PARAKEET_RNNT_FUNCTION_ID)
+        grpc_uri = node_config.get('asr_grpc_uri', NVCF_GRPC_URI)
         language_code = node_config.get('language_code', 'en-US')
 
         for annotation in item.annotations.list():
@@ -36,32 +61,29 @@ class ASRInference(dl.BaseServiceRunner):
         prompt_item = dl.PromptItem.from_item(item=item)
 
         audio_source = None
-        is_placeholder = False
         for prompt in prompt_item.prompts:
             for element in prompt.elements:
                 if element['mimetype'] == dl.PromptType.AUDIO:
                     audio_source = element['value']
                     break
-                if element['mimetype'] == dl.PromptType.TEXT and 'No audio available' in str(element.get('value', '')):
-                    is_placeholder = True
-            if audio_source or is_placeholder:
+            if audio_source:
                 break
 
         if audio_source is None:
             transcript = "Audio transcript not available."
             logger.warning(f"No audio element found in prompt item {item.id}")
         else:
-            transcript = self._call_asr(
+            transcript = self._transcribe(
                 audio_source=audio_source,
-                base_url=asr_base_url,
-                model_name=asr_model_name,
-                language_code=language_code
+                function_id=function_id,
+                grpc_uri=grpc_uri,
+                language_code=language_code,
             )
 
         prompt_item.add(
             message={
                 'role': 'assistant',
-                'content': [{'mimetype': dl.PromptType.TEXT, 'value': transcript}]
+                'content': [{'mimetype': dl.PromptType.TEXT, 'value': transcript}],
             }
         )
 
@@ -69,49 +91,70 @@ class ASRInference(dl.BaseServiceRunner):
         logger.info(f"ASR transcript written to prompt item {item.id} ({len(transcript)} chars)")
         return item
 
-    @staticmethod
-    def _call_asr(audio_source: str, base_url: str, model_name: str, language_code: str) -> str:
-        """
-        Call the ASR API. Handles both local file paths and remote URLs
-        (PromptItem audio references become URLs after upload to the platform).
-        """
+    def _transcribe(self, audio_source: str, function_id: str, grpc_uri: str, language_code: str) -> str:
+        import riva.client
+
         try:
-            api_key = os.environ.get('NVIDIA_API_KEY', os.environ.get('NGC_API_KEY', ''))
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                wav_path = self._download_audio(audio_source, tmp_dir)
+                if wav_path is None:
+                    return "Audio transcript not available."
 
-            if os.path.isfile(audio_source):
-                with open(audio_source, 'rb') as f:
+                asr_service = self._get_asr_service(function_id, grpc_uri)
+
+                config = riva.client.RecognitionConfig(
+                    encoding=riva.client.AudioEncoding.LINEAR_PCM,
+                    max_alternatives=1,
+                    enable_automatic_punctuation=True,
+                    verbatim_transcripts=False,
+                    language_code=language_code,
+                )
+                riva.client.add_audio_file_specs_to_config(config, wav_path)
+
+                with open(wav_path, 'rb') as f:
                     audio_bytes = f.read()
-            elif 'dataloop.ai' in audio_source and '/items/' in audio_source:
-                item_id = audio_source.split("/stream")[0].split("/items/")[-1]
-                audio_bytes = dl.items.get(item_id=item_id).download(save_locally=False).getvalue()
-            elif audio_source.startswith('http'):
-                resp = requests.get(audio_source, timeout=60)
-                resp.raise_for_status()
-                audio_bytes = resp.content
-            else:
-                logger.warning(f"Audio source is not a local file or URL: {audio_source}")
-                return "Audio transcript not available."
 
-            audio_b64 = base64.b64encode(audio_bytes).decode('utf-8')
+                response = asr_service.offline_recognize(audio_bytes, config)
 
-            url = f"{base_url}/audio/transcriptions"
-            headers = {
-                'Authorization': f'Bearer {api_key}',
-                'Content-Type': 'application/json'
-            }
-            payload = {
-                'model': model_name,
-                'language': language_code,
-                'audio': audio_b64,
-            }
+                transcript_parts = []
+                for result in response.results:
+                    if result.alternatives:
+                        transcript_parts.append(result.alternatives[0].transcript)
 
-            response = requests.post(url, headers=headers, json=payload, timeout=120)
-            response.raise_for_status()
-
-            result = response.json()
-            transcript = result.get('text', result.get('transcript', ''))
-            return transcript if transcript else "Audio transcript not available."
+                transcript = ' '.join(transcript_parts).strip()
+                return transcript if transcript else "Audio transcript not available."
 
         except Exception as e:
-            logger.error(f"ASR API call failed: {e}")
+            logger.error(f"ASR inference failed: {e}", exc_info=True)
             return "Audio transcript not available."
+
+    @staticmethod
+    def _download_audio(audio_source: str, tmp_dir: str) -> str:
+        """Download audio to a local WAV file and return the path."""
+        try:
+            dest_path = os.path.join(tmp_dir, 'audio.wav')
+
+            if os.path.isfile(audio_source):
+                import shutil
+                shutil.copy2(audio_source, dest_path)
+                return dest_path
+
+            if 'dataloop.ai' in audio_source and '/items/' in audio_source:
+                item_id = audio_source.split("/stream")[0].split("/items/")[-1]
+                dl.items.get(item_id=item_id).download(local_path=dest_path)
+                return dest_path
+
+            if audio_source.startswith('http'):
+                import requests
+                resp = requests.get(audio_source, timeout=60)
+                resp.raise_for_status()
+                with open(dest_path, 'wb') as f:
+                    f.write(resp.content)
+                return dest_path
+
+            logger.warning(f"Unrecognized audio source format: {audio_source}")
+            return None
+
+        except Exception as e:
+            logger.error(f"Failed to download audio: {e}")
+            return None

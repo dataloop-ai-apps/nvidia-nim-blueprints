@@ -1,7 +1,7 @@
 {
   "name": "video-search-summarization",
   "displayName": "Video Search and Summarization",
-  "description": "Custom nodes for the VSS NVIDIA Blueprint: audio extraction, ASR inference, transcript-to-text, graph extraction (prepare prompt + process response), and graph context expansion for retrieval.",
+  "description": "Custom nodes for the VSS NVIDIA Blueprint: ASR inference (NVIDIA Riva gRPC) and Graph RAG (knowledge graph construction, retrieval, visualization).",
   "version": "0.0.67",
   "scope": "public",
   "attributes": {
@@ -18,25 +18,30 @@
         "runtime": {
           "podType": "regular-xs",
           "concurrency": 10,
-          "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints:0.0.3",
+          "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints:0.0.4",
           "autoscaler": {
             "type": "rabbitmq",
             "minReplicas": 0,
             "maxReplicas": 2
           }
         }
+      },
+      {
+        "name": "graph-rag-compute-config",
+        "runtime": {
+          "podType": "regular-xs",
+          "concurrency": 1,
+          "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints:0.0.4",
+          "autoscaler": {
+            "type": "rabbitmq",
+            "minReplicas": 0,
+            "maxReplicas": 1,
+            "queueLength": 10
+          }
+        }
       }
     ],
     "pipelineNodes": [
-      {
-        "name": "audio-extract-node",
-        "invoke": {
-          "type": "function",
-          "namespace": "vss-compute-config.vss-audio-module.extract_audio"
-        },
-        "categories": ["Video Search and Summarization"],
-        "scope": "project"
-      },
       {
         "name": "asr-inference-node",
         "invoke": {
@@ -47,12 +52,33 @@
         "scope": "project"
       },
       {
-        "name": "transcript-to-text-node",
+        "name": "add-chunk-to-graph",
         "invoke": {
           "type": "function",
-          "namespace": "vss-compute-config.vss-audio-module.transcript_to_text"
+          "namespace": "graph-rag-compute-config.graph-rag-module.add_chunk_to_graph"
         },
         "categories": ["Video Search and Summarization"],
+        "displayName": "Add Chunk to Graph",
+        "scope": "project"
+      },
+      {
+        "name": "query-graph",
+        "invoke": {
+          "type": "function",
+          "namespace": "graph-rag-compute-config.graph-rag-module.query_graph"
+        },
+        "categories": ["Video Search and Summarization"],
+        "displayName": "Query Graph",
+        "scope": "project"
+      },
+      {
+        "name": "export-graph",
+        "invoke": {
+          "type": "function",
+          "namespace": "graph-rag-compute-config.graph-rag-module.export_graph"
+        },
+        "categories": ["Video Search and Summarization"],
+        "displayName": "Export Graph",
         "scope": "project"
       }
     ],
@@ -60,26 +86,14 @@
       {
         "name": "vss-audio-module",
         "computeConfig": "vss-compute-config",
-        "entryPoint": "video_search_summarization/vss_nodes/audio_extraction.py",
-        "className": "AudioExtraction",
+        "entryPoint": "video_search_summarization/vss_nodes/asr_inference.py",
+        "className": "ASRInference",
         "integrations": [
           "dl-ngc-api-key"
         ],
         "functions": [
           {
-            "name": "extract_audio",
-            "input": [
-              {"name": "item", "type": "Item"}
-            ],
-            "output": [
-              {"name": "item", "type": "Item"}
-            ],
-            "displayName": "Audio Extract"
-          },
-          {
             "name": "predict",
-            "entryPoint": "video_search_summarization/vss_nodes/asr_inference.py",
-            "className": "ASRInference",
             "input": [
               {"name": "item", "type": "Item"}
             ],
@@ -87,18 +101,44 @@
               {"name": "item", "type": "Item"}
             ],
             "displayName": "ASR Inference"
-          },
+          }
+        ]
+      },
+      {
+        "name": "graph-rag-module",
+        "computeConfig": "graph-rag-compute-config",
+        "entryPoint": "video_search_summarization/vss_nodes/graph_rag.py",
+        "className": "ServiceRunner",
+        "functions": [
           {
-            "name": "transcript_to_text",
-            "entryPoint": "video_search_summarization/vss_nodes/transcript_to_text.py",
-            "className": "TranscriptToText",
+            "name": "add_chunk_to_graph",
             "input": [
               {"name": "item", "type": "Item"}
             ],
             "output": [
               {"name": "item", "type": "Item"}
             ],
-            "displayName": "Transcript to Text"
+            "displayName": "Add Chunk to Graph"
+          },
+          {
+            "name": "query_graph",
+            "input": [
+              {"name": "item", "type": "Item"}
+            ],
+            "output": [
+              {"name": "item", "type": "Item"}
+            ],
+            "displayName": "Query Graph"
+          },
+          {
+            "name": "export_graph",
+            "input": [
+              {"name": "dataset", "type": "Dataset"}
+            ],
+            "output": [
+              {"name": "item", "type": "Item"}
+            ],
+            "displayName": "Export Graph"
           }
         ]
       }

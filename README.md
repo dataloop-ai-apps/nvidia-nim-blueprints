@@ -21,8 +21,27 @@ A collection of NVIDIA NIM-powered blueprints for the Dataloop Platform. These b
 | [PDF to Podcast](pdf_to_podcast/README.md) | Transform PDF documents into podcast-ready audio content |
 | [Multimodal RAG - Preprocessing](multimodal_rag/preprocessing_multimodal_rag/README.md) | PDF extraction and embedding pipeline for RAG |
 | [Multimodal RAG - Retrieval](multimodal_rag/nvidia_rag_pipeline/README.md) | Document retrieval and response generation with human-in-the-loop |
+| Video Search & Summarization | Ingest videos, split into chunks, extract frames + audio, describe with VLM, transcribe with ASR, embed, and store for search & Q&A |
 
 ## Blueprint Overviews
+
+### Video Search & Summarization
+
+Processes video content for semantic search and Q&A. The pipeline splits videos into time-based chunks (via [Video Utils - Splitting](https://github.com/dataloop-ai-apps/video-utils) with FFmpeg), uniformly samples frames, and runs dual branches in parallel:
+
+- **Visual branch**: Groups frames into prompts → describes them with a Vision Language Model (Phi-4 Multimodal Instruct) → converts to text
+- **Audio branch**: Extracts audio → transcribes with NVIDIA Riva ASR → converts to text
+
+Both branches feed into an embedding model (Llama 3.2 NeMoRetriever 300M Embed v2) and a clone-to-dataset node for downstream vector search.
+
+**Key Features:**
+- FFmpeg-based video splitting (preserves audio, near-instant stream-copy)
+- Uniform frame sampling for VLM analysis
+- NVIDIA Riva gRPC ASR integration
+- Knowledge graph construction (Graph RAG) for contextual retrieval
+- Reuses community DPKs: `video-utils-splitting`, `llm-tools-frames-to-prompt`, `prompt_to_text`
+
+**Required API Keys:** NVIDIA NGC API Key
 
 ### Report Generation
 
