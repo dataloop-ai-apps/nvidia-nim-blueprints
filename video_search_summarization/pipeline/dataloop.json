@@ -55,13 +55,13 @@
       }
     },
     {
-      "name": "nim-llama-3-2-nemoretriever-300m-embed-v2",
+      "name": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
       "components": {
         "models": [
           {
-            "name": "nim-llama-3-2-nemoretriever-300m-embed-v2",
+            "name": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
             "configuration": {
-              "nim_model_name": "nvidia/llama-3.2-nemoretriever-300m-embed-v2",
+              "nim_model_name": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
               "embeddings_size": 2048
             }
           }
@@ -133,7 +133,7 @@
           {
             "name": "embedding_model",
             "type": "Model",
-            "description": "Embedding model used to embed text descriptions for vector search. Preset: Llama 3.2 NeMoRetriever 300M Embed v2 (nim-llama-3-2-nemoretriever-300m-embed-v2).",
+            "description": "Embedding model used to embed text descriptions for vector search. Preset: Llama 3.2 NeMoRetriever 1B VLM Embed v1 (nim-llama-3-2-nemoretriever-1b-vlm-embed-v1).",
             "value": "$var(embedding_model__model)"
           }
         ],
@@ -178,9 +178,9 @@
               },
               "componentGroupName": "video-utils",
               "customNodeConfig": {
-                "output_dir": "output_split_videos",
+                "output_dir": "/vss_pipeline/split_videos",
                 "split_type": "out_length",
-                "splitter_arg": 30,
+                "splitter_arg": 15,
                 "n_overlap": 0,
                 "use_ffmpeg": true,
                 "carry_annotations": false,
@@ -233,7 +233,7 @@
               },
               "componentGroupName": "prompt-utils",
               "customNodeConfig": {
-                "prompt_dir": "/prompt_items_dir",
+                "prompt_dir": "/vss_pipeline/visual/prompts",
                 "prompt_instruction": "Analyze this video and provide a detailed, search-friendly description. Include: (1) Key objects, people, and entities visible; (2) Actions, movements, and events occurring; (3) Scene setting, location type, and environment; (4) Any text, signs, or identifiable information; (5) Notable changes or transitions throughout the video. Be specific and factual — mention colors, positions, counts, and directions where applicable.",
                 "validation": {
                   "valid": true,
@@ -344,7 +344,7 @@
               },
               "componentGroupName": "text-utils",
               "customNodeConfig": {
-                "output_dir": "/text_responses_dir",
+                "output_dir": "/vss_pipeline/visual/descriptions",
                 "text_prefix": "Video description: ",
                 "source_type": "vlm_caption",
                 "validation": {
@@ -435,10 +435,10 @@
               "functionName": "embed",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-llama-3-2-nemoretriever-300m-embed-v2"
+              "packageName": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1"
             },
-            "appName": "Llama 3.2 NeMoRetriever 300M Embed v2",
-            "dpkName": "nim-llama-3-2-nemoretriever-300m-embed-v2",
+            "appName": "Llama 3.2 Nemoretriever 1B Vlm Embed V1",
+            "dpkName": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
             "metadata": {
               "position": {
                 "x": 11800,
@@ -446,7 +446,7 @@
                 "z": 0
               },
               "modelConfig": {
-                "nim_model_name": "nvidia/llama-3.2-nemoretriever-300m-embed-v2",
+                "nim_model_name": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
                 "embeddings_size": 2048,
                 "hyde_model_name": "",
                 "base_url": "https://integrate.api.nvidia.com/v1"
@@ -497,7 +497,7 @@
               },
               "componentGroupName": "audio-utils",
               "customNodeConfig": {
-                "output_dir": "/audio_files",
+                "output_dir": "/vss_pipeline/audio/extracted",
                 "sample_rate": 16000,
                 "create_prompt_item": false,
                 "validation": {
@@ -549,7 +549,7 @@
               },
               "componentGroupName": "audio-utils",
               "customNodeConfig": {
-                "output_dir": "/audio_transcripts",
+                "output_dir": "/vss_pipeline/audio/transcripts",
                 "validation": {
                   "valid": true,
                   "errors": []
@@ -565,6 +565,6 @@
   },
   "variables": {
     "vlm_model__model": "vila-model-adapter.models.nvila-8b",
-    "embedding_model__model": "nim-llama-3-2-nemoretriever-300m-embed-v2.models.nim-llama-3-2-nemoretriever-300m-embed-v2"
+    "embedding_model__model": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1.models.nim-llama-3-2-nemoretriever-1b-vlm-embed-v1"
   }
 }

@@ -32,7 +32,7 @@ Processes video content for semantic search and Q&A. The pipeline is 100% compos
 - **Visual branch**: Wraps each sub-video in a prompt → describes it with NVILA-8B (a Vision Language Model with native video understanding) → extracts the text response
 - **Audio branch**: Extracts audio from each sub-video → transcribes with NVIDIA Parakeet CTC 0.6B ASR
 
-Both branches clone results to a target dataset and embed them with Llama 3.2 NeMoRetriever 300M Embed v2 for downstream vector search.
+Both branches clone results to a target dataset and embed them with Llama 3.2 NeMoRetriever 1B VLM Embed v1 for downstream vector search.
 
 **Pipeline flow:**
 
@@ -52,7 +52,7 @@ Video ─→ Video to Videos┤                                               �
 | `prompt_to_text` | Prompt to Text — extracts the assistant response as a text item |
 | `audio-utils` | Audio Extract — FFmpeg audio extraction to WAV |
 | `parakeet-ctc-0-6b-asr` | Parakeet ASR — NVIDIA Parakeet CTC 0.6B speech-to-text |
-| `nim-llama-3-2-nemoretriever-300m-embed-v2` | Embedding — text embeddings for vector search |
+| `nim-llama-3-2-nemoretriever-1b-vlm-embed-v1` | Embedding — text embeddings for vector search |
 
 **Required API Keys:** NVIDIA NGC API Key
 
@@ -80,7 +80,7 @@ Transforms PDF documents into audio content using text-to-speech technology. Sup
 
 Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pdf-data-extraction-for-enterprise-rag) blueprint. On the Dataloop platform, this blueprint is implemented as two separate pipelines that work together:
 
-1. **Preprocessing Pipeline**: Extracts text and images from PDFs, generates chunks, and creates embeddings using NVIDIA NIM models (YOLOX, PaddleOCR, E5-V5).
+1. **Preprocessing Pipeline**: Extracts text and images from PDFs, generates chunks, and creates embeddings using NVIDIA NIM models (YOLOX, PaddleOCR, Llama 3.2 NeMoRetriever 1B VLM Embed v1).
 
 2. **Retrieval Pipeline**: Retrieves relevant documents based on queries and generates responses using Llama 3.1 405B, with human-in-the-loop validation.
 
@@ -103,15 +103,13 @@ Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pd
 ## NVIDIA Models Used
 
 - **NVILA-8B** - Video description via native video understanding (VSS)
-- **Parakeet CTC 0.6B ASR** - Speech-to-text transcription (VSS)
-- **Llama 3.2 NeMoRetriever 300M Embed v2** - Text embeddings for vector search (VSS)
+- **Llama 3.2 NeMoRetriever 1B VLM Embed v1** - Text embeddings for vector search (VSS, Multimodal RAG)
 - **Llama 3.3 70B Instruct** - Report planning and content generation
 - **Llama 3.1 405B Instruct** - RAG response generation, PDF to Podcast script generation
 - **Llama 3.1 70B Instruct** - PDF to Podcast content processing
 - **Llama 3.1 8B Instruct** - PDF to Podcast content processing
 - **YOLOX Page Elements** - PDF layout analysis
 - **PaddleOCR** - Optical character recognition
-- **E5-V5 Embeddings** - Document embeddings for retrieval
 
 For more information on NVIDIA NIMs, visit [NVIDIA Build](https://build.nvidia.com/explore/discover).
 
