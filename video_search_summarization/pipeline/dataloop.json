@@ -1,8 +1,8 @@
 {
   "name": "video-search-summarization-bp",
   "displayName": "VSS NVIDIA Blueprint",
-  "description": "NVIDIA blueprint for video search and summarization. Ingest videos, split them into chunks, extract key frames, describe frames using a Vision Language Model, embed the descriptions, and store them for downstream search and Q&A. Setup: (1) Install this app — requires an NVIDIA NGC API key. (2) Create a pipeline from the 'Video Search and Summarization NVIDIA Blueprint' template. (3) The VLM variable is preset to Phi-4 Multimodal Instruct and the embedding variable to Llama 3.2 NeMoRetriever 300M Embed v2. To use different models, update the pipeline Variables panel. (4) Configure the target dataset in the Clone to Dataset node. (5) Upload videos to your dataset and execute the pipeline.",
-  "version": "0.0.67",
+  "description": "NVIDIA blueprint for video search and summarization. Ingest videos, split them into chunks, describe each chunk using VILA (a Vision Language Model with native video understanding), embed the descriptions, and store them for downstream search and Q&A. Setup: (1) Install this app — requires an NVIDIA NGC API key. (2) Create a pipeline from the 'Video Search and Summarization NVIDIA Blueprint' template. (3) The VLM variable is preset to NVILA-8B and the embedding variable to Llama 3.2 NeMoRetriever 300M Embed v2. To use different models, update the pipeline Variables panel. (4) Configure the target dataset in the Clone to Dataset node. (5) Upload videos to your dataset and execute the pipeline.",
+  "version": "0.0.69",
   "scope": "public",
   "attributes": {
     "Hub": [
@@ -23,6 +23,9 @@
   },
   "dependencies": [
     {
+      "name": "audio-utils"
+    },
+    {
       "name": "video-utils-splitting"
     },
     {
@@ -32,34 +35,33 @@
       "name": "prompt_to_text"
     },
     {
-      "name": "video-search-summarization"
+      "name": "parakeet-ctc-0-6b-asr"
     },
     {
-      "name": "nim-phi-4-multimodal-instruct",
+      "name": "vila-model-adapter",
       "components": {
         "models": [
           {
-            "name": "nim-phi-4-multimodal-instruct",
+            "name": "nvila-8b",
             "configuration": {
-              "nim_model_name": "microsoft/phi-4-multimodal-instruct",
-              "system_prompt": "You are a precise video analysis system. Your descriptions will be embedded and used for semantic search. Be factual, specific, and concise. Describe what is visible, not what might be happening.",
+              "model_path": "Efficient-Large-Model/NVILA-8B",
               "max_tokens": 1024,
               "temperature": 0.2,
-              "top_p": 0.7,
-              "stream": true
+              "top_p": 0.9,
+              "stream": false
             }
           }
         ]
       }
     },
     {
-      "name": "nim-llama-3-2-nemoretriever-300m-embed-v2",
+      "name": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
       "components": {
         "models": [
           {
-            "name": "nim-llama-3-2-nemoretriever-300m-embed-v2",
+            "name": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
             "configuration": {
-              "nim_model_name": "nvidia/llama-3.2-nemoretriever-300m-embed-v2",
+              "nim_model_name": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
               "embeddings_size": 2048
             }
           }
@@ -80,11 +82,6 @@
           },
           {
             "src": { "nodeId": "b1a00002-0002-4000-8000-000000000002", "portId": "b1a00002-0002-4000-8000-200000000002" },
-            "tgt": { "nodeId": "b1a00003-0003-4000-8000-000000000003", "portId": "b1a00003-0003-4000-8000-100000000003" },
-            "condition": "{\"filter\":{\"$and\":[{\"metadata.splitting_frame_index\":0}]},\"resource\":\"items\"}"
-          },
-          {
-            "src": { "nodeId": "b1a00003-0003-4000-8000-000000000003", "portId": "b1a00003-0003-4000-8000-200000000003" },
             "tgt": { "nodeId": "b1a00004-0004-4000-8000-000000000004", "portId": "b1a00004-0004-4000-8000-100000000004" },
             "condition": "{}"
           },
@@ -110,11 +107,6 @@
           },
           {
             "src": { "nodeId": "b1a00009-0009-4000-8000-000000000009", "portId": "b1a00009-0009-4000-8000-200000000009" },
-            "tgt": { "nodeId": "b1a0000a-000a-4000-8000-00000000000a", "portId": "b1a0000a-000a-4000-8000-10000000000a" },
-            "condition": "{}"
-          },
-          {
-            "src": { "nodeId": "b1a0000a-000a-4000-8000-00000000000a", "portId": "b1a0000a-000a-4000-8000-20000000000a" },
             "tgt": { "nodeId": "b1a00006-0006-4000-8000-000000000006", "portId": "b1a00006-0006-4000-8000-100000000006" },
             "condition": "{}"
           },
@@ -135,13 +127,13 @@
           {
             "name": "vlm_model",
             "type": "Model",
-            "description": "Vision Language Model used to describe video frame groups. Preset: Phi-4 Multimodal Instruct (nim-phi-4-multimodal-instruct).",
+            "description": "Vision Language Model used to describe video segments. Preset: NVILA-8B (vila-model-adapter).",
             "value": "$var(vlm_model__model)"
           },
           {
             "name": "embedding_model",
             "type": "Model",
-            "description": "Embedding model used to embed text descriptions for vector search. Preset: Llama 3.2 NeMoRetriever 300M Embed v2 (nim-llama-3-2-nemoretriever-300m-embed-v2).",
+            "description": "Embedding model used to embed text descriptions for vector search. Preset: Llama 3.2 NeMoRetriever 1B VLM Embed v1 (nim-llama-3-2-nemoretriever-1b-vlm-embed-v1).",
             "value": "$var(embedding_model__model)"
           }
         ],
@@ -186,10 +178,12 @@
               },
               "componentGroupName": "video-utils",
               "customNodeConfig": {
-                "output_dir": "output_split_videos",
-                "split_type": "num_frames",
-                "splitter_arg": 250,
-                "n_overlap": 25,
+                "output_dir": "/vss_pipeline/split_videos",
+                "split_type": "out_length",
+                "splitter_arg": 15,
+                "n_overlap": 0,
+                "use_ffmpeg": true,
+                "carry_annotations": false,
                 "validation": {
                   "valid": true,
                   "errors": []
@@ -215,94 +209,39 @@
               {
                 "portId": "b1a00002-0002-4000-8000-200000000002",
                 "nodeId": "b1a00002-0002-4000-8000-200000000002",
-                "type": "Item[]",
-                "name": "items",
-                "displayName": "items",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
                 "io": "output"
               }
             ],
-            "name": "Smart Frames Splitting",
+            "name": "Video to Prompt",
             "type": "custom",
             "namespace": {
-              "functionName": "video_to_frames",
-              "serviceName": "video-to-frames",
-              "moduleName": "video-to-frames",
-              "packageName": "video-utils-splitting"
+              "functionName": "run",
+              "serviceName": "video-to-prompt-service",
+              "moduleName": "video-to-prompt-module",
+              "packageName": "llm-tools-frames-to-prompt"
             },
-            "appName": "[Video Utils] - Splitting",
-            "dpkName": "video-utils-splitting",
+            "appName": "Prompt Tools",
+            "dpkName": "llm-tools-frames-to-prompt",
             "metadata": {
               "position": {
                 "x": 10300,
                 "y": 10200,
                 "z": 0
               },
-              "componentGroupName": "video-utils",
-              "customNodeConfig": {
-                "output_dir": "output",
-                "split_type": "structural_similarity_sampling",
-                "min_interval": 2,
-                "window_size": 7,
-                "threshold": 0.25,
-                "validation": {
-                  "valid": true,
-                  "errors": []
-                }
-              },
-              "repeatable": true,
-              "pipelineNodeName": "smart-frames-splitting"
-            }
-          },
-          {
-            "id": "b1a00003-0003-4000-8000-000000000003",
-            "inputs": [
-              {
-                "portId": "b1a00003-0003-4000-8000-100000000003",
-                "nodeId": "b1a00003-0003-4000-8000-100000000003",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "input"
-              }
-            ],
-            "outputs": [
-              {
-                "portId": "b1a00003-0003-4000-8000-200000000003",
-                "nodeId": "b1a00003-0003-4000-8000-200000000003",
-                "type": "Item[]",
-                "name": "items",
-                "displayName": "items",
-                "io": "output"
-              }
-            ],
-            "name": "Frames to Prompt",
-            "type": "custom",
-            "namespace": {
-              "functionName": "run",
-              "serviceName": "frames-to-prompt-service",
-              "moduleName": "frames-to-prompt-module",
-              "packageName": "llm-tools-frames-to-prompt"
-            },
-            "appName": "Frames to Prompt",
-            "dpkName": "llm-tools-frames-to-prompt",
-            "metadata": {
-              "position": {
-                "x": 10600,
-                "y": 10200,
-                "z": 0
-              },
               "componentGroupName": "prompt-utils",
               "customNodeConfig": {
-                "group_size": 999,
-                "prompt_dir": "/prompt_items_dir",
-                "prompt_instruction": "Analyze these sequential video frames and provide a detailed, search-friendly description. Include: (1) Key objects, people, and entities visible; (2) Actions, movements, and events occurring; (3) Scene setting, location type, and environment; (4) Any text, signs, or identifiable information; (5) Notable changes or transitions between frames. Be specific and factual — mention colors, positions, counts, and directions where applicable.",
+                "prompt_dir": "/vss_pipeline/visual/prompts",
+                "prompt_instruction": "Analyze this video and provide a detailed, search-friendly description. Include: (1) Key objects, people, and entities visible; (2) Actions, movements, and events occurring; (3) Scene setting, location type, and environment; (4) Any text, signs, or identifiable information; (5) Notable changes or transitions throughout the video. Be specific and factual — mention colors, positions, counts, and directions where applicable.",
                 "validation": {
                   "valid": true,
                   "errors": []
                 }
               },
               "repeatable": true,
-              "pipelineNodeName": "frames-to-prompt"
+              "pipelineNodeName": "video-to-prompt"
             }
           },
           {
@@ -335,38 +274,33 @@
                 "io": "output"
               }
             ],
-            "name": "phi-4-multimodal-instruct",
+            "name": "VILA VLM",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-phi-4-multimodal-instruct"
+              "packageName": "vila-model-adapter"
             },
-            "appName": "Phi 4 Multimodal Instruct",
-            "dpkName": "nim-phi-4-multimodal-instruct",
+            "appName": "VILA Model Adapter",
+            "dpkName": "vila-model-adapter",
             "metadata": {
               "position": {
-                "x": 10900,
+                "x": 10600,
                 "y": 10200,
                 "z": 0
               },
               "modelConfig": {
-                "nim_model_name": "microsoft/phi-4-multimodal-instruct",
+                "model_path": "Efficient-Large-Model/NVILA-8B",
                 "max_tokens": 1024,
                 "temperature": 0.2,
-                "top_p": 0.7,
-                "stream": true,
-                "base_url": "https://integrate.api.nvidia.com/v1",
-                "system_prompt": "You are a precise video analysis system. Your descriptions will be embedded and used for semantic search. Be factual, specific, and concise. Describe what is visible, not what might be happening.",
-                "add_metadata": [
-                  "system.document.source"
-                ]
+                "top_p": 0.9,
+                "stream": false
               },
               "componentGroupName": "models",
               "variableModel": "vlm_model",
               "repeatable": true,
-              "pipelineNodeName": "nim-phi-4-multimodal-instruct",
+              "pipelineNodeName": "vila-model-adapter",
               "mlType": "genAi"
             }
           },
@@ -404,13 +338,13 @@
             "dpkName": "prompt_to_text",
             "metadata": {
               "position": {
-                "x": 11200,
+                "x": 10900,
                 "y": 10200,
                 "z": 0
               },
               "componentGroupName": "text-utils",
               "customNodeConfig": {
-                "output_dir": "/text_responses_dir",
+                "output_dir": "/vss_pipeline/visual/descriptions",
                 "text_prefix": "Video description: ",
                 "source_type": "vlm_caption",
                 "validation": {
@@ -501,9 +435,10 @@
               "functionName": "embed",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-llama-3-2-nemoretriever-300m-embed-v2"
+              "packageName": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1"
             },
-            "dpkName": "nim-llama-3-2-nemoretriever-300m-embed-v2",
+            "appName": "Llama 3.2 Nemoretriever 1B Vlm Embed V1",
+            "dpkName": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
             "metadata": {
               "position": {
                 "x": 11800,
@@ -511,7 +446,7 @@
                 "z": 0
               },
               "modelConfig": {
-                "nim_model_name": "nvidia/llama-3.2-nemoretriever-300m-embed-v2",
+                "nim_model_name": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
                 "embeddings_size": 2048,
                 "hyde_model_name": "",
                 "base_url": "https://integrate.api.nvidia.com/v1"
@@ -548,29 +483,30 @@
             "type": "custom",
             "namespace": {
               "functionName": "extract_audio",
-              "serviceName": "vss-compute-config",
-              "moduleName": "vss-audio-module",
-              "packageName": "video-search-summarization"
+              "serviceName": "audio-extraction",
+              "moduleName": "audio-extraction",
+              "packageName": "audio-utils"
             },
-            "appName": "Video Search and Summarization",
-            "dpkName": "video-search-summarization",
+            "appName": "[Audio Utils] - Extraction",
+            "dpkName": "audio-utils",
             "metadata": {
               "position": {
                 "x": 10300,
                 "y": 10700,
                 "z": 0
               },
-              "componentGroupName": "Video Search and Summarization",
+              "componentGroupName": "audio-utils",
               "customNodeConfig": {
-                "output_dir": "/audio_prompt_items",
+                "output_dir": "/vss_pipeline/audio/extracted",
                 "sample_rate": 16000,
+                "create_prompt_item": false,
                 "validation": {
                   "valid": true,
                   "errors": []
                 }
               },
               "repeatable": true,
-              "pipelineNodeName": "audio-extract-node"
+              "pipelineNodeName": "audio-extraction"
             }
           },
           {
@@ -595,86 +531,32 @@
                 "io": "output"
               }
             ],
-            "name": "ASR Inference",
+            "name": "Parakeet ASR",
             "type": "custom",
             "namespace": {
-              "functionName": "predict",
-              "serviceName": "vss-compute-config",
-              "moduleName": "vss-audio-module",
-              "packageName": "video-search-summarization"
+              "functionName": "audio_transcript",
+              "serviceName": "parakeet-ctc-0-6b-asr",
+              "moduleName": "parakeet-ctc-0-6b-asr-module",
+              "packageName": "parakeet-ctc-0-6b-asr"
             },
-            "appName": "Video Search and Summarization",
-            "dpkName": "video-search-summarization",
+            "appName": "Audio Transcript (Parakeet CTC 0.6B ASR)",
+            "dpkName": "parakeet-ctc-0-6b-asr",
             "metadata": {
               "position": {
                 "x": 10600,
                 "y": 10700,
                 "z": 0
               },
-              "componentGroupName": "Video Search and Summarization",
+              "componentGroupName": "audio-utils",
               "customNodeConfig": {
-                "asr_base_url": "https://integrate.api.nvidia.com/v1",
-                "asr_model_name": "nvidia/parakeet-ctc-1.1b-asr",
-                "language_code": "en-US",
+                "output_dir": "/vss_pipeline/audio/transcripts",
                 "validation": {
                   "valid": true,
                   "errors": []
                 }
               },
               "repeatable": true,
-              "pipelineNodeName": "asr-inference-node"
-            }
-          },
-          {
-            "id": "b1a0000a-000a-4000-8000-00000000000a",
-            "inputs": [
-              {
-                "portId": "b1a0000a-000a-4000-8000-10000000000a",
-                "nodeId": "b1a0000a-000a-4000-8000-10000000000a",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "input"
-              }
-            ],
-            "outputs": [
-              {
-                "portId": "b1a0000a-000a-4000-8000-20000000000a",
-                "nodeId": "b1a0000a-000a-4000-8000-20000000000a",
-                "type": "Item",
-                "name": "item",
-                "displayName": "item",
-                "io": "output"
-              }
-            ],
-            "name": "Transcript to Text",
-            "type": "custom",
-            "namespace": {
-              "functionName": "transcript_to_text",
-              "serviceName": "vss-compute-config",
-              "moduleName": "vss-audio-module",
-              "packageName": "video-search-summarization"
-            },
-            "appName": "Video Search and Summarization",
-            "dpkName": "video-search-summarization",
-            "metadata": {
-              "position": {
-                "x": 10900,
-                "y": 10700,
-                "z": 0
-              },
-              "componentGroupName": "Video Search and Summarization",
-              "customNodeConfig": {
-                "output_dir": "/text_responses_dir",
-                "text_prefix": "Audio transcript: ",
-                "source_type": "audio_transcript",
-                "validation": {
-                  "valid": true,
-                  "errors": []
-                }
-              },
-              "repeatable": true,
-              "pipelineNodeName": "transcript-to-text-node"
+              "pipelineNodeName": "audio-transcript"
             }
           }
         ]
@@ -682,7 +564,7 @@
     ]
   },
   "variables": {
-    "vlm_model__model": "nim-phi-4-multimodal-instruct.models.nim-phi-4-multimodal-instruct",
-    "embedding_model__model": "nim-llama-3-2-nemoretriever-300m-embed-v2.models.nim-llama-3-2-nemoretriever-300m-embed-v2"
+    "vlm_model__model": "vila-model-adapter.models.nvila-8b",
+    "embedding_model__model": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1.models.nim-llama-3-2-nemoretriever-1b-vlm-embed-v1"
   }
 }

@@ -17,11 +17,11 @@ For configuration, components, and troubleshooting, see the sections below.
 | Variable | Type | Recommended / value | Purpose |
 |----------|------|--------------------|---------|
 | **retrieval_dataset** | Dataset | Output dataset from [preprocessing](../preprocessing_multimodal_rag/README.md) | Dataset of embedded chunks to search |
-| **embed_model** | Model | Llama 3.2 Nemoretriever 300M Embed V2 (must match preprocessing) | Embeds user questions and used for retrieval — must match the embedding model used in preprocessing |
+| **embed_model** | Model | Llama 3.2 Nemoretriever 1B Vlm Embed V1 (must match preprocessing) | Embeds user questions and used for retrieval — must match the embedding model used in preprocessing |
 | **gen_ai_model** | Model | Llama 3.1 8B Instruct | Generates the final RAG response |
 | **k_nearest_items** | Integer | 30 (default) | Number of chunks to retrieve |
 
-**Getting the model ID:** When you run or edit the pipeline, each Model variable shows a model selector. Choose the recommended model (or another from your project); the selected value is the model ID (e.g. `nim-llama-3-2-nemoretriever-300m-embed-v2`). You can also find model IDs in your project **Models** page. For **embed_model**, use the exact same model ID as in the preprocessing pipeline so vector spaces match.
+**Getting the model ID:** When you run or edit the pipeline, each Model variable shows a model selector. Choose the recommended model (or another from your project); the selected value is the model ID (e.g. `nim-llama-3-2-nemoretriever-1b-vlm-embed-v1`). You can also find model IDs in your project **Models** page. For **embed_model**, use the exact same model ID as in the preprocessing pipeline so vector spaces match.
 
 ---
 
@@ -42,7 +42,7 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 - **Retrieval Dataset**: The output dataset from the extraction pipeline containing embedded chunks
 - **Prompts Dataset**: A dataset to store user queries and generated responses
 
-> **Critical**: The `embed_model` must be the same model used in the extraction pipeline (e.g. `nim-llama-3-2-nemoretriever-300m-embed-v2`). Using a different embedding model will cause semantic search failures because the vector spaces won't align.
+> **Critical**: The `embed_model` must be the same model used in the extraction pipeline (e.g. `nim-llama-3-2-nemoretriever-1b-vlm-embed-v1`). Using a different embedding model will cause semantic search failures because the vector spaces won't align.
 
 ## Features
 
@@ -57,7 +57,7 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 
 | Model | Purpose |
 |-------|---------|
-| **Llama 3.2 Nemoretriever 300M Embed V2** | Embeds user queries for similarity search |
+| **Llama 3.2 Nemoretriever 1B Vlm Embed V1** | Embeds user queries for similarity search |
 | **Llama 3.1 8B Instruct** | Generates responses using retrieved context |
 
 ### Pipeline Nodes
@@ -67,7 +67,7 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 - **Service**: pipeline-utils
 - **Purpose**: Receives prompt items from the prompts dataset
 
-#### 2. Llama 3.2 Nemoretriever 300M Embed V2 (Embedding Model)
+#### 2. Llama 3.2 Nemoretriever 1B Vlm Embed V1 (Embedding Model)
 - **Type**: ML
 - **Function**: `embed`
 - **Purpose**: Generates embeddings for the user query
@@ -113,12 +113,12 @@ Set the `retrieval_dataset` variable to the ID of the dataset output by the extr
 
 ### 3. Configure the Embedding Model
 
-Set the `embed_model` to the same embedding model used in the preprocessing pipeline (e.g. `nim-llama-3-2-nemoretriever-300m-embed-v2`). This model is used both for embedding user queries and for retrieval — it must match the extraction pipeline so vector spaces align.
+Set the `embed_model` to the same embedding model used in the preprocessing pipeline (e.g. `nim-llama-3-2-nemoretriever-1b-vlm-embed-v1`). This model is used both for embedding user queries and for retrieval — it must match the extraction pipeline so vector spaces align.
 
 ### 4. Configure Model Services
 
 Ensure your NVIDIA NGC API key is configured in the model services:
-- Llama 3.2 Nemoretriever 300M Embed V2
+- Llama 3.2 Nemoretriever 1B Vlm Embed V1
 - Llama 3.1 8B Instruct
 
 ### 5. Create Prompt Items

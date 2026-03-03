@@ -1,6 +1,6 @@
 {
   "name": "preprocess-multimodal-rag-bp",
-  "version": "0.0.67",
+  "version": "0.0.69",
   "attributes": {
     "Category": [
       "Pipeline",
@@ -19,7 +19,7 @@
     ]
   },
   "displayName": "RAG Preprocessing Multimodal PDFs",
-  "description": "Preprocessing stage of a multimodal PDF RAG pipeline powered by NVIDIA NIM. Extracts text and images from PDFs, detects page layout elements, performs OCR, chunks content, and generates vector embeddings for retrieval. This is the first stage of a two-part RAG system — run this before the 'RAG Pipeline NVIDIA Blueprint'. Setup: (1) Install this app — requires an NVIDIA NGC API key, which can be set up in advance as a secret integration or created during installation when prompted. (2) Create a pipeline from the 'RAG Preprocessing Multimodal PDFs' template. (3) Model variables are preset to Llama 3.2 Nemoretriever 300M Embed V2 (embeddings), NVIDIA YOLOX Page Elements v1 (layout detection), University at Buffalo CachedTransformer (table detection), and Baidu PaddleOCR (OCR). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Upload PDFs to your dataset and execute to generate embeddings.",
+  "description": "Preprocessing stage of a multimodal PDF RAG pipeline powered by NVIDIA NIM. Extracts text and images from PDFs, detects page layout elements, performs OCR, chunks content, and generates vector embeddings for retrieval. This is the first stage of a two-part RAG system — run this before the 'RAG Pipeline NVIDIA Blueprint'. Setup: (1) Install this app — requires an NVIDIA NGC API key, which can be set up in advance as a secret integration or created during installation when prompted. (2) Create a pipeline from the 'RAG Preprocessing Multimodal PDFs' template. (3) Model variables are preset to Llama 3.2 Nemoretriever 1B Vlm Embed V1 (embeddings), NVIDIA YOLOX Page Elements v1 (layout detection), University at Buffalo CachedTransformer (table detection), and Baidu PaddleOCR (OCR). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Upload PDFs to your dataset and execute to generate embeddings.",
   "scope": "public",
   "components": {
     "pipelineTemplates": [
@@ -621,15 +621,15 @@
                 "io": "output"
               }
             ],
-            "name": "Llama 3.2 Nemoretriever 300M Embed V2",
+            "name": "Llama 3.2 Nemoretriever 1B Vlm Embed V1",
             "type": "ml",
             "namespace": {
               "functionName": "embed",
-              "moduleName": "nim-llama-3-2-nemoretriever-300m-embed-v2-module",
-              "packageName": "nim-llama-3-2-nemoretriever-300m-embed-v2"
+              "moduleName": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1-module",
+              "packageName": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1"
             },
-            "appName": "Llama 3.2 Nemoretriever 300M Embed V2",
-            "dpkName": "nim-llama-3-2-nemoretriever-300m-embed-v2",
+            "appName": "Llama 3.2 Nemoretriever 1B Vlm Embed V1",
+            "dpkName": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
             "metadata": {
               "position": {
                 "x": 13237.8428864159,
@@ -637,13 +637,13 @@
                 "z": 0
               },
               "modelConfig": {
-                "nim_model_name": "nvidia/llama-3.2-nemoretriever-300m-embed-v2",
+                "nim_model_name": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
                 "embeddings_size": 2048
               },
               "componentGroupName": "models",
               "repeatable": true,
-              "variableModel": "llama-3-2-nemoretriever-300m-embed-v2",
-              "pipelineNodeName": "llama-3-2-nemoretriever-300m-embed-v2",
+              "variableModel": "llama-3-2-nemoretriever-1b-vlm-embed-v1",
+              "pipelineNodeName": "llama-3-2-nemoretriever-1b-vlm-embed-v1",
               "mlType": "embeddings"
             }
           },
@@ -834,10 +834,10 @@
             "value": "$var(baidu-paddleocr__model)"
           },
           {
-            "name": "llama-3-2-nemoretriever-300m-embed-v2",
+            "name": "llama-3-2-nemoretriever-1b-vlm-embed-v1",
             "type": "Model",
-            "description": "Embedding model for vectorizing text chunks for retrieval. Preset: Llama 3.2 Nemoretriever 300M Embed V2 (nim-llama-3-2-nemoretriever-300m-embed-v2)",
-            "value": "$var(llama-3-2-nemoretriever-300m-embed-v2__model)"
+            "description": "Embedding model for vectorizing text chunks for retrieval. Preset: Llama 3.2 Nemoretriever 1B Vlm Embed V1 (nim-llama-3-2-nemoretriever-1b-vlm-embed-v1)",
+            "value": "$var(llama-3-2-nemoretriever-1b-vlm-embed-v1__model)"
           }
         ]
       }
@@ -854,7 +854,7 @@
       "name": "baidu-paddleocr"
     },
     {
-      "name": "nim-llama-3-2-nemoretriever-300m-embed-v2"
+      "name": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1"
     },
     {
       "name": "pdf_to_txt"
@@ -873,6 +873,6 @@
     "university-at-buffalo-cached__model": "university-at-buffalo-cached.models.university-at-buffalo-cached",
     "nv-yolox-page-elements_v1__model": "nv-yolox-page-elements-v1.models.nv-yolox-page-elements-v1",
     "baidu-paddleocr__model": "baidu-paddleocr.models.baidu-paddleocr",
-    "llama-3-2-nemoretriever-300m-embed-v2__model": "nim-llama-3-2-nemoretriever-300m-embed-v2.models.nim-llama-3-2-nemoretriever-300m-embed-v2"
+    "llama-3-2-nemoretriever-1b-vlm-embed-v1__model": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1.models.nim-llama-3-2-nemoretriever-1b-vlm-embed-v1"
   }
 }
