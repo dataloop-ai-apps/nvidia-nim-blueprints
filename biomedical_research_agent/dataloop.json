@@ -1,0 +1,135 @@
+{
+  "name": "nvidia-biomedical-research",
+  "displayName": "NVIDIA Biomedical AI-Q Research Agent",
+  "description": "Biomedical research agent with virtual screening capabilities for drug discovery. Extends the Enterprise Research Agent with MolMIM (molecule generation) and DiffDock (molecular docking) NIM integrations. Adapted from NVIDIA Biomedical AI-Q Research Agent Blueprint.",
+  "version": "0.0.67",
+  "scope": "public",
+  "codebase": {
+    "type": "item"
+  },
+  "attributes": {
+    "Hub": ["Nvidia", "Dataloop"],
+    "Category": ["Application"],
+    "Application Type": "GenAI",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop"
+  },
+  "components": {
+    "computeConfigs": [
+      {
+        "name": "biomedical-research-compute",
+        "runtime": {
+          "podType": "regular-xs",
+          "concurrency": 10,
+          "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints-biomedical:0.0.1",
+          "autoscaler": {
+            "type": "rabbitmq",
+            "minReplicas": 0,
+            "maxReplicas": 2
+          }
+        }
+      }
+    ],
+    "pipelineNodes": [
+      {
+        "name": "biomed-init-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "biomedical-research-compute.biomedical-research-module.init_research"
+        },
+        "categories": ["NVIDIA Biomedical Research"],
+        "scope": "project"
+      },
+      {
+        "name": "biomed-agent-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "biomedical-research-compute.biomedical-research-module.run_agent"
+        },
+        "categories": ["NVIDIA Biomedical Research"],
+        "scope": "project"
+      },
+      {
+        "name": "biomed-research-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "biomedical-research-compute.biomedical-research-module.research"
+        },
+        "categories": ["NVIDIA Biomedical Research"],
+        "scope": "project"
+      },
+      {
+        "name": "biomed-vs-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "biomedical-research-compute.biomedical-research-module.virtual_screening"
+        },
+        "categories": ["NVIDIA Biomedical Research"],
+        "scope": "project"
+      }
+    ],
+    "modules": [
+      {
+        "name": "biomedical-research-module",
+        "computeConfig": "biomedical-research-compute",
+        "entryPoint": "biomedical_research_agent/biomedical_agent.py",
+        "className": "BiomedicalResearchAgent",
+        "integrations": [
+          "dl-ngc-api-key",
+          "dl-tavily-api-key"
+        ],
+        "functions": [
+          {
+            "name": "init_research",
+            "input": [
+              { "name": "item", "type": "Item" },
+              { "name": "rag_pipeline_id", "type": "String" }
+            ],
+            "output": [
+              { "name": "item", "type": "Item" }
+            ],
+            "displayName": "Biomedical Init",
+            "displayIcon": "icon-dl-play"
+          },
+          {
+            "name": "run_agent",
+            "input": [
+              { "name": "item", "type": "Item" }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item",
+                "actions": ["research", "virtual_screening", "generate_report"]
+              }
+            ],
+            "displayName": "Biomedical AIQ Agent",
+            "displayIcon": "icon-dl-smart-search"
+          },
+          {
+            "name": "research",
+            "input": [
+              { "name": "item", "type": "Item" }
+            ],
+            "output": [
+              { "name": "item", "type": "Item" }
+            ],
+            "displayName": "Biomedical Research",
+            "displayIcon": "icon-dl-search"
+          },
+          {
+            "name": "virtual_screening",
+            "input": [
+              { "name": "item", "type": "Item" }
+            ],
+            "output": [
+              { "name": "item", "type": "Item" }
+            ],
+            "displayName": "Virtual Screening",
+            "displayIcon": "icon-dl-models"
+          }
+        ]
+      }
+    ]
+  }
+}

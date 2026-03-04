@@ -659,6 +659,24 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
         prompt_item.update()
         logger.info(f"Set nearestItems on prompt #1 (no additional prompts added)")
 
+        # Verify the revision has propagated — the adapter uses the same
+        # PromptItem.from_item() path and may get a stale revision.
+        max_retries = 5
+        for attempt in range(1, max_retries + 1):
+            time.sleep(1)
+            try:
+                check_pi = dl.PromptItem.from_item(dl.items.get(item_id=main_item.id))
+                if check_pi.prompts[-1].metadata.get("nearestItems"):
+                    logger.info(f"nearestItems exists (checked after {attempt} attempts), nearestItems ID: {check_pi.prompts[-1].metadata.get('nearestItems')[0]}")
+                    break
+                logger.warning(f"nearestItems not yet visible (attempt {attempt}/{max_retries})")
+            except Exception as e:
+                logger.warning(f"Verification attempt {attempt} failed: {e}")
+        else:
+            logger.error(
+                "nearestItems not confirmed after all retries — adapter may not receive context"
+            )
+
         main_item = self._set_state(main_item, state)
 
         progress.update(action="generate_report")
