@@ -67,6 +67,68 @@
           }
         ]
       }
+    },
+    {
+      "name": "txt_to_prompt"
+    },
+    {
+      "name": "nim-llama-3-1-8b-instruct",
+      "components": {
+        "models": [
+          {
+            "name": "nim-llama-3-1-8b-instruct",
+            "configuration": {
+              "nim_model_name": "meta/llama-3.1-8b-instruct",
+              "max_tokens": 4096,
+              "temperature": 0.2,
+              "top_p": 0.7,
+              "stream": true,
+              "base_url": "https://integrate.api.nvidia.com/v1",
+              "system_prompt": "You are a knowledge-graph extraction engine. Given a text passage, extract the most important entities and the relationships between them.\n\nEntity rules:\n- Use Title Case canonical names (\"Assembly Line\", not \"assembly-line\").\n- Merge synonyms into one canonical name (pick the most common form, e.g. \"Car\" not \"car/vehicle/automobile\").\n- SKIP low-value entities: URLs, watermarks, colors, directions, generic sizes, timestamps.\n- Focus on meaningful nouns: people, objects, places, organizations, concepts, events.\n- Prefer specific names over generic ones (\"Forklift\" not \"Vehicle\", \"Warehouse\" not \"Building\").\n\nRelationship rules:\n- \"source\" and \"target\" MUST exactly match an entity \"name\".\n- \"relation\" must be a short UPPER_SNAKE_CASE verb (e.g. LOCATED_IN, OPERATES, CONTAINS, PART_OF, CAUSES, PRODUCES).\n- Only include relationships clearly stated or strongly implied.\n- Do NOT invent relationships that require speculation.\n\nReturn valid JSON matching the provided schema.",
+              "guided_json": {
+                "type": "object",
+                "properties": {
+                  "entities": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": { "type": "string", "description": "Canonical name of the entity" },
+                        "type": { "type": "string", "description": "Entity type, e.g. Person, Object, Location, Organisation, Concept, Event, Equipment, Attribute" }
+                      },
+                      "required": ["name", "type"]
+                    },
+                    "minItems": 2,
+                    "maxItems": 8
+                  },
+                  "relationships": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "source": { "type": "string", "description": "Must match an entity name exactly" },
+                        "target": { "type": "string", "description": "Must match an entity name exactly" },
+                        "relation": { "type": "string", "description": "UPPER_SNAKE_CASE verb, e.g. PLACES, CAUSES, LOCATED_IN" },
+                        "description": { "type": "string", "description": "Free-text description of this relationship" }
+                      },
+                      "required": ["source", "target", "relation"]
+                    },
+                    "minItems": 1,
+                    "maxItems": 10
+                  }
+                },
+                "required": ["entities", "relationships"]
+              },
+              "add_metadata": [
+                "system.document.source"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "graph-rag"
     }
   ],
   "components": {
@@ -114,6 +176,21 @@
             "src": { "nodeId": "b1a00006-0006-4000-8000-000000000006", "portId": "b1a00006-0006-4000-8000-200000000006" },
             "tgt": { "nodeId": "b1a00007-0007-4000-8000-000000000007", "portId": "b1a00007-0007-4000-8000-100000000007" },
             "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "b1a00006-0006-4000-8000-000000000006", "portId": "b1a00006-0006-4000-8000-200000000006" },
+            "tgt": { "nodeId": "b1a00010-0010-4000-8000-000000000010", "portId": "b1a00010-0010-4000-8000-100000000010" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "b1a00010-0010-4000-8000-000000000010", "portId": "b1a00010-0010-4000-8000-200000000010" },
+            "tgt": { "nodeId": "b1a00011-0011-4000-8000-000000000011", "portId": "b1a00011-0011-4000-8000-100000000011" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "b1a00011-0011-4000-8000-000000000011", "portId": "b1a00011-0011-4000-8000-200000000011" },
+            "tgt": { "nodeId": "b1a00012-0012-4000-8000-000000000012", "portId": "b1a00012-0012-4000-8000-100000000012" },
+            "condition": "{}"
           }
         ],
         "startNodes": [
@@ -135,6 +212,12 @@
             "type": "Model",
             "description": "Embedding model used to embed text descriptions for vector search. Preset: Llama 3.2 NeMoRetriever 1B VLM Embed v1 (nim-llama-3-2-nemoretriever-1b-vlm-embed-v1).",
             "value": "$var(embedding_model__model)"
+          },
+          {
+            "name": "graph_llm_model",
+            "type": "Model",
+            "description": "LLM used for knowledge graph entity and relationship extraction. Preset: Llama 3.1 8B Instruct with guided JSON.",
+            "value": "$var(graph_llm_model__model)"
           }
         ],
         "nodes": [
@@ -558,6 +641,175 @@
               "repeatable": true,
               "pipelineNodeName": "audio-transcript"
             }
+          },
+          {
+            "id": "b1a00010-0010-4000-8000-000000000010",
+            "inputs": [
+              {
+                "portId": "b1a00010-0010-4000-8000-100000000010",
+                "nodeId": "b1a00010-0010-4000-8000-100000000010",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00010-0010-4000-8000-200000000010",
+                "nodeId": "b1a00010-0010-4000-8000-200000000010",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Text to Prompt",
+            "type": "custom",
+            "namespace": {
+              "functionName": "run",
+              "serviceName": "txt-to-prompt-service",
+              "moduleName": "txt-to-prompt-module",
+              "packageName": "txt_to_prompt"
+            },
+            "appName": "Text to Prompt",
+            "dpkName": "txt_to_prompt",
+            "metadata": {
+              "position": {
+                "x": 11800,
+                "y": 10700,
+                "z": 0
+              },
+              "componentGroupName": "text-utils",
+              "customNodeConfig": {
+                "name": "Text-to-Prompt",
+                "output_dir": "/prompt_items_dir",
+                "system_prompt": "",
+                "metadata_keys_to_extract": [],
+                "add_metadata_to_prompt": false,
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "txt-to-prompt"
+            }
+          },
+          {
+            "id": "b1a00011-0011-4000-8000-000000000011",
+            "inputs": [
+              {
+                "portId": "b1a00011-0011-4000-8000-100000000011",
+                "nodeId": "b1a00011-0011-4000-8000-100000000011",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00011-0011-4000-8000-200000000011",
+                "nodeId": "b1a00011-0011-4000-8000-200000000011",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "b1a00011-0011-4000-8000-300000000011",
+                "nodeId": "b1a00011-0011-4000-8000-300000000011",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "Graph Entity Extraction",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "serviceName": "",
+              "moduleName": "",
+              "packageName": "nim-llama-3-1-8b-instruct"
+            },
+            "appName": "Llama 3.1 8B Instruct",
+            "dpkName": "nim-llama-3-1-8b-instruct",
+            "metadata": {
+              "position": {
+                "x": 12100,
+                "y": 10700,
+                "z": 0
+              },
+              "modelConfig": {
+                "nim_model_name": "meta/llama-3.1-8b-instruct",
+                "max_tokens": 4096,
+                "temperature": 0.2,
+                "top_p": 0.7,
+                "stream": true,
+                "base_url": "https://integrate.api.nvidia.com/v1",
+                "system_prompt": "",
+                "add_metadata": [
+                  "system.document.source"
+                ]
+              },
+              "componentGroupName": "models",
+              "variableModel": "graph_llm_model",
+              "repeatable": true,
+              "mlType": "genAi"
+            }
+          },
+          {
+            "id": "b1a00012-0012-4000-8000-000000000012",
+            "inputs": [
+              {
+                "portId": "b1a00012-0012-4000-8000-100000000012",
+                "nodeId": "b1a00012-0012-4000-8000-100000000012",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00012-0012-4000-8000-200000000012",
+                "nodeId": "b1a00012-0012-4000-8000-200000000012",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Add Chunk to Graph",
+            "type": "custom",
+            "namespace": {
+              "functionName": "add_chunk_to_graph",
+              "serviceName": "graph-rag-service",
+              "moduleName": "graph-rag-module",
+              "packageName": "graph-rag"
+            },
+            "appName": "Graph RAG",
+            "dpkName": "graph-rag",
+            "metadata": {
+              "position": {
+                "x": 12400,
+                "y": 10700,
+                "z": 0
+              },
+              "componentGroupName": "graph-rag",
+              "customNodeConfig": {
+                "name": "add-chunk-to-graph",
+                "store_text": false,
+                "validation": {
+                  "valid": true,
+                  "errors": []
+                }
+              },
+              "repeatable": true,
+              "pipelineNodeName": "add-chunk-to-graph"
+            }
           }
         ]
       }
@@ -565,6 +817,7 @@
   },
   "variables": {
     "vlm_model__model": "vila-model-adapter.models.nvila-8b",
-    "embedding_model__model": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1.models.nim-llama-3-2-nemoretriever-1b-vlm-embed-v1"
+    "embedding_model__model": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1.models.nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
+    "graph_llm_model__model": "nim-llama-3-1-8b-instruct.models.nim-llama-3-1-8b-instruct"
   }
 }
