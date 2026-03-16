@@ -138,6 +138,11 @@
         "description": "NVIDIA blueprint for video search and summarization",
         "connections": [
           {
+            "src": { "nodeId": "b1a00013-0013-4000-8000-000000000013", "portId": "b1a00013-0013-4000-8000-200000000013" },
+            "tgt": { "nodeId": "b1a00001-0001-4000-8000-000000000001", "portId": "b1a00001-0001-4000-8000-100000000001" },
+            "condition": "{}"
+          },
+          {
             "src": { "nodeId": "b1a00001-0001-4000-8000-000000000001", "portId": "b1a00001-0001-4000-8000-200000000001" },
             "tgt": { "nodeId": "b1a00002-0002-4000-8000-000000000002", "portId": "b1a00002-0002-4000-8000-100000000002" },
             "condition": "{}"
@@ -195,7 +200,7 @@
         ],
         "startNodes": [
           {
-            "nodeId": "b1a00001-0001-4000-8000-000000000001",
+            "nodeId": "b1a00013-0013-4000-8000-000000000013",
             "type": "root",
             "id": "b1a0start-0000-4000-8000-000000000000"
           }
@@ -221,6 +226,47 @@
           }
         ],
         "nodes": [
+          {
+            "id": "b1a00013-0013-4000-8000-000000000013",
+            "inputs": [
+              {
+                "portId": "b1a00013-0013-4000-8000-100000000013",
+                "nodeId": "b1a00013-0013-4000-8000-100000000013",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "b1a00013-0013-4000-8000-200000000013",
+                "nodeId": "b1a00013-0013-4000-8000-200000000013",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              }
+            ],
+            "name": "Dataset",
+            "type": "storage",
+            "namespace": {
+              "functionName": "clone_item",
+              "projectName": "DataloopTasks",
+              "serviceName": "pipeline-utils",
+              "moduleName": "default_module",
+              "packageName": "pipeline-utils"
+            },
+            "metadata": {
+              "position": {
+                "x": 9700,
+                "y": 10450,
+                "z": 0
+              },
+              "componentGroupName": "data",
+              "repeatable": true
+            }
+          },
           {
             "id": "b1a00001-0001-4000-8000-000000000001",
             "inputs": [
