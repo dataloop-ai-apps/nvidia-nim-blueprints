@@ -42,7 +42,7 @@
       "components": {
         "models": [
           {
-            "name": "vila-1-5-3b",
+            "name": "vila-1p5-3b",
             "configuration": {
               "model_path": "Efficient-Large-Model/VILA1.5-3b",
               "conv_mode": "vicuna_v1",
@@ -869,7 +869,7 @@
     ]
   },
   "variables": {
-    "vlm_model__model": "vila-model-adapter.models.vila-1-5-3b",
+    "vlm_model__model": "vila-model-adapter.models.vila-1p5-3b",
     "embedding_model__model": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1.models.nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
     "graph_llm_model__model": "nim-llama-3-1-8b-instruct.models.nim-llama-3-1-8b-instruct"
   }
