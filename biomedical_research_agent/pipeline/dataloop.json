@@ -2,7 +2,7 @@
   "name": "nvidia-biomedical-research-bp",
   "displayName": "Biomedical AI-Q Research Agent",
   "description": "Biomedical research agent pipeline adapted from NVIDIA Biomedical AI-Q Research Agent Blueprint. Agent orchestrates RAG-first search with LLM-as-judge, web search fallback, and virtual screening (MolMIM + DiffDock) in a Plan-Execute-Reflect loop, then NIM Llama 3.3 70B generates the final report.",
-  "version": "0.0.73",
+  "version": "0.0.74",
   "scope": "public",
   "codebase": {
     "type": "item"
