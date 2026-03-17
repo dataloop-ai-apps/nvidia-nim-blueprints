@@ -21,23 +21,21 @@ A collection of NVIDIA NIM-powered blueprints for the Dataloop Platform. These b
 | [PDF to Podcast](pdf_to_podcast/README.md) | Transform PDF documents into podcast-ready audio content |
 | [Multimodal RAG - Preprocessing](multimodal_rag/preprocessing_multimodal_rag/README.md) | PDF extraction and embedding pipeline for RAG |
 | [Multimodal RAG - Retrieval](multimodal_rag/nvidia_rag_pipeline/README.md) | Document retrieval and response generation with human-in-the-loop |
-| [Video Search & Summarization](video_search_summarization/README.md) | Ingest videos, describe with VILA VLM, transcribe with Parakeet ASR, embed for vector search, and build a knowledge graph |
+| [VSS - Preprocessing](video_search_summarization/README.md) | Ingest videos, describe with VILA VLM, transcribe with Parakeet ASR, embed for vector search, and build a knowledge graph |
+| [VSS - Retrieval](video_search_summarization/README.md#2-retrieval-pipeline) | Query the knowledge graph and vector store, then generate answers with an LLM |
 
 ## Blueprint Overviews
 
-### Video Search & Summarization
+### Video Search & Summarization (VSS)
 
-Processes video content for semantic search, Q&A, and knowledge-graph-based retrieval. The pipeline is 100% composed from external Dataloop DPKs — no custom node code lives in this repository. It splits videos into time-based chunks and runs two branches in parallel:
+Implemented as two pipelines that work together, similar to the Multimodal RAG blueprint:
 
-- **Visual branch**: Wraps each sub-video in a prompt → describes it with VILA 1.5 3B (a compact Vision Language Model for image and video understanding) → extracts the text response
-- **Audio branch**: Extracts audio from each sub-video → transcribes with NVIDIA Parakeet CTC 0.6B ASR
+**1. Preprocessing Pipeline** — processes video content into searchable text and a knowledge graph. Splits videos into time-based chunks and runs two branches in parallel:
 
-Both branches clone results to a target dataset, which then fans out to:
+- **Visual branch**: Wraps each sub-video in a prompt → describes it with VILA 1.5 3B → extracts the text response
+- **Audio branch**: Extracts audio → transcribes with NVIDIA Parakeet CTC 0.6B ASR
 
-- **Embedding**: Embeds text with Llama 3.2 NeMoRetriever 1B VLM Embed v1 for vector search.
-- **Graph RAG**: Extracts entities and relationships using Llama 3.1 8B Instruct (guided JSON) and stores them in a knowledge graph.
-
-**Pipeline flow:**
+Both branches clone results to a target dataset, which then fans out to embedding (for vector search) and graph entity extraction (for knowledge graph construction).
 
 ```
                               ┌─ Video to Prompt → VILA VLM → Prompt to Text ─┐
@@ -46,20 +44,11 @@ Dataset → Video to Videos ────┤                                     
                                                                                                      └─→ Text to Prompt → Graph Entity Extraction → Add Chunk to Graph
 ```
 
-**DPKs:**
+**2. Retrieval Pipeline** — answers questions by combining graph RAG with vector search:
 
-| DPK | Node(s) |
-|-----|---------|
-| `video-utils-splitting` | Video to Videos — FFmpeg stream-copy splitting into 15 s chunks |
-| `llm-tools-frames-to-prompt` | Video to Prompt — wraps a video item in a PromptItem |
-| `vila-model-adapter` | VILA VLM — VILA 1.5 3B vision-language inference on video |
-| `prompt_to_text` | Prompt to Text — extracts the assistant response as a text item |
-| `audio-utils` | Audio Extract — FFmpeg audio extraction to WAV |
-| `parakeet-ctc-0-6b-asr` | Parakeet ASR — NVIDIA Parakeet CTC 0.6B speech-to-text |
-| `nim-llama-3-2-nemoretriever-1b-vlm-embed-v1` | Embedding — text embeddings for vector search |
-| `txt_to_prompt` | Text to Prompt — wraps text in a PromptItem for LLM inference |
-| `nim-llama-3-1-8b-instruct` | Graph Entity Extraction — entity/relationship extraction with guided JSON |
-| `graph-rag` | Add Chunk to Graph — stores entities and relationships in the knowledge graph |
+```
+Prompt → Graph Query → Embedding → Retriever → Response LLM
+```
 
 **Required API Keys:** NVIDIA NGC API Key
 
@@ -114,7 +103,7 @@ Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pd
 - **Llama 3.3 70B Instruct** - Report planning and content generation
 - **Llama 3.1 405B Instruct** - RAG response generation, PDF to Podcast script generation
 - **Llama 3.1 70B Instruct** - PDF to Podcast content processing
-- **Llama 3.1 8B Instruct** - Knowledge graph entity extraction with guided JSON (VSS), PDF to Podcast content processing
+- **Llama 3.1 8B Instruct** - Knowledge graph entity extraction (VSS preprocessing), RAG response generation (VSS retrieval), PDF to Podcast content processing
 - **YOLOX Page Elements** - PDF layout analysis
 - **PaddleOCR** - Optical character recognition
 
