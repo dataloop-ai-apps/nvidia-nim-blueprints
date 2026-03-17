@@ -29,7 +29,7 @@ A collection of NVIDIA NIM-powered blueprints for the Dataloop Platform. These b
 
 Processes video content for semantic search and Q&A. The pipeline is 100% composed from external Dataloop DPKs — no custom node code lives in this repository. It splits videos into time-based chunks and runs two branches in parallel:
 
-- **Visual branch**: Wraps each sub-video in a prompt → describes it with NVILA-8B (a Vision Language Model with native video understanding) → extracts the text response
+- **Visual branch**: Wraps each sub-video in a prompt → describes it with VILA-1.5-3B (a compact Vision Language Model for image and video understanding) → extracts the text response
 - **Audio branch**: Extracts audio from each sub-video → transcribes with NVIDIA Parakeet CTC 0.6B ASR
 
 Both branches clone results to a target dataset and embed them with Llama 3.2 NeMoRetriever 1B VLM Embed v1 for downstream vector search.
@@ -48,7 +48,7 @@ Video ─→ Video to Videos┤                                               �
 |-----|---------|
 | `video-utils-splitting` | Video to Videos — FFmpeg stream-copy splitting into 30 s chunks |
 | `llm-tools-frames-to-prompt` | Video to Prompt — wraps a video item in a PromptItem |
-| `vila-model-adapter` | VILA VLM — NVILA-8B vision-language inference on native video |
+| `vila-model-adapter` | VILA VLM — VILA-1.5-3B vision-language inference on video |
 | `prompt_to_text` | Prompt to Text — extracts the assistant response as a text item |
 | `audio-utils` | Audio Extract — FFmpeg audio extraction to WAV |
 | `parakeet-ctc-0-6b-asr` | Parakeet ASR — NVIDIA Parakeet CTC 0.6B speech-to-text |
@@ -102,7 +102,7 @@ Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pd
 
 ## NVIDIA Models Used
 
-- **NVILA-8B** - Video description via native video understanding (VSS)
+- **VILA-1.5-3B** - Video description via vision-language understanding (VSS)
 - **Llama 3.2 NeMoRetriever 1B VLM Embed v1** - Text embeddings for vector search (VSS, Multimodal RAG)
 - **Llama 3.3 70B Instruct** - Report planning and content generation
 - **Llama 3.1 405B Instruct** - RAG response generation, PDF to Podcast script generation

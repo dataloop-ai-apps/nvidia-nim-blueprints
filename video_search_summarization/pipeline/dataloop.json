@@ -42,9 +42,10 @@
       "components": {
         "models": [
           {
-            "name": "nvila-8b",
+            "name": "vila-1.5-3b",
             "configuration": {
-              "model_path": "Efficient-Large-Model/NVILA-8B",
+              "model_path": "Efficient-Large-Model/VILA1.5-3b",
+              "conv_mode": "vicuna_v1",
               "max_tokens": 1024,
               "temperature": 0.2,
               "top_p": 0.9,
@@ -209,7 +210,7 @@
           {
             "name": "vlm_model",
             "type": "Model",
-            "description": "Vision Language Model used to describe video segments. Preset: NVILA-8B (vila-model-adapter).",
+            "description": "Vision Language Model used to describe video segments. Preset: VILA-1.5-3B (vila-model-adapter).",
             "value": "$var(vlm_model__model)"
           },
           {
@@ -420,11 +421,17 @@
                 "z": 0
               },
               "modelConfig": {
-                "model_path": "Efficient-Large-Model/NVILA-8B",
+                "model_path": "Efficient-Large-Model/VILA1.5-3b",
+                "conv_mode": "vicuna_v1",
                 "max_tokens": 1024,
                 "temperature": 0.2,
                 "top_p": 0.9,
                 "stream": false
+              },
+              "serviceConfig": {
+                "runtime": {
+                  "concurrency": 1
+                }
               },
               "componentGroupName": "models",
               "variableModel": "vlm_model",
@@ -862,7 +869,7 @@
     ]
   },
   "variables": {
-    "vlm_model__model": "vila-model-adapter.models.nvila-8b",
+    "vlm_model__model": "vila-model-adapter.models.vila-1.5-3b",
     "embedding_model__model": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1.models.nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
     "graph_llm_model__model": "nim-llama-3-1-8b-instruct.models.nim-llama-3-1-8b-instruct"
   }
