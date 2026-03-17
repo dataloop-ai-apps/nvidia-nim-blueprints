@@ -1,7 +1,7 @@
 {
   "name": "video-search-summarization-bp",
   "displayName": "VSS NVIDIA Blueprint",
-  "description": "NVIDIA blueprint for video search and summarization. Ingest videos, split them into chunks, describe each chunk using VILA (a Vision Language Model with native video understanding), embed the descriptions, and store them for downstream search and Q&A. Setup: (1) Install this app — requires an NVIDIA NGC API key. (2) Create a pipeline from the 'Video Search and Summarization NVIDIA Blueprint' template. (3) The VLM variable is preset to NVILA-8B and the embedding variable to Llama 3.2 NeMoRetriever 300M Embed v2. To use different models, update the pipeline Variables panel. (4) Configure the target dataset in the Clone to Dataset node. (5) Upload videos to your dataset and execute the pipeline.",
+  "description": "NVIDIA blueprint for video search and summarization. Ingest videos, split them into chunks, describe each chunk using VILA 1.5 3B (a compact Vision Language Model for image and video understanding), transcribe audio with Parakeet ASR, embed the text for vector search, and build a knowledge graph for Graph RAG retrieval. Setup: (1) Install this app — requires an NVIDIA NGC API key. (2) Create a pipeline from the 'Video Search and Summarization NVIDIA Blueprint' template. (3) The VLM variable is preset to VILA 1.5 3B, the embedding variable to Llama 3.2 NeMoRetriever 1B VLM Embed v1, and the graph LLM to Llama 3.1 8B Instruct. To use different models, update the pipeline Variables panel. (4) Configure the source and target datasets. (5) Upload videos and execute the pipeline.",
   "version": "0.0.72",
   "scope": "public",
   "attributes": {
@@ -736,7 +736,7 @@
               "componentGroupName": "text-utils",
               "customNodeConfig": {
                 "name": "Text-to-Prompt",
-                "output_dir": "/prompt_items_dir",
+                "output_dir": "/graph_rag/prompts",
                 "system_prompt": "",
                 "metadata_keys_to_extract": [],
                 "add_metadata_to_prompt": false,
