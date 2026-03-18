@@ -100,24 +100,24 @@ Dataset → Video to Videos ────┤                                     
 
 The retrieval pipeline answers questions about processed videos by combining two retrieval strategies:
 
-1. **Graph RAG**: Searches the knowledge graph for matching entities and relationships, adding structured context to the prompt.
-2. **Vector search**: Embeds the user query and retrieves the k nearest text chunks from the dataset.
+1. **Vector search**: Embeds the user query and retrieves the k nearest text chunks from the dataset.
+2. **Graph RAG**: Searches the knowledge graph for matching entities and relationships, adding structured context to the prompt.
 
-The Response LLM then generates an answer using both graph context and vector-retrieved passages.
+The Response LLM then generates an answer using both vector-retrieved passages and graph context.
 
 ### Pipeline flow
 
 ```
-Prompt → Graph Query → Embedding → Retriever → Response LLM
+Prompt → Embedding → Retriever → Graph Query → Response LLM
 ```
 
 ### Pipeline nodes
 
 | # | Node | Type | DPK | Purpose |
 |---|------|------|-----|---------|
-| 1 | Graph Query | custom | graph-rag | Searches the knowledge graph and adds graph context to the prompt |
-| 2 | Embedding Model | ml | nim-llama-3-2-nemoretriever-1b-vlm-embed-v1 | Embeds the user query |
-| 3 | Retriever Prompt | custom | llm-tools-retriever | Finds k nearest embedded chunks via vector search |
+| 1 | Embedding Model | ml | nim-llama-3-2-nemoretriever-1b-vlm-embed-v1 | Embeds the user query |
+| 2 | Retriever Prompt | custom | llm-tools-retriever | Finds k nearest embedded chunks via vector search |
+| 3 | Graph Query | custom | graph-rag | Searches the knowledge graph and adds graph context to the prompt |
 | 4 | Response LLM | ml | nim-llama-3-1-8b-instruct | Generates the final answer from all retrieved context |
 
 ---
