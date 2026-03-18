@@ -1,7 +1,7 @@
 {
   "name": "vss-retrieval-bp",
   "displayName": "VSS Retrieval NVIDIA Blueprint",
-  "description": "RAG retrieval pipeline for Video Search & Summarization. Queries the knowledge graph built during preprocessing, retrieves relevant embedded chunks via vector search, and generates a response using an LLM. This is the second stage — first run the 'VSS NVIDIA Blueprint' preprocessing pipeline to build the knowledge graph and embed your video descriptions. Setup: (1) Install this app — requires an NVIDIA NGC API key. (2) Create a pipeline from the 'VSS Retrieval NVIDIA Blueprint' template. (3) Set 'retrieval_dataset' to the chunked dataset from the preprocessing pipeline. (4) Adjust model variables and k_nearest_items if needed. (5) Execute the pipeline with prompt items.",
+  "description": "RAG retrieval pipeline for Video Search & Summarization. Embeds the user query, retrieves relevant chunks via vector search, enriches with knowledge graph context, and generates a response using an LLM. This is the second stage — first run the 'VSS NVIDIA Blueprint' preprocessing pipeline to build the knowledge graph and embed your video descriptions. Setup: (1) Install this app — requires an NVIDIA NGC API key. (2) Create a pipeline from the 'VSS Retrieval NVIDIA Blueprint' template. (3) Set 'retrieval_dataset' to the chunked dataset from the preprocessing pipeline. (4) Adjust model variables and k_nearest_items if needed. (5) Execute the pipeline with prompt items.",
   "version": "0.0.76",
   "scope": "public",
   "attributes": {
@@ -53,7 +53,10 @@
               "max_tokens": 4096,
               "temperature": 0.2,
               "top_p": 0.7,
-              "stream": true
+              "stream": true,
+              "add_metadata": [
+                "system.document.source"
+              ]
             }
           }
         ]
@@ -67,11 +70,6 @@
         "description": "Video Search & Summarization retrieval pipeline with graph RAG and vector search.",
         "connections": [
           {
-            "src": { "nodeId": "b1a00020-0020-4000-8000-000000000020", "portId": "b1a00020-0020-4000-8000-200000000020" },
-            "tgt": { "nodeId": "b1a00021-0021-4000-8000-000000000021", "portId": "b1a00021-0021-4000-8000-100000000021" },
-            "condition": "{}"
-          },
-          {
             "src": { "nodeId": "b1a00021-0021-4000-8000-000000000021", "portId": "b1a00021-0021-4000-8000-200000000021" },
             "tgt": { "nodeId": "b1a00022-0022-4000-8000-000000000022", "portId": "b1a00022-0022-4000-8000-100000000022" },
             "condition": "{}"
@@ -83,13 +81,18 @@
           },
           {
             "src": { "nodeId": "b1a00022-0022-4000-8000-000000000022", "portId": "b1a00022-0022-4000-8000-200000000022" },
+            "tgt": { "nodeId": "b1a00020-0020-4000-8000-000000000020", "portId": "b1a00020-0020-4000-8000-100000000020" },
+            "condition": "{}"
+          },
+          {
+            "src": { "nodeId": "b1a00020-0020-4000-8000-000000000020", "portId": "b1a00020-0020-4000-8000-200000000020" },
             "tgt": { "nodeId": "b1a00023-0023-4000-8000-000000000023", "portId": "b1a00023-0023-4000-8000-100000000023" },
             "condition": "{}"
           }
         ],
         "startNodes": [
           {
-            "nodeId": "b1a00020-0020-4000-8000-000000000020",
+            "nodeId": "b1a00021-0021-4000-8000-000000000021",
             "type": "root",
             "id": "b1a0start-0020-4000-8000-000000000000"
           }
@@ -140,6 +143,39 @@
                 "displayName": "dataset",
                 "variableName": "retrieval_dataset",
                 "io": "input"
+              },
+              {
+                "portId": "b1a00020-0020-4000-8000-100000000030",
+                "nodeId": "b1a00020-0020-4000-8000-100000000030",
+                "type": "String",
+                "name": "entity_name",
+                "displayName": "entity_name",
+                "io": "input"
+              },
+              {
+                "portId": "b1a00020-0020-4000-8000-100000000031",
+                "nodeId": "b1a00020-0020-4000-8000-100000000031",
+                "type": "String",
+                "name": "relationship",
+                "displayName": "relationship",
+                "io": "input"
+              },
+              {
+                "portId": "b1a00020-0020-4000-8000-100000000032",
+                "nodeId": "b1a00020-0020-4000-8000-100000000032",
+                "type": "String",
+                "name": "target_name",
+                "displayName": "target_name",
+                "io": "input"
+              },
+              {
+                "portId": "b1a00020-0020-4000-8000-100000000033",
+                "nodeId": "b1a00020-0020-4000-8000-100000000033",
+                "type": "Integer",
+                "name": "hops",
+                "displayName": "hops",
+                "defaultValue": 2,
+                "io": "input"
               }
             ],
             "outputs": [
@@ -152,7 +188,7 @@
                 "io": "output"
               }
             ],
-            "name": "Graph Query",
+            "name": "Query Graph",
             "type": "custom",
             "namespace": {
               "functionName": "query_graph",
@@ -164,7 +200,7 @@
             "dpkName": "graph-rag",
             "metadata": {
               "position": {
-                "x": 9700,
+                "x": 10500,
                 "y": 10090,
                 "z": 0
               },
@@ -223,7 +259,7 @@
             "dpkName": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
             "metadata": {
               "position": {
-                "x": 10083,
+                "x": 9840,
                 "y": 10090,
                 "z": 0
               },
@@ -311,7 +347,7 @@
             "dpkName": "llm-tools-retriever",
             "metadata": {
               "position": {
-                "x": 10500,
+                "x": 10230,
                 "y": 10090,
                 "z": 0
               },

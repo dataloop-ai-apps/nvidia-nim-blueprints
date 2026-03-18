@@ -47,7 +47,7 @@ Dataset → Video to Videos ────┤                                     
 **2. Retrieval Pipeline** — answers questions by combining graph RAG with vector search:
 
 ```
-Prompt → Graph Query → Embedding → Retriever → Response LLM
+Prompt → Embedding → Retriever → Graph Query → Response LLM
 ```
 
 **Required API Keys:** NVIDIA NGC API Key
