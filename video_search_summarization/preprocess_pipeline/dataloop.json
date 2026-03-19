@@ -224,6 +224,18 @@
             "type": "Model",
             "description": "LLM used for knowledge graph entity and relationship extraction. Preset: Llama 3.1 8B Instruct with guided JSON.",
             "value": "$var(graph_llm_model__model)"
+          },
+          {
+            "name": "source_dataset",
+            "type": "Dataset",
+            "description": "Dataset containing the source videos.",
+            "value": "$var(sourceDataset__dataset)"
+          },
+          {
+            "name": "chunks_dataset",
+            "type": "Dataset",
+            "description": "Dataset containing embedded chunks and the knowledge graph from the VSS preprocessing pipeline.",
+            "value": "$var(chunksDataset__dataset)"
           }
         ],
         "nodes": [
@@ -265,7 +277,8 @@
                 "z": 0
               },
               "componentGroupName": "data",
-              "repeatable": true
+              "repeatable": true,
+              "variableDataset": "source_dataset"
             }
           },
           {
@@ -532,7 +545,8 @@
               "datasetId": "",
               "dir": "/",
               "componentGroupName": "data",
-              "repeatable": true
+              "repeatable": true,
+              "variableDataset": "chunks_dataset"
             }
           },
           {
