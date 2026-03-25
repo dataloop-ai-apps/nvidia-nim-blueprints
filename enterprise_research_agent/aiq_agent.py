@@ -110,7 +110,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
             content = self._download_data_file(state_file_id)
             return json.loads(content)
         except Exception as e:
-            logger.warning(f"Could not load state file {state_file_id}: {e}")
+            logger.warning("Could not load state file %s: %s", state_file_id, e)
             return {}
 
     def _set_state(self, item: dl.Item, state: dict) -> dl.Item:
@@ -207,7 +207,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
             try:
                 return json.loads(cleaned.strip())
             except json.JSONDecodeError:
-                logger.warning(f"Could not parse JSON from response: {cleaned[:200]}")
+                logger.warning("Could not parse JSON from response: %s", cleaned[:200])
                 return None
 
     def _extract_params_from_prompt(self, prompt_text: str) -> dict:
@@ -324,7 +324,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
             return rag_answer
 
         except Exception as e:
-            logger.error(f"RAG query error: {e}")
+            logger.error("RAG query error: %s", e)
             return ""
 
     # ─── Relevancy Check (LLM-as-Judge) ──────────────────────────────────────
@@ -352,7 +352,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
                 if float(r.get('score', 0)) > 0.6
             ]
         except Exception as e:
-            logger.error(f"Tavily search error: {e}")
+            logger.error("Tavily search error: %s", e)
             return []
 
     # ─── Source Deduplication and XML Formatting (NVIDIA pattern) ─────────────
@@ -457,7 +457,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
                     state['rag_pipeline_id'] = rag_pipeline_id
                     logger.info(f"RAG pipeline validated: {rag_pipeline.name} (ID: {rag_pipeline_id})")
             except Exception as e:
-                logger.warning(f"Could not find RAG pipeline '{rag_pipeline_id}': {e}. Web search only.")
+                logger.warning("Could not find RAG pipeline '%s': %s. Web search only.", rag_pipeline_id, e)
         else:
             logger.info("No RAG pipeline configured - web search only mode")
         self._set_state(item, state)
@@ -546,7 +546,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
                     sources_xml = results_json.get('sources_xml', '')
                     citations = results_json.get('citations', '')
                 except Exception as e:
-                    logger.error(f"Could not read research results file: {e}")
+                    logger.error("Could not read research results file: %s", e)
 
             logger.info(f"Research returned sources_xml length: {len(sources_xml)}")
 
@@ -671,7 +671,7 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
                     break
                 logger.warning(f"nearestItems not yet visible (attempt {attempt}/{max_retries})")
             except Exception as e:
-                logger.warning(f"Verification attempt {attempt} failed: {e}")
+                logger.warning("Verification attempt %s failed: %s", attempt, e)
         else:
             logger.error(
                 "nearestItems not confirmed after all retries — adapter may not receive context"
@@ -729,13 +729,13 @@ class AIQEnterpriseAgent(dl.BaseServiceRunner):
                     results.append(future.result())
                 except Exception as e:
                     query = futures[future]
-                    logger.error(f"Query processing failed: {e}")
+                    logger.error("Query processing failed: %s", e)
                     results.append({
                         "query": str(query),
                         "rag_answer": "",
                         "rag_citation": "",
                         "relevancy": {"score": "no"},
-                        "web_answer": f"Error: {e}",
+                        "web_answer": "Error processing query",
                         "web_citation": "",
                     })
 

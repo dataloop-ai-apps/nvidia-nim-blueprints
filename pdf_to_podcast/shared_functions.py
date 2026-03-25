@@ -75,7 +75,7 @@ class TTSConverter:
             )
             return b"".join(chunk for chunk in audio_stream)
         except Exception as e:
-            logger.error(f"Error converting text to speech: {e}")
+            logger.error("Error converting text to speech: %s", e)
             raise
 
     def process_file(
@@ -129,7 +129,7 @@ class TTSConverter:
             logger.info(f"Successfully created audio file: {output_file}")
 
         except Exception as e:
-            logger.error(f"Error processing file: {e}")
+            logger.error("Error processing file: %s", e)
             raise
 
 
@@ -294,7 +294,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             try:
                 conversation_json = json.loads(extracted)
             except json.JSONDecodeError as e:
-                logger.warning(f"Conversation JSON parse failed: {e}. Attempting repair...")
+                logger.warning("Conversation JSON parse failed: %s. Attempting repair...", e)
                 repaired = SharedServiceRunner._repair_conversation_json(extracted)
                 if repaired is not None:
                     try:
@@ -419,7 +419,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             os.remove(temp_file)
 
         except Exception as e:
-            logger.error(f"Error processing conversation JSON: {e} from item {item.id}")
+            logger.error("Error processing conversation JSON: %s from item %s", e, item.id)
             raise
 
         mp3_item = item.dataset.items.upload(
@@ -480,7 +480,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             messages = prompt_item.to_messages()
         except Exception as e:
             raise ValueError(
-                f"Failed to parse item {item.id} ('{item.name}') as a prompt item: {e}"
+                "Failed to parse item %s ('%s') as a prompt item: %s" % (item.id, item.name, e)
             ) from e
 
         if not messages:
@@ -494,7 +494,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             text = content[0].get("text", None)
         except (IndexError, KeyError, TypeError) as e:
             raise ValueError(
-                f"Unexpected message structure in item {item.id} ('{item.name}'): {e}"
+                "Unexpected message structure in item %s ('%s'): %s" % (item.id, item.name, e)
             ) from e
         return text
 
@@ -810,7 +810,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
             outline = PodcastOutline.model_validate_json(outline_dict)
             return outline
         except Exception as first_error:
-            logger.warning(f"Initial outline parse failed: {first_error}")
+            logger.warning("Initial outline parse failed: %s", first_error)
             repaired = SharedServiceRunner._repair_outline_json(outline_dict)
             if repaired is not None and repaired != outline_dict:
                 logger.info("Attempting parse with repaired JSON...")
@@ -819,7 +819,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
                     logger.info("Successfully parsed repaired outline JSON.")
                     return outline
                 except Exception as repair_error:
-                    logger.warning(f"Repaired JSON also failed: {repair_error}")
+                    logger.warning("Repaired JSON also failed: %s", repair_error)
             # Re-raise the original error
             raise first_error
 

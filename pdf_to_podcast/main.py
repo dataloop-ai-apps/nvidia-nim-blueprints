@@ -219,5 +219,5 @@ if __name__ == "__main__":
         print(f"End: Successfully prepared audio file: {output_podcast.name} ({output_podcast.id})")
         print(f"Link here: {output_podcast.platform_url}")
     except Exception as e:
-        print(f"Error generating audio: {e}")
+        logger.error("Error generating audio: %s", e)
         raise

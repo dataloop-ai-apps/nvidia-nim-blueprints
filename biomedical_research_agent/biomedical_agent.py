@@ -148,7 +148,7 @@ class BiomedicalResearchAgent(AIQEnterpriseAgent):
                     return prop["value"]["sval"]
             return compounds[0].isomeric_smiles
         except Exception as e:
-            logger.error(f"PubChem lookup failed for '{compound_name}': {e}")
+            logger.error("PubChem lookup failed for '%s': %s", compound_name, e)
             return None
 
     @staticmethod
@@ -173,7 +173,7 @@ class BiomedicalResearchAgent(AIQEnterpriseAgent):
             logger.warning(f"RCSB PDB: no results for '{protein_name}'")
             return None
         except Exception as e:
-            logger.error(f"RCSB PDB lookup failed for '{protein_name}': {e}")
+            logger.error("RCSB PDB lookup failed for '%s': %s", protein_name, e)
             return None
 
     @staticmethod
@@ -189,7 +189,7 @@ class BiomedicalResearchAgent(AIQEnterpriseAgent):
             logger.info(f"Fetched PDB structure for {protein_id} ({len(resp.text)} chars)")
             return resp.text
         except Exception as e:
-            logger.error(f"PDB fetch failed for {protein_id}: {e}")
+            logger.error("PDB fetch failed for %s: %s", protein_id, e)
             return None
 
     # ─── NIM Calls ────────────────────────────────────────────────────────────
@@ -220,7 +220,7 @@ class BiomedicalResearchAgent(AIQEnterpriseAgent):
                 return "\n".join(v["sample"] for v in molecules)
             return "\n".join(v["smiles"] for v in body.get("generated", []))
         except Exception as e:
-            logger.error(f"MolMIM call failed: {e}")
+            logger.error("MolMIM call failed: %s", e)
             return None
 
     def _call_diffdock(self, protein_pdb: str, ligands: str) -> dict | None:
@@ -254,7 +254,7 @@ class BiomedicalResearchAgent(AIQEnterpriseAgent):
                 "ligand_positions": body.get("ligand_positions", []),
             }
         except Exception as e:
-            logger.error(f"DiffDock call failed: {e}")
+            logger.error("DiffDock call failed: %s", e)
             return None
 
     def _upload_vs_artifacts(
@@ -357,7 +357,7 @@ class BiomedicalResearchAgent(AIQEnterpriseAgent):
                             state.get("citations", "") + "\n" + vs_citations
                         ).strip()
                 except Exception as e:
-                    logger.error(f"Could not read VS results: {e}")
+                    logger.error("Could not read VS results: %s", e)
 
             return self._prepare_for_report(main_item, state, progress)
 
@@ -427,7 +427,7 @@ class BiomedicalResearchAgent(AIQEnterpriseAgent):
                 sources_xml = results_json.get("sources_xml", "")
                 citations = results_json.get("citations", "")
             except Exception as e:
-                logger.error(f"Could not read research results file: {e}")
+                logger.error("Could not read research results file: %s", e)
 
         state["citations"] = (state.get("citations", "") + "\n" + citations).strip()
 

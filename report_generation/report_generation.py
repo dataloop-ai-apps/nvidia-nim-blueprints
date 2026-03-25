@@ -61,7 +61,7 @@ class ReportGenerator(dl.BaseServiceRunner):
                 raw_content = source.get('raw_content', '')
                 if raw_content is None:
                     raw_content = ''
-                    print(f"Warning: No raw_content found for source {source['url']}")
+                    logger.warning("No raw_content found for source %s", source['url'])
                 if len(raw_content) > char_limit:
                     raw_content = raw_content[:char_limit] + "... [truncated]"
                 formatted_text += f"Full source content limited to {max_tokens_per_source} tokens: {raw_content}\n\n"
@@ -636,8 +636,8 @@ class ReportGenerator(dl.BaseServiceRunner):
                     )
                     non_research_sections_prompt_items.append(item_non_research)
                 except Exception as e:
-                    logger.info(f"section_{i} already exists from a concurrent call, "
-                                f"returning empty list: {e}")
+                    logger.info("section_%s already exists from a concurrent call, "
+                                "returning empty list: %s", i, e)
                     return []
         
         return non_research_sections_prompt_items
