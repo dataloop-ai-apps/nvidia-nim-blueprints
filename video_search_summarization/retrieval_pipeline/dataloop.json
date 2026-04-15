@@ -2,7 +2,7 @@
   "name": "vss-retrieval-bp",
   "displayName": "VSS Retrieval NVIDIA Blueprint",
   "description": "RAG retrieval pipeline for Video Search & Summarization. Embeds the user query, retrieves relevant chunks via vector search, enriches with knowledge graph context, and generates a response using an LLM. This is the second stage — first run the 'VSS NVIDIA Blueprint' preprocessing pipeline to build the knowledge graph and embed your video descriptions. Setup: (1) Install this app — requires an NVIDIA NGC API key. (2) Create a pipeline from the 'VSS Retrieval NVIDIA Blueprint' template. (3) Set 'retrieval_dataset' to the chunked dataset from the preprocessing pipeline. (4) Adjust model variables and k_nearest_items if needed. (5) Execute the pipeline with prompt items.",
-  "version": "0.0.78",
+  "version": "0.0.79",
   "scope": "public",
   "attributes": {
     "Hub": [
