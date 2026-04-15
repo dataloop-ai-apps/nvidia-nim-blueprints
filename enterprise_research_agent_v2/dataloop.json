@@ -128,7 +128,7 @@
               {
                 "name": "item",
                 "type": "Item",
-                "actions": ["generate_report", "escalate"]
+                "actions": ["answer", "escalate"]
               }
             ],
             "displayName": "AIQ v2 Shallow Researcher",
