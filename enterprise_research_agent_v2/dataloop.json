@@ -1,0 +1,171 @@
+{
+  "name": "nvidia-aiq-enterprise-research-v2",
+  "displayName": "NVIDIA AIQ Enterprise Research Agent v2",
+  "description": "AI Agent for Enterprise Research v2 with two-tier research (shallow + deep), intent classification, human-in-the-loop plan approval, citation verification, and deepagents-based multi-agent research. Implements NVIDIA AI-Q Blueprint v2.0.0.",
+  "version": "0.0.78",
+  "scope": "public",
+  "codebase": {
+    "type": "item"
+  },
+  "attributes": {
+    "Hub": ["Nvidia", "Dataloop"],
+    "Category": ["Application"],
+    "Application Type": "GenAI",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop"
+  },
+  "components": {
+    "computeConfigs": [
+      {
+        "name": "enterprise-research-v2-compute",
+        "runtime": {
+          "podType": "regular-xs",
+          "concurrency": 10,
+          "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/nvidia-nim-blueprints-v2:0.0.1",
+          "autoscaler": {
+            "type": "rabbitmq",
+            "minReplicas": 0,
+            "maxReplicas": 2
+          }
+        }
+      }
+    ],
+    "pipelineNodes": [
+      {
+        "name": "aiq-v2-init-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "enterprise-research-v2-compute.enterprise-research-v2-module.init_research"
+        },
+        "categories": ["NVIDIA AIQ Enterprise Research v2"],
+        "scope": "project"
+      },
+      {
+        "name": "aiq-v2-intent-classifier-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "enterprise-research-v2-compute.enterprise-research-v2-module.classify_intent"
+        },
+        "categories": ["NVIDIA AIQ Enterprise Research v2"],
+        "scope": "project"
+      },
+      {
+        "name": "aiq-v2-shallow-researcher-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "enterprise-research-v2-compute.enterprise-research-v2-module.shallow_research"
+        },
+        "categories": ["NVIDIA AIQ Enterprise Research v2"],
+        "scope": "project"
+      },
+      {
+        "name": "aiq-v2-clarifier-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "enterprise-research-v2-compute.enterprise-research-v2-module.clarify_and_plan"
+        },
+        "categories": ["NVIDIA AIQ Enterprise Research v2"],
+        "scope": "project"
+      },
+      {
+        "name": "aiq-v2-deep-researcher-node",
+        "invoke": {
+          "type": "function",
+          "namespace": "enterprise-research-v2-compute.enterprise-research-v2-module.deep_research"
+        },
+        "categories": ["NVIDIA AIQ Enterprise Research v2"],
+        "scope": "project"
+      }
+    ],
+    "modules": [
+      {
+        "name": "enterprise-research-v2-module",
+        "computeConfig": "enterprise-research-v2-compute",
+        "entryPoint": "enterprise_research_agent_v2/aiq_agent.py",
+        "className": "AIQEnterpriseAgentV2",
+        "integrations": [
+          "dl-ngc-api-key",
+          "dl-tavily-api-key"
+        ],
+        "functions": [
+          {
+            "name": "init_research",
+            "input": [
+              { "name": "item", "type": "Item" },
+              { "name": "rag_pipeline_id", "type": "String" }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item",
+                "actions": ["classify", "deep_research_approved"]
+              }
+            ],
+            "displayName": "AIQ v2 Init",
+            "displayIcon": "icon-dl-play"
+          },
+          {
+            "name": "classify_intent",
+            "input": [
+              { "name": "item", "type": "Item" }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item",
+                "actions": ["meta", "shallow", "deep"]
+              }
+            ],
+            "displayName": "AIQ v2 Intent Classifier",
+            "displayIcon": "icon-dl-filter"
+          },
+          {
+            "name": "shallow_research",
+            "input": [
+              { "name": "item", "type": "Item" }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item",
+                "actions": ["generate_report", "escalate"]
+              }
+            ],
+            "displayName": "AIQ v2 Shallow Researcher",
+            "displayIcon": "icon-dl-search"
+          },
+          {
+            "name": "clarify_and_plan",
+            "input": [
+              { "name": "item", "type": "Item" }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item",
+                "actions": ["plan_pending"]
+              }
+            ],
+            "displayName": "AIQ v2 Clarifier",
+            "displayIcon": "icon-dl-qa"
+          },
+          {
+            "name": "deep_research",
+            "input": [
+              { "name": "item", "type": "Item" }
+            ],
+            "output": [
+              {
+                "name": "item",
+                "type": "Item",
+                "actions": ["generate_report"]
+              }
+            ],
+            "displayName": "AIQ v2 Deep Researcher",
+            "displayIcon": "icon-dl-smart-search"
+          }
+        ]
+      }
+    ]
+  }
+}

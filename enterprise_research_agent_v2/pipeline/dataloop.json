@@ -1,0 +1,375 @@
+{
+  "name": "nvidia-aiq-enterprise-research-v2-bp",
+  "displayName": "AI Agent for Enterprise Research v2",
+  "description": "Enterprise research agent v2 pipeline with intent classification, two-tier research (shallow + deep), HITL plan approval, citation verification, and NIM GPT-OSS 120B report writer. Implements NVIDIA AI-Q Blueprint v2.0.0.",
+  "version": "0.0.78",
+  "scope": "public",
+  "codebase": {
+    "type": "item"
+  },
+  "attributes": {
+    "Hub": ["Nvidia", "Dataloop"],
+    "Category": ["Pipeline", "Blueprint"],
+    "Pipeline Type": "GenAI",
+    "Provider": "NVIDIA",
+    "Developed By": "Dataloop",
+    "Media Type": ["Text"]
+  },
+  "dependencies": [
+    { "name": "nvidia-aiq-enterprise-research-v2" },
+    {
+      "name": "nim-gpt-oss-120b",
+      "components": {
+        "models": [
+          {
+            "name": "nim-gpt-oss-120b",
+            "configuration": {
+              "nim_model_name": "openai/gpt-oss-120b",
+              "system_prompt": "You are working with a team of research experts to deliver a publication-ready long-form report. The user provides a research topic. You also receive a research draft and sources via the provided context documents.\n\nYour task: Based on the research draft in the context, produce a comprehensive, well-structured final report.\n\nGuidelines:\n- Introduction: Begin with an engaging, context-rich introduction that frames the central questions and scope.\n- Flow & Structure: Arrange sections logically with clear headings and smooth transitions.\n- Integrated Synthesis: Blend multi-source insights into the narrative.\n- Exploratory Depth: Pursue lines of inquiry that deepen understanding.\n- Length & Form: Aim for very long reports. Write in multiple coherent paragraphs. Avoid bullet lists unless absolutely necessary.\n- Use ## for sections, ### for subsections.\n- Do NOT refer to yourself as the writer. Do not add meta-commentary.\n- Do not add a sources section (added in post-processing).\n- Do NOT wrap the report in markdown code blocks.\n- Write the report in the same language as the user's message.\n- Each section should be as long as necessary for deep analysis.\n- Return only the final report.",
+              "max_tokens": 20000,
+              "temperature": 0.0,
+              "top_p": 0.7,
+              "stream": true
+            }
+          }
+        ]
+      }
+    },
+    { "name": "nim-rag-bp" }
+  ],
+  "variables": {
+    "report_writer_model__model": "nim-gpt-oss-120b.models.nim-gpt-oss-120b"
+  },
+  "components": {
+    "pipelineTemplates": [
+      {
+        "name": "AI Agent for Enterprise Research v2",
+        "description": "Intent Classifier -> Shallow Research / Deep Research (with HITL plan approval) -> NIM GPT-OSS 120B Report Generation",
+        "connections": [
+          {
+            "src": { "nodeId": "node-init", "portId": "port-init-out" },
+            "tgt": { "nodeId": "node-intent", "portId": "port-intent-in" },
+            "condition": "{}",
+            "action": "classify"
+          },
+          {
+            "src": { "nodeId": "node-init", "portId": "port-init-out" },
+            "tgt": { "nodeId": "node-deep", "portId": "port-deep-in" },
+            "condition": "{}",
+            "action": "deep_research_approved"
+          },
+          {
+            "src": { "nodeId": "node-intent", "portId": "port-intent-out" },
+            "tgt": { "nodeId": "node-shallow", "portId": "port-shallow-in" },
+            "condition": "{}",
+            "action": "shallow"
+          },
+          {
+            "src": { "nodeId": "node-intent", "portId": "port-intent-out" },
+            "tgt": { "nodeId": "node-clarifier", "portId": "port-clarifier-in" },
+            "condition": "{}",
+            "action": "deep"
+          },
+          {
+            "src": { "nodeId": "node-shallow", "portId": "port-shallow-out" },
+            "tgt": { "nodeId": "node-report", "portId": "port-report-in" },
+            "condition": "{}",
+            "action": "generate_report"
+          },
+          {
+            "src": { "nodeId": "node-shallow", "portId": "port-shallow-out" },
+            "tgt": { "nodeId": "node-clarifier", "portId": "port-clarifier-in" },
+            "condition": "{}",
+            "action": "escalate"
+          },
+          {
+            "src": { "nodeId": "node-deep", "portId": "port-deep-out" },
+            "tgt": { "nodeId": "node-report", "portId": "port-report-in" },
+            "condition": "{}",
+            "action": "generate_report"
+          }
+        ],
+        "startNodes": [
+          {
+            "nodeId": "node-init",
+            "type": "root",
+            "id": "start-node-1"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "node-init",
+            "inputs": [
+              {
+                "portId": "port-init-in",
+                "nodeId": "port-init-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              },
+              {
+                "portId": "port-init-rag-pipeline",
+                "nodeId": "port-init-rag-pipeline",
+                "type": "String",
+                "name": "rag_pipeline_id",
+                "displayName": "RAG Pipeline ID",
+                "variableName": "rag_pipeline_id",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-init-out",
+                "nodeId": "port-init-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": ["classify", "deep_research_approved"],
+                "io": "output"
+              }
+            ],
+            "name": "Init",
+            "type": "custom",
+            "namespace": {
+              "functionName": "init_research",
+              "serviceName": "enterprise-research-v2-compute",
+              "moduleName": "enterprise-research-v2-module",
+              "packageName": "nvidia-aiq-enterprise-research-v2"
+            },
+            "appName": "NVIDIA AIQ Enterprise Research Agent v2",
+            "dpkName": "nvidia-aiq-enterprise-research-v2",
+            "metadata": {
+              "position": { "x": 9200, "y": 10300, "z": 0 },
+              "componentGroupName": "NVIDIA AIQ Enterprise Research v2",
+              "repeatable": true,
+              "pipelineNodeName": "aiq-v2-init-node"
+            }
+          },
+          {
+            "id": "node-intent",
+            "inputs": [
+              {
+                "portId": "port-intent-in",
+                "nodeId": "port-intent-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-intent-out",
+                "nodeId": "port-intent-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": ["meta", "shallow", "deep"],
+                "io": "output"
+              }
+            ],
+            "name": "Intent Classifier",
+            "type": "custom",
+            "namespace": {
+              "functionName": "classify_intent",
+              "serviceName": "enterprise-research-v2-compute",
+              "moduleName": "enterprise-research-v2-module",
+              "packageName": "nvidia-aiq-enterprise-research-v2"
+            },
+            "appName": "NVIDIA AIQ Enterprise Research Agent v2",
+            "dpkName": "nvidia-aiq-enterprise-research-v2",
+            "metadata": {
+              "position": { "x": 9800, "y": 10300, "z": 0 },
+              "componentGroupName": "NVIDIA AIQ Enterprise Research v2",
+              "repeatable": true,
+              "pipelineNodeName": "aiq-v2-intent-classifier-node"
+            }
+          },
+          {
+            "id": "node-shallow",
+            "inputs": [
+              {
+                "portId": "port-shallow-in",
+                "nodeId": "port-shallow-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-shallow-out",
+                "nodeId": "port-shallow-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": ["generate_report", "escalate"],
+                "io": "output"
+              }
+            ],
+            "name": "Shallow Researcher",
+            "type": "custom",
+            "namespace": {
+              "functionName": "shallow_research",
+              "serviceName": "enterprise-research-v2-compute",
+              "moduleName": "enterprise-research-v2-module",
+              "packageName": "nvidia-aiq-enterprise-research-v2"
+            },
+            "appName": "NVIDIA AIQ Enterprise Research Agent v2",
+            "dpkName": "nvidia-aiq-enterprise-research-v2",
+            "metadata": {
+              "position": { "x": 10200, "y": 10100, "z": 0 },
+              "componentGroupName": "NVIDIA AIQ Enterprise Research v2",
+              "repeatable": true,
+              "pipelineNodeName": "aiq-v2-shallow-researcher-node"
+            }
+          },
+          {
+            "id": "node-clarifier",
+            "inputs": [
+              {
+                "portId": "port-clarifier-in",
+                "nodeId": "port-clarifier-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-clarifier-out",
+                "nodeId": "port-clarifier-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": ["plan_pending"],
+                "io": "output"
+              }
+            ],
+            "name": "Clarifier",
+            "type": "custom",
+            "namespace": {
+              "functionName": "clarify_and_plan",
+              "serviceName": "enterprise-research-v2-compute",
+              "moduleName": "enterprise-research-v2-module",
+              "packageName": "nvidia-aiq-enterprise-research-v2"
+            },
+            "appName": "NVIDIA AIQ Enterprise Research Agent v2",
+            "dpkName": "nvidia-aiq-enterprise-research-v2",
+            "metadata": {
+              "position": { "x": 10600, "y": 10300, "z": 0 },
+              "componentGroupName": "NVIDIA AIQ Enterprise Research v2",
+              "repeatable": true,
+              "pipelineNodeName": "aiq-v2-clarifier-node"
+            }
+          },
+          {
+            "id": "node-deep",
+            "inputs": [
+              {
+                "portId": "port-deep-in",
+                "nodeId": "port-deep-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-deep-out",
+                "nodeId": "port-deep-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "actions": ["generate_report"],
+                "io": "output"
+              }
+            ],
+            "name": "Deep Researcher",
+            "type": "custom",
+            "namespace": {
+              "functionName": "deep_research",
+              "serviceName": "enterprise-research-v2-compute",
+              "moduleName": "enterprise-research-v2-module",
+              "packageName": "nvidia-aiq-enterprise-research-v2"
+            },
+            "appName": "NVIDIA AIQ Enterprise Research Agent v2",
+            "dpkName": "nvidia-aiq-enterprise-research-v2",
+            "metadata": {
+              "position": { "x": 10200, "y": 10500, "z": 0 },
+              "componentGroupName": "NVIDIA AIQ Enterprise Research v2",
+              "repeatable": true,
+              "pipelineNodeName": "aiq-v2-deep-researcher-node"
+            }
+          },
+          {
+            "id": "node-report",
+            "inputs": [
+              {
+                "portId": "port-report-in",
+                "nodeId": "port-report-in",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "input"
+              }
+            ],
+            "outputs": [
+              {
+                "portId": "port-report-out",
+                "nodeId": "port-report-out",
+                "type": "Item",
+                "name": "item",
+                "displayName": "item",
+                "io": "output"
+              },
+              {
+                "portId": "port-report-annotations",
+                "nodeId": "port-report-annotations",
+                "type": "Annotation[]",
+                "name": "annotations",
+                "displayName": "annotations",
+                "io": "output"
+              }
+            ],
+            "name": "NIM GPT-OSS 120B - Report Writer",
+            "type": "ml",
+            "namespace": {
+              "functionName": "predict",
+              "serviceName": "",
+              "moduleName": "",
+              "packageName": "nim-gpt-oss-120b"
+            },
+            "appName": "NIM GPT-OSS 120B",
+            "dpkName": "nim-gpt-oss-120b",
+            "metadata": {
+              "position": { "x": 11200, "y": 10300, "z": 0 },
+              "componentGroupName": "models",
+              "repeatable": true,
+              "variableModel": "report_writer_model",
+              "pipelineNodeName": "nim-gpt-oss-120b-report-writer",
+              "mlType": "genAi"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "report_writer_model",
+            "type": "Model",
+            "description": "LLM model for generating the final research report. Preset: NIM GPT-OSS 120B.",
+            "value": "$var(report_writer_model__model)"
+          },
+          {
+            "name": "rag_pipeline_id",
+            "type": "String",
+            "description": "Optional: Pipeline ID of a configured 'RAG Pipeline NVIDIA Blueprint' instance. Create a pipeline from the nim-rag-bp template, configure its dataset and models, then paste its ID here. Leave empty to skip RAG retrieval and use web search only."
+          }
+        ]
+      }
+    ]
+  }
+}
