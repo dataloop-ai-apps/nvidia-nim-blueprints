@@ -2,7 +2,7 @@
   "name": "nvidia-aiq-enterprise-research-v2-bp",
   "displayName": "AI Agent for Enterprise Research v2",
   "description": "Enterprise research agent v2 pipeline with intent classification, two-tier research (shallow + deep), HITL plan approval, citation verification, and NIM GPT-OSS 120B report writer. Implements NVIDIA AI-Q Blueprint v2.0.0.",
-  "version": "0.0.1",
+  "version": "0.0.78",
   "scope": "public",
   "codebase": {
     "type": "item"

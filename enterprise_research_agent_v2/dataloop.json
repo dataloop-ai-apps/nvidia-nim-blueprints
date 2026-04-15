@@ -2,7 +2,7 @@
   "name": "nvidia-aiq-enterprise-research-v2",
   "displayName": "NVIDIA AIQ Enterprise Research Agent v2",
   "description": "AI Agent for Enterprise Research v2 with two-tier research (shallow + deep), intent classification, human-in-the-loop plan approval, citation verification, and deepagents-based multi-agent research. Implements NVIDIA AI-Q Blueprint v2.0.0.",
-  "version": "0.0.1",
+  "version": "0.0.78",
   "scope": "public",
   "codebase": {
     "type": "item"
