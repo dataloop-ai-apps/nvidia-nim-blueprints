@@ -140,7 +140,7 @@
             "appName": "NVIDIA AIQ Enterprise Research Agent v2",
             "dpkName": "nvidia-aiq-enterprise-research-v2",
             "metadata": {
-              "position": { "x": 9400, "y": 10300, "z": 0 },
+              "position": { "x": 9200, "y": 10300, "z": 0 },
               "componentGroupName": "NVIDIA AIQ Enterprise Research v2",
               "repeatable": true,
               "pipelineNodeName": "aiq-v2-init-node"
@@ -347,7 +347,7 @@
             "appName": "NIM GPT-OSS 120B",
             "dpkName": "nim-gpt-oss-120b",
             "metadata": {
-              "position": { "x": 11000, "y": 10300, "z": 0 },
+              "position": { "x": 11200, "y": 10300, "z": 0 },
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "report_writer_model",
