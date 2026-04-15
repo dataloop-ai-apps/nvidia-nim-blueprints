@@ -24,7 +24,7 @@
           {
             "name": "nim-gpt-oss-120b",
             "configuration": {
-              "nim_model_name": "nvidia/gpt-oss-120b",
+              "nim_model_name": "openai/gpt-oss-120b",
               "system_prompt": "You are working with a team of research experts to deliver a publication-ready long-form report. The user provides a research topic. You also receive a research draft and sources via the provided context documents.\n\nYour task: Based on the research draft in the context, produce a comprehensive, well-structured final report.\n\nGuidelines:\n- Introduction: Begin with an engaging, context-rich introduction that frames the central questions and scope.\n- Flow & Structure: Arrange sections logically with clear headings and smooth transitions.\n- Integrated Synthesis: Blend multi-source insights into the narrative.\n- Exploratory Depth: Pursue lines of inquiry that deepen understanding.\n- Length & Form: Aim for very long reports. Write in multiple coherent paragraphs. Avoid bullet lists unless absolutely necessary.\n- Use ## for sections, ### for subsections.\n- Do NOT refer to yourself as the writer. Do not add meta-commentary.\n- Do not add a sources section (added in post-processing).\n- Do NOT wrap the report in markdown code blocks.\n- Write the report in the same language as the user's message.\n- Each section should be as long as necessary for deep analysis.\n- Return only the final report.",
               "max_tokens": 20000,
               "temperature": 0.0,
@@ -140,7 +140,7 @@
             "appName": "NVIDIA AIQ Enterprise Research Agent v2",
             "dpkName": "nvidia-aiq-enterprise-research-v2",
             "metadata": {
-              "position": { "x": 9400, "y": 10274, "z": 0 },
+              "position": { "x": 9400, "y": 10300, "z": 0 },
               "componentGroupName": "NVIDIA AIQ Enterprise Research v2",
               "repeatable": true,
               "pipelineNodeName": "aiq-v2-init-node"
@@ -180,7 +180,7 @@
             "appName": "NVIDIA AIQ Enterprise Research Agent v2",
             "dpkName": "nvidia-aiq-enterprise-research-v2",
             "metadata": {
-              "position": { "x": 9800, "y": 10274, "z": 0 },
+              "position": { "x": 9800, "y": 10300, "z": 0 },
               "componentGroupName": "NVIDIA AIQ Enterprise Research v2",
               "repeatable": true,
               "pipelineNodeName": "aiq-v2-intent-classifier-node"
@@ -220,7 +220,7 @@
             "appName": "NVIDIA AIQ Enterprise Research Agent v2",
             "dpkName": "nvidia-aiq-enterprise-research-v2",
             "metadata": {
-              "position": { "x": 10200, "y": 10074, "z": 0 },
+              "position": { "x": 10200, "y": 10100, "z": 0 },
               "componentGroupName": "NVIDIA AIQ Enterprise Research v2",
               "repeatable": true,
               "pipelineNodeName": "aiq-v2-shallow-researcher-node"
@@ -245,7 +245,7 @@
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
-                "actions": ["plan_pending", "plan_approved"],
+                "actions": ["plan_pending"],
                 "io": "output"
               }
             ],
@@ -260,7 +260,7 @@
             "appName": "NVIDIA AIQ Enterprise Research Agent v2",
             "dpkName": "nvidia-aiq-enterprise-research-v2",
             "metadata": {
-              "position": { "x": 10200, "y": 10474, "z": 0 },
+              "position": { "x": 10600, "y": 10300, "z": 0 },
               "componentGroupName": "NVIDIA AIQ Enterprise Research v2",
               "repeatable": true,
               "pipelineNodeName": "aiq-v2-clarifier-node"
@@ -300,7 +300,7 @@
             "appName": "NVIDIA AIQ Enterprise Research Agent v2",
             "dpkName": "nvidia-aiq-enterprise-research-v2",
             "metadata": {
-              "position": { "x": 10600, "y": 10474, "z": 0 },
+              "position": { "x": 10200, "y": 10500, "z": 0 },
               "componentGroupName": "NVIDIA AIQ Enterprise Research v2",
               "repeatable": true,
               "pipelineNodeName": "aiq-v2-deep-researcher-node"
@@ -347,7 +347,7 @@
             "appName": "NIM GPT-OSS 120B",
             "dpkName": "nim-gpt-oss-120b",
             "metadata": {
-              "position": { "x": 10600, "y": 10074, "z": 0 },
+              "position": { "x": 11000, "y": 10300, "z": 0 },
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "report_writer_model",

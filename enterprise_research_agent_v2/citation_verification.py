@@ -19,7 +19,9 @@ logger = logging.getLogger(__name__)
 # Regex patterns for citation parsing
 _CITATION_INLINE_RE = re.compile(r"\[(\d+)\]")
 _REFERENCE_SECTION_RE = re.compile(
-    r"^#{1,3}\s*(Sources|References|Reference List|Bibliography)\s*$",
+    r"^(?:#{1,3}\s*|\*\*)"
+    r"(Sources|References|Reference List|Bibliography)"
+    r"(?:\*?\*?\s*:?\s*)$",
     re.MULTILINE | re.IGNORECASE,
 )
 _CITATION_LINE_RE = re.compile(

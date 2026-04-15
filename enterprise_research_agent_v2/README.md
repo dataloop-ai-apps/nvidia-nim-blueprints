@@ -42,12 +42,12 @@ Input -> [Init] -> [Intent Classifier]
 | Role | Model | Usage |
 |------|-------|-------|
 | Intent Classifier | `nemotron-3-nano-30b-a3b` | Fast classification via inline ChatNVIDIA |
-| Shallow Researcher | `llama-3.3-nemotron-super-49b-v1.5` | Research with tool-calling |
+| Shallow Researcher | `nemotron-3-nano-30b-a3b` | Bounded research with tool-calling |
 | Clarifier | `nemotron-3-nano-30b-a3b` | Clarification and plan generation |
-| Orchestrator | `llama-3.3-nemotron-super-49b-v1.5` | Deep research coordination |
-| Planner | `llama-3.3-nemotron-super-49b-v1.5` | Research plan generation |
-| Researcher | `llama-3.3-nemotron-super-49b-v1.5` | Information gathering |
-| Report Writer | `gpt-oss-120b` | Final report (dedicated NIM node) |
+| Orchestrator | `gpt-oss-120b` | Deep research coordination and synthesis |
+| Planner | `gpt-oss-120b` | Research plan generation |
+| Researcher (deep) | `nemotron-3-nano-30b-a3b` | Information gathering for deep research |
+| Report Writer | `gpt-oss-120b` | Final report formatting (dedicated NIM node) |
 
 ## Environment Variables
 

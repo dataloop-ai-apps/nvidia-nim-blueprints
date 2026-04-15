@@ -143,7 +143,7 @@
               {
                 "name": "item",
                 "type": "Item",
-                "actions": ["plan_pending", "plan_approved"]
+                "actions": ["plan_pending"]
               }
             ],
             "displayName": "AIQ v2 Clarifier",

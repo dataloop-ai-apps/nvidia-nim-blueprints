@@ -29,6 +29,7 @@ import tempfile
 import time
 from datetime import datetime
 
+import enterprise_research_agent_v2  # noqa: F401 — triggers SDK patches in __init__
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
 
 from enterprise_research_agent_v2.intent_classifier import IntentClassifier
@@ -41,11 +42,11 @@ logger = logging.getLogger("[AIQ-v2-Enterprise-Research]")
 
 DEFAULT_NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
 DEFAULT_INTENT_MODEL = "nvidia/nemotron-3-nano-30b-a3b"
-DEFAULT_SHALLOW_MODEL = "nvidia/llama-3.3-nemotron-super-49b-v1.5"
+DEFAULT_SHALLOW_MODEL = "nvidia/nemotron-3-nano-30b-a3b"
 DEFAULT_CLARIFIER_MODEL = "nvidia/nemotron-3-nano-30b-a3b"
-DEFAULT_ORCHESTRATOR_MODEL = "nvidia/llama-3.3-nemotron-super-49b-v1.5"
-DEFAULT_PLANNER_MODEL = "nvidia/llama-3.3-nemotron-super-49b-v1.5"
-DEFAULT_RESEARCHER_MODEL = "nvidia/llama-3.3-nemotron-super-49b-v1.5"
+DEFAULT_ORCHESTRATOR_MODEL = "openai/gpt-oss-120b"
+DEFAULT_PLANNER_MODEL = "openai/gpt-oss-120b"
+DEFAULT_RESEARCHER_MODEL = "nvidia/nemotron-3-nano-30b-a3b"
 
 
 class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
@@ -63,48 +64,62 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
             model=os.environ.get("INTENT_MODEL", DEFAULT_INTENT_MODEL),
             api_key=nvidia_api_key,
             base_url=base_url,
-            temperature=0.0,
-            max_tokens=2000,
+            temperature=0.5,
+            top_p=0.9,
+            max_tokens=4096,
         )
 
         self.shallow_llm = ChatNVIDIA(
             model=os.environ.get("SHALLOW_MODEL", DEFAULT_SHALLOW_MODEL),
             api_key=nvidia_api_key,
             base_url=base_url,
-            temperature=0.3,
-            max_tokens=16000,
+            temperature=0.5,
+            top_p=0.9,
+            max_tokens=4096,
         )
 
         self.clarifier_llm = ChatNVIDIA(
             model=os.environ.get("CLARIFIER_MODEL", DEFAULT_CLARIFIER_MODEL),
             api_key=nvidia_api_key,
             base_url=base_url,
-            temperature=0.0,
-            max_tokens=4000,
+            temperature=0.5,
+            top_p=0.9,
+            max_tokens=4096,
         )
+
+        orchestrator_model = os.environ.get("ORCHESTRATOR_MODEL", DEFAULT_ORCHESTRATOR_MODEL)
+        planner_model = os.environ.get("PLANNER_MODEL", DEFAULT_PLANNER_MODEL)
 
         self.orchestrator_llm = ChatNVIDIA(
-            model=os.environ.get("ORCHESTRATOR_MODEL", DEFAULT_ORCHESTRATOR_MODEL),
+            model=orchestrator_model,
             api_key=nvidia_api_key,
             base_url=base_url,
-            temperature=0.5,
-            max_tokens=20000,
+            temperature=1.0,
+            top_p=1.0,
+            max_tokens=256000,
         )
 
-        self.planner_llm = ChatNVIDIA(
-            model=os.environ.get("PLANNER_MODEL", DEFAULT_PLANNER_MODEL),
-            api_key=nvidia_api_key,
-            base_url=base_url,
-            temperature=0.3,
-            max_tokens=8000,
-        )
+        # Reuse the same instance when orchestrator and planner share a model
+        # to avoid duplicate entries in the langchain-nvidia model registry
+        if planner_model == orchestrator_model:
+            self.planner_llm = self.orchestrator_llm
+        else:
+            self.planner_llm = ChatNVIDIA(
+                model=planner_model,
+                api_key=nvidia_api_key,
+                base_url=base_url,
+                temperature=1.0,
+                top_p=1.0,
+                max_tokens=256000,
+            )
 
         self.researcher_llm = ChatNVIDIA(
             model=os.environ.get("RESEARCHER_MODEL", DEFAULT_RESEARCHER_MODEL),
             api_key=nvidia_api_key,
             base_url=base_url,
-            temperature=0.3,
-            max_tokens=16000,
+            temperature=0.5,
+            top_p=0.9,
+            max_tokens=4096,
         )
 
         # Build tools

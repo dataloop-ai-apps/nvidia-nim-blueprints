@@ -83,12 +83,16 @@ class ShallowResearcherAgent:
             )
             system_message = SystemMessage(content=rendered_prompt)
 
-            if iterations >= agent_self.max_tool_iterations:
-                logger.warning("Max iterations (%d) reached. Forcing synthesis.", iterations)
+            has_tool_results = any(isinstance(m, ToolMessage) for m in messages)
+
+            if iterations >= agent_self.max_tool_iterations or has_tool_results:
+                if iterations >= agent_self.max_tool_iterations:
+                    logger.warning("Max iterations (%d) reached. Forcing synthesis.", iterations)
                 synthesis_anchor = HumanMessage(
                     content=(
-                        "You have exhausted your research budget. Synthesize the final answer now "
-                        "using the citations [1], [2] and the '## References' format. "
+                        "Using the search results above, synthesize a comprehensive answer to the "
+                        "user's question now. Cite sources inline with [1], [2], etc. and include a "
+                        "'**References:**' section at the end listing each cited URL. "
                         "Do not attempt any further tool calls."
                     )
                 )
