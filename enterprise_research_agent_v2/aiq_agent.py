@@ -66,7 +66,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
             base_url=base_url,
             temperature=0.5,
             top_p=0.9,
-            max_tokens=4096,
+            max_completion_tokens=4096,
         )
 
         self.shallow_llm = ChatNVIDIA(
@@ -75,7 +75,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
             base_url=base_url,
             temperature=0.5,
             top_p=0.9,
-            max_tokens=4096,
+            max_completion_tokens=4096,
         )
 
         self.clarifier_llm = ChatNVIDIA(
@@ -84,7 +84,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
             base_url=base_url,
             temperature=0.5,
             top_p=0.9,
-            max_tokens=4096,
+            max_completion_tokens=4096,
         )
 
         orchestrator_model = os.environ.get("ORCHESTRATOR_MODEL", DEFAULT_ORCHESTRATOR_MODEL)
@@ -96,7 +96,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
             base_url=base_url,
             temperature=1.0,
             top_p=1.0,
-            max_tokens=256000,
+            max_completion_tokens=256000,
         )
 
         # Reuse the same instance when orchestrator and planner share a model
@@ -110,7 +110,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
                 base_url=base_url,
                 temperature=1.0,
                 top_p=1.0,
-                max_tokens=256000,
+                max_completion_tokens=256000,
             )
 
         self.researcher_llm = ChatNVIDIA(
@@ -119,7 +119,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
             base_url=base_url,
             temperature=0.5,
             top_p=0.9,
-            max_tokens=4096,
+            max_completion_tokens=4096,
         )
 
         # Build tools
@@ -228,13 +228,19 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
         return cleaned.strip()
 
     @staticmethod
-    def _get_user_query(item: dl.Item) -> str:
-        """Extract the user's text query from a PromptItem."""
+    def _get_user_query(item: dl.Item, latest: bool = False) -> str:
+        """Extract the user's text query from a PromptItem.
+
+        Args:
+            latest: If True, return the most recent prompt (for detecting
+                    approval in multi-turn conversations). If False (default),
+                    return the first prompt (the original research question).
+        """
         try:
             prompt_item = dl.PromptItem.from_item(item)
             prompts_json = prompt_item.to_json()["prompts"]
-            first_key = list(prompts_json.keys())[0]
-            return prompts_json[first_key][0]["value"]
+            key = list(prompts_json.keys())[-1 if latest else 0]
+            return prompts_json[key][0]["value"]
         except Exception as e:
             logger.error(f"Could not extract user query: {e}")
             return ""
@@ -271,7 +277,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
 
     # ─── Pipeline Node 1: Init ────────────────────────────────────────────────
 
-    def init_research(self, item: dl.Item, rag_pipeline_id: str = None, context: dl.Context = None):
+    def init_research(self, item: dl.Item, rag_pipeline_id: str = None, context: dl.Context = None, progress: dl.Progress = None):
         """Pipeline node: Init (ROOT)
 
         Detects if this is a fresh query or a plan-approval cycle.
@@ -289,34 +295,32 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
         plan_pending = user_meta.get("plan_pending", False) or state.get("plan_pending", False)
 
         if plan_pending:
-            user_query = self._get_user_query(item)
-            lower_query = user_query.strip().lower()
+            latest_msg = self._get_user_query(item, latest=True)
+            lower_msg = latest_msg.strip().lower()
+            logger.info("Plan pending — latest user message: '%s'", latest_msg[:100])
 
-            approval_signals = [
-                "approved", "approve", "yes", "go ahead",
-                "start", "proceed", "ok", "looks good", "lgtm",
-            ]
-            is_approved = any(signal in lower_query for signal in approval_signals)
+            rejection_signals = ["reject", "cancel", "no", "stop", "abort"]
+            is_rejected = any(lower_msg == signal for signal in rejection_signals)
 
-            if is_approved:
-                logger.info("Plan APPROVED by user. Routing to deep research.")
-                state["plan_approved"] = True
-                state["plan_pending"] = False
-                state["user_feedback"] = user_query
-                item = self._set_state(item, state)
-
-                context.progress.update(action="deep_research_approved")
-                return item
-            else:
-                logger.info("User provided feedback on plan. Re-routing to clarifier.")
-                state["plan_feedback"] = user_query
+            if is_rejected:
+                logger.info("User REJECTED the plan. Re-routing to clarifier with feedback.")
+                state["plan_feedback"] = latest_msg
                 state["plan_pending"] = False
                 feedback_history = state.get("feedback_history", [])
-                feedback_history.append(user_query)
+                feedback_history.append(latest_msg)
                 state["feedback_history"] = feedback_history
                 item = self._set_state(item, state)
 
-                context.progress.update(action="classify")
+                progress.update(action="classify")
+                return item
+            else:
+                logger.info("Plan APPROVED by user. Routing to deep research.")
+                state["plan_approved"] = True
+                state["plan_pending"] = False
+                state["user_feedback"] = latest_msg
+                item = self._set_state(item, state)
+
+                progress.update(action="deep_research_approved")
                 return item
 
         # Validate RAG pipeline if provided
@@ -334,7 +338,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
             logger.info("No RAG pipeline configured")
 
         item = self._set_state(item, state)
-        context.progress.update(action="classify")
+        progress.update(action="classify")
         return item
 
     # ─── Pipeline Node 2: Intent Classifier ──────────────────────────────────
@@ -361,7 +365,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
         # Check if re-entering after plan feedback -> route to deep/clarifier
         if state.get("plan_feedback"):
             logger.info("Re-entering after plan feedback. Routing to clarifier (deep).")
-            _progress = context.progress if context else progress
+            _progress = progress
             _progress.update(action="deep")
             return main_item
 
@@ -377,7 +381,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
         state["query"] = user_query
         main_item = self._set_state(main_item, state)
 
-        _progress = context.progress if context else progress
+        _progress = progress
 
         if result["intent"] == "meta":
             meta_response = result.get("meta_response", "")
@@ -445,7 +449,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
         state["shallow_answer"] = answer
         state["shallow_sources"] = sources
 
-        _progress = context.progress if context else progress
+        _progress = progress
 
         if should_escalate:
             logger.info("Shallow research recommends escalation to deep research")
@@ -509,7 +513,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
                 state["clarification_asked"] = True
                 main_item = self._set_state(main_item, state)
 
-                _progress = context.progress if context else progress
+                _progress = progress
                 _progress.update(action="plan_pending")
                 return main_item
 
@@ -531,7 +535,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
 
         logger.info("Plan presented to user, waiting for approval")
 
-        _progress = context.progress if context else progress
+        _progress = progress
         _progress.update(action="plan_pending")
         return main_item
 
@@ -595,7 +599,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
         # Prepare for report writer node
         self._prepare_for_report(main_item, report, state)
 
-        _progress = context.progress if context else progress
+        _progress = progress
         _progress.update(action="generate_report")
 
         logger.info(

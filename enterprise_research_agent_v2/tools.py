@@ -16,7 +16,7 @@ from typing import Optional
 
 import requests
 from langchain_core.tools import BaseTool
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 logger = logging.getLogger(__name__)
 
@@ -30,8 +30,7 @@ class TavilySearchTool(BaseTool):
     relevance_threshold: float = Field(default=0.6)
     _client: object = None
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def __init__(self, api_key: str, max_results: int = 5, **kwargs):
         super().__init__(max_results=max_results, **kwargs)
@@ -79,8 +78,7 @@ class TavilyAdvancedSearchTool(BaseTool):
     max_results: int = Field(default=2)
     _client: object = None
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def __init__(self, api_key: str, max_results: int = 2, **kwargs):
         super().__init__(max_results=max_results, **kwargs)
@@ -182,8 +180,7 @@ class DataloopRAGTool(BaseTool):
     rag_pipeline_id: str = Field(default="")
     dataset_id: str = Field(default="")
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def __init__(self, rag_pipeline_id: str, dataset_id: str, **kwargs):
         super().__init__(

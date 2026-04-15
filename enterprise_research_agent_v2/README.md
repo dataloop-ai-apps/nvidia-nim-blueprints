@@ -49,21 +49,6 @@ Input -> [Init] -> [Intent Classifier]
 | Researcher (deep) | `nemotron-3-nano-30b-a3b` | Information gathering for deep research |
 | Report Writer | `gpt-oss-120b` | Final report formatting (dedicated NIM node) |
 
-## Environment Variables
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NGC_API_KEY` | Yes | NVIDIA NGC API key for NIM endpoints |
-| `TAVILY_API_KEY` | Yes | Tavily API key for web search |
-| `SERPER_API_KEY` | No | Serper API key for academic paper search |
-| `NVIDIA_BASE_URL` | No | Override NIM API base URL |
-| `INTENT_MODEL` | No | Override intent classifier model |
-| `SHALLOW_MODEL` | No | Override shallow researcher model |
-| `CLARIFIER_MODEL` | No | Override clarifier model |
-| `ORCHESTRATOR_MODEL` | No | Override deep research orchestrator model |
-| `PLANNER_MODEL` | No | Override deep research planner model |
-| `RESEARCHER_MODEL` | No | Override deep research researcher model |
-
 ## Pipeline Variables
 
 | Variable | Type | Description |
@@ -76,17 +61,52 @@ Input -> [Init] -> [Intent Classifier]
 1. User asks a complex question in AI Playground
 2. Pipeline creates a cycle, Intent Classifier routes to "deep"
 3. Clarifier generates a research plan and presents it as a chat annotation
-4. User reads the plan in the chat and replies with "approved" or feedback
+4. User reads the plan in the chat and replies (e.g. "approved", "looks good", or feedback)
 5. The reply creates a new pipeline cycle
-6. Init node detects `plan_pending` metadata and the approval/feedback
-7. If approved: routes directly to Deep Researcher
-8. If feedback: routes back through Intent Classifier -> Clarifier with the feedback
+6. Init node detects `plan_pending` metadata and reads the latest message
+7. Any response is treated as **approval by default** — the user's message is passed along so the deep researcher can incorporate any additional instructions
+8. Only explicit rejection ("no", "reject", "cancel", "stop", "abort") re-routes to the Clarifier for a revised plan
+
+## Usage
+
+This pipeline is designed to be used from the **Dataloop AI Playground**. Select the pipeline in the AI Playground dropdown and start a conversation — the agent will automatically classify your query and route it through the appropriate research path.
+
+## AI Playground Timeout
+
+The AI Playground has a **5-minute response timeout**. Shallow research and meta queries complete well within this limit, but deep research (which involves multi-agent orchestration + the NIM report writer) typically takes **15–25 minutes**.
+
+When deep research is triggered:
+
+- The **plan presentation** will appear in the chat normally (takes a few seconds)
+- After approving the plan, the AI Playground may show a **"Failed to get response"** error — this is expected and does not mean the pipeline failed
+- The pipeline continues running in the background
+
+To view the completed deep research report:
+
+1. **From the pipeline**: Open the pipeline execution, find the Report Writer node output, and click the output item to see the full report
+2. **From the dataset**: Go to the `ai-playground-history` dataset, find the prompt item for your conversation, and open it — the report will be in the last response
+
+
+## RAG Integration (Optional)
+
+To enable knowledge base retrieval from your own documents, you can connect a RAG pipeline:
+
+1. Create a RAG pipeline from the **NVIDIA RAG Blueprint** template (`nim-rag-bp`). See the [NVIDIA RAG Pipeline documentation](../multimodal_rag/nvidia_rag_pipeline/README.md) for setup instructions.
+2. Configure the RAG pipeline with your dataset and embedding/reranking models, then install and activate it.
+3. Copy the RAG pipeline's ID.
+4. In this pipeline's variables, paste the ID into the **`rag_pipeline_id`** field.
+
+When configured, the research agents will use the RAG pipeline as an additional tool (`knowledge_search`) alongside web search, allowing them to retrieve information from your uploaded documents and internal knowledge base.
+
+If left empty, the agent uses web search only.
 
 ## Deployment
 
-1. Build the Docker image using the provided Dockerfile
-2. Install the app DPK (`dataloop.json`)
-3. Create a pipeline from the template (`pipeline/dataloop.json`)
-4. Configure the pipeline variables (RAG pipeline ID, report writer model)
-5. Set the required environment variables as Dataloop integrations
-6. Install and activate the pipeline
+1. Go to the **Dataloop Marketplace** and find **AI Agent for Enterprise Research v2** under the Pipelines tab
+2. Install the pipeline into your project
+3. Configure the pipeline variables:
+   - **`report_writer_model`**: select the NIM GPT-OSS 120B model
+   - **`rag_pipeline_id`**: (optional) paste a RAG pipeline ID for knowledge base integration
+4. Ensure the required integrations are configured in your project (`NGC_API_KEY`, `TAVILY_API_KEY`)
+5. Install and activate the pipeline
+6. Open the **AI Playground**, select this pipeline, and start asking questions

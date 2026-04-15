@@ -20,6 +20,7 @@ from datetime import datetime
 from typing import Any, Optional
 
 from langchain_core.tools import BaseTool, tool
+from pydantic import ConfigDict
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
 
 from enterprise_research_agent_v2.prompts import render_prompt
@@ -58,8 +59,7 @@ class VerifiedSourcesTool(BaseTool):
     )
     _registry: SourceRegistry = None
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def __init__(self, registry: SourceRegistry):
         super().__init__()
