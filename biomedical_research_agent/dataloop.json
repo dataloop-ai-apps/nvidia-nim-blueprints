@@ -2,7 +2,7 @@
   "name": "nvidia-biomedical-research",
   "displayName": "NVIDIA Biomedical AI-Q Research Agent",
   "description": "Biomedical research agent with virtual screening capabilities for drug discovery. Extends the Enterprise Research Agent with MolMIM (molecule generation) and DiffDock (molecular docking) NIM integrations. Adapted from NVIDIA Biomedical AI-Q Research Agent Blueprint.",
-  "version": "0.0.80",
+  "version": "0.0.81",
   "scope": "public",
   "codebase": {
     "type": "item"
