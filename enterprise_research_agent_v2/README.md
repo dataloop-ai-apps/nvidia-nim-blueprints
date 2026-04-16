@@ -105,8 +105,8 @@ If left empty, the agent uses web search only.
 1. Go to the **Dataloop Marketplace** and find **AI Agent for Enterprise Research v2** under the Pipelines tab
 2. Install the pipeline into your project
 3. Configure the pipeline variables:
-   - **`report_writer_model`**: select the NIM GPT-OSS 120B model
+   - **`report_writer_model`**: NIM GPT-OSS 120B model (already selected)
    - **`rag_pipeline_id`**: (optional) paste a RAG pipeline ID for knowledge base integration
 4. Ensure the required integrations are configured in your project (`NGC_API_KEY`, `TAVILY_API_KEY`)
-5. Install and activate the pipeline
+5. Publish the pipeline
 6. Open the **AI Playground**, select this pipeline, and start asking questions
