@@ -409,7 +409,7 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
         """Pipeline node: Shallow Research
 
         Routes:
-          - answer ready -> action: generate_report
+          - answer ready -> action: answer (annotated directly, no report writer)
           - escalate -> action: escalate
         """
         logger.info("=== AIQ v2 Shallow Researcher node ===")
@@ -458,12 +458,12 @@ class AIQEnterpriseAgentV2(dl.BaseServiceRunner):
             _progress.update(action="escalate")
             return main_item
 
-        # Prepare for report writer
         state["research_complete"] = True
         main_item = self._set_state(main_item, state)
 
-        self._prepare_for_report(main_item, answer, state)
-        _progress.update(action="generate_report")
+        self._annotate_response(main_item, answer)
+        _progress.update(action="answer")
+        logger.info("Shallow answer annotated directly (%d chars)", len(answer))
         return main_item
 
     # ─── Pipeline Node 4: Clarifier ──────────────────────────────────────────

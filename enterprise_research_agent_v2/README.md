@@ -11,7 +11,7 @@ Dataloop implementation of the [NVIDIA AI-Q Blueprint v2.0.0](https://github.com
 - **Human-in-the-Loop (HITL)**: For deep research, the agent proposes a plan and waits for user approval in the AI Playground chat before proceeding.
 - **Citation Verification**: 5-level URL matching against a source registry, with report sanitization to remove hallucinated URLs.
 - **RAG Integration**: Optional Dataloop RAG pipeline wrapped as a LangChain tool for knowledge base queries.
-- **Report Writer**: Dedicated NIM `gpt-oss-120b` predict node for final report formatting with streaming output.
+- **Report Writer**: Dedicated NIM `gpt-oss-120b` predict node for deep research report formatting with streaming output (shallow answers are returned directly).
 
 ## Pipeline Architecture
 
@@ -19,7 +19,7 @@ Dataloop implementation of the [NVIDIA AI-Q Blueprint v2.0.0](https://github.com
 Input -> [Init] -> [Intent Classifier]
                      |-- meta -> annotate response (end)
                      |-- shallow -> [Shallow Researcher]
-                     |                |-- answer -> [GPT-OSS 120B Report Writer]
+                     |                |-- answer -> annotate response (end)
                      |                '-- escalate -> [Clarifier]
                      '-- deep -> [Clarifier]
                                    |-- plan_pending -> (present plan, wait for approval)
@@ -47,7 +47,7 @@ Input -> [Init] -> [Intent Classifier]
 | Orchestrator | `gpt-oss-120b` | Deep research coordination and synthesis |
 | Planner | `gpt-oss-120b` | Research plan generation |
 | Researcher (deep) | `nemotron-3-nano-30b-a3b` | Information gathering for deep research |
-| Report Writer | `gpt-oss-120b` | Final report formatting (dedicated NIM node) |
+| Report Writer | `gpt-oss-120b` | Final deep research report formatting (dedicated NIM node) |
 
 ## Pipeline Variables
 
@@ -105,8 +105,8 @@ If left empty, the agent uses web search only.
 1. Go to the **Dataloop Marketplace** and find **AI Agent for Enterprise Research v2** under the Pipelines tab
 2. Install the pipeline into your project
 3. Configure the pipeline variables:
-   - **`report_writer_model`**: select the NIM GPT-OSS 120B model
+   - **`report_writer_model`**: NIM GPT-OSS 120B model (already selected)
    - **`rag_pipeline_id`**: (optional) paste a RAG pipeline ID for knowledge base integration
 4. Ensure the required integrations are configured in your project (`NGC_API_KEY`, `TAVILY_API_KEY`)
-5. Install and activate the pipeline
+5. Publish the pipeline
 6. Open the **AI Playground**, select this pipeline, and start asking questions

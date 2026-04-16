@@ -72,12 +72,6 @@
           },
           {
             "src": { "nodeId": "node-shallow", "portId": "port-shallow-out" },
-            "tgt": { "nodeId": "node-report", "portId": "port-report-in" },
-            "condition": "{}",
-            "action": "generate_report"
-          },
-          {
-            "src": { "nodeId": "node-shallow", "portId": "port-shallow-out" },
             "tgt": { "nodeId": "node-clarifier", "portId": "port-clarifier-in" },
             "condition": "{}",
             "action": "escalate"
@@ -205,7 +199,7 @@
                 "type": "Item",
                 "name": "item",
                 "displayName": "item",
-                "actions": ["generate_report", "escalate"],
+                "actions": ["answer", "escalate"],
                 "io": "output"
               }
             ],
@@ -347,7 +341,7 @@
             "appName": "NIM GPT-OSS 120B",
             "dpkName": "nim-gpt-oss-120b",
             "metadata": {
-              "position": { "x": 11200, "y": 10300, "z": 0 },
+              "position": { "x": 10600, "y": 10500, "z": 0 },
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "report_writer_model",
