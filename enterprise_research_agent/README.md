@@ -5,7 +5,7 @@
 1. **(Optional) Prepare a RAG knowledge base:**
    - Run the [Preprocessing Multimodal PDF RAG](../multimodal_rag/preprocessing_multimodal_rag/README.md) pipeline to create a dataset of embedded chunks from your documents.
    - Install and configure the [NVIDIA RAG Pipeline](../multimodal_rag/nvidia_rag_pipeline/README.md) so it can retrieve information from those chunks.
-2. Install this pipeline from the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace).
+2. Install this pipeline from the [DDOE Marketplace](https://docs.dataloop.ai/docs/marketplace).
 3. Add your **NVIDIA NGC API Key** and **Tavily API Key** in [Data Governance](https://docs.dataloop.ai/docs/overview-1).
 4. Set pipeline variables (see [Variables](#variables) below): **report_writer_model** and optionally **rag_pipeline_id**.
 5. Create a prompt item with your research topic and run the pipeline or use AI playground with your pipeline.
@@ -19,7 +19,7 @@ For architecture, components, and troubleshooting, see the sections below.
 | **report_writer_model** | Model | Yes | LLM for generating the final report. Recommended: NIM Llama 3.3 70B Instruct. |
 | **rag_pipeline_id** | String | No | Pipeline ID of a configured [NVIDIA RAG Pipeline](../multimodal_rag/nvidia_rag_pipeline/README.md) instance. Enables RAG-first search with LLM-as-judge relevancy checking. Leave empty for web-search-only mode. |
 
-**Getting the RAG pipeline ID:** Open your installed NVIDIA RAG Pipeline in the Dataloop platform, copy the pipeline ID from the URL or pipeline settings, and paste it into the `rag_pipeline_id` variable when configuring the research agent pipeline.
+**Getting the RAG pipeline ID:** Open your installed NVIDIA RAG Pipeline in the DDOE platform, copy the pipeline ID from the URL or pipeline settings, and paste it into the `rag_pipeline_id` variable when configuring the research agent pipeline.
 
 **Getting the model ID:** When you run or edit the pipeline, the Model variable shows a model selector. Choose the recommended model; the selected value is the model ID (e.g. `nim-llama-3-3-70b-instruct.models.nim-llama-3-3-70b-instruct`). You can also find model IDs in your project Models page.
 
@@ -27,7 +27,7 @@ For architecture, components, and troubleshooting, see the sections below.
 
 ## Overview
 
-The AI Agent for Enterprise Research is a Dataloop implementation of the [NVIDIA AIQ Research Assistant Blueprint](https://build.nvidia.com/nvidia/aiq). It automates deep research on any topic using a Plan-Execute-Reflect agentic loop, producing comprehensive, publication-ready long-form reports.
+The AI Agent for Enterprise Research is a DDOE implementation of the [NVIDIA AIQ Research Assistant Blueprint](https://build.nvidia.com/nvidia/aiq). It automates deep research on any topic using a Plan-Execute-Reflect agentic loop, producing comprehensive, publication-ready long-form reports.
 
 The agent generates search queries, retrieves information from both a RAG knowledge base (if configured) and web search, summarizes findings, reflects on gaps, and iterates until the research is complete. A final NIM Llama model formats the accumulated research into a polished report.
 
@@ -64,7 +64,7 @@ Setting up RAG enables the agent to search your own document corpus before falli
 
 ### 1. Install the Pipeline
 
-Install from the Dataloop Marketplace. If you want RAG, also install the preprocessing and RAG pipelines first.
+Install from the DDOE Marketplace. If you want RAG, also install the preprocessing and RAG pipelines first.
 
 ### 2. Configure Variables
 

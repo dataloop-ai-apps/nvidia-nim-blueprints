@@ -1,8 +1,8 @@
-# NVIDIA NIM Blueprints for Dataloop
+# NVIDIA NIM Blueprints for DDOE
 
 ## Quick setup
 
-1. Open the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace) and find the blueprint you want (Report Generation, PDF to Podcast, Multimodal RAG, or Video Search & Summarization).
+1. Open the [DDOE Marketplace](https://docs.dataloop.ai/docs/marketplace) and find the blueprint you want (Report Generation, PDF to Podcast, Multimodal RAG, or Video Search & Summarization).
 2. Install the pipeline into your project.
 3. Add the required API keys in your organization’s [Data Governance](https://docs.dataloop.ai/docs/overview-1) (e.g. NVIDIA NGC, and Tavily or ElevenLabs where needed).
 4. Configure and run the pipeline from your project.
@@ -11,7 +11,7 @@ For per-blueprint steps and requirements, see the README for each app in [Bluepr
 
 ---
 
-A collection of NVIDIA NIM-powered blueprints for the Dataloop Platform. These blueprints leverage NVIDIA's AI models to enable advanced GenAI workflows including document processing, report generation, and multimodal RAG pipelines.
+A collection of NVIDIA NIM-powered blueprints for the DDOE Platform. These blueprints leverage NVIDIA's AI models to enable advanced GenAI workflows including document processing, report generation, and multimodal RAG pipelines.
 
 ## Blueprints
 
@@ -74,7 +74,7 @@ Transforms PDF documents into audio content using text-to-speech technology. Sup
 
 ### Multimodal RAG Pipeline
 
-Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pdf-data-extraction-for-enterprise-rag) blueprint. On the Dataloop platform, this blueprint is implemented as two separate pipelines that work together:
+Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pdf-data-extraction-for-enterprise-rag) blueprint. On the DDOE platform, this blueprint is implemented as two separate pipelines that work together:
 
 1. **Preprocessing Pipeline**: Extracts text and images from PDFs, generates chunks, and creates embeddings using NVIDIA NIM models (YOLOX, PaddleOCR, Llama 3.2 NeMoRetriever 1B VLM Embed v1).
 
@@ -82,7 +82,7 @@ Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pd
 
 ## Installation
 
-1. Access the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace)
+1. Access the [DDOE Marketplace](https://docs.dataloop.ai/docs/marketplace)
 2. Search for the desired blueprint (Report Generation, PDF to Podcast, Multimodal RAG, or Video Search & Summarization)
 3. Install the pipeline to your project
 4. Configure required API keys in your organization's [Data Governance](https://docs.dataloop.ai/docs/overview-1)

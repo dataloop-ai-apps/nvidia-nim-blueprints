@@ -140,7 +140,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         Set configuration parameters on model for LLM generation.
         
         Args:
-            model (dl.Model): Dataloop model entity to configure
+            model (dl.Model): DDOE model entity to configure
             **kwargs: Configuration parameters to set (e.g., max_tokens=2048)
         """
         for key, value in kwargs.items():
@@ -199,7 +199,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         if with_references is None:
             with_references = False
 
-        # upload text to dataloop item
+        # upload text to DDOE item
         remote_text_filename = f"{pdf_name}_text.txt"
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=f"_{parent_item.id}_text.txt", delete=False, encoding="utf-8"
@@ -270,10 +270,10 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         Check the final conversation JSON and make sure all strings are unescaped
 
         Args:
-            item (dl.Item): Dataloop item containing the dialogue
+            item (dl.Item): DDOE item containing the dialogue
 
         Returns:
-            new_item (dl.Item): Dataloop item containing the structured conversation JSON
+            new_item (dl.Item): DDOE item containing the structured conversation JSON
         """
         logger.info("Formatting final conversation")
 
@@ -361,7 +361,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         Generate audio from the conversation JSON file
 
         Args:
-            item (dl.Item): Dataloop JSON item containing the conversation
+            item (dl.Item): DDOE JSON item containing the conversation
             voice_mapping (dict): A dictionary mapping speaker names to voice IDs
             output_file (str): The name of the output audio file
             speech_model (str): ElevenLabs speech model to use (default: eleven_multilingual_v2)
@@ -465,7 +465,7 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         Get the last message from the item.
 
         Args:
-            item (dl.Item): Dataloop item containing the last message
+            item (dl.Item): DDOE item containing the last message
 
         Returns:
             str or None: The text of the last message, or None if the item

@@ -97,7 +97,7 @@ class PodcastMetadata(BaseModel):
             )
 
     def to_item_metadata(self, **extra_user_fields) -> dict:
-        """Serialize to Dataloop item metadata format: {\"user\": {\"podcast\": {...}, ...extra}}"""
+        """Serialize to DDOE item metadata format: {\"user\": {\"podcast\": {...}, ...extra}}"""
         user_meta = {"podcast": self.model_dump()}
         user_meta.update(extra_user_fields)
         return {"user": user_meta}

@@ -8,11 +8,11 @@
     "type": "item"
   },
   "attributes": {
-    "Hub": ["Nvidia", "Dataloop"],
+    "Hub": ["Nvidia", "DDOE"],
     "Category": ["Pipeline", "Blueprint"],
     "Pipeline Type": "GenAI",
     "Provider": "NVIDIA",
-    "Developed By": "Dataloop",
+    "Developed By": "DDOE",
     "Media Type": ["Text"]
   },
   "dependencies": [

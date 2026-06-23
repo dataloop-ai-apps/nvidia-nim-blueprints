@@ -161,7 +161,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         Utility function to create and upload a prompt item
         
         Args:
-            item: The parent Dataloop item
+            item: The parent DDOE item
             prompt_text: The text content for the prompt
             prompt_name: Name for the new prompt item
             main_item: Optional main item to link to (defaults to item if None)
@@ -206,7 +206,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         First node in the pipeline - Extract parameters and generate report plan queries
         
         Args:
-            item: Dataloop item containing the prompt
+            item: DDOE item containing the prompt
             
         Returns:
             item: Updated item with report planning prompt

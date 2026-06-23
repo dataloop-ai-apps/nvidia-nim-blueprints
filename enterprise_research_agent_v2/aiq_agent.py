@@ -1,5 +1,5 @@
 """
-NVIDIA AIQ Enterprise Research Agent v2 - Dataloop Service Runner
+NVIDIA AIQ Enterprise Research Agent v2 - DDOE Service Runner
 
 Implements NVIDIA AI-Q Blueprint v2.0.0 features:
   - Two-tier research (shallow + deep)

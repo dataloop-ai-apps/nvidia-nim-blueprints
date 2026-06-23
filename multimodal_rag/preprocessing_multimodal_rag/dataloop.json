@@ -8,10 +8,10 @@
     ],
     "Pipeline Type": "GenAI",
     "Provider": "NVIDIA",
-    "Developed By": "Dataloop",
+    "Developed By": "DDOE",
     "Hub": [
       "Nvidia",
-      "Dataloop"
+      "DDOE"
     ],
     "Media Type": [
       "Text",

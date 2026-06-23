@@ -5,7 +5,7 @@
 1. **(Optional) Prepare a RAG knowledge base:**
    - Run the [Preprocessing Multimodal PDF RAG](../multimodal_rag/preprocessing_multimodal_rag/README.md) pipeline to create a dataset of embedded chunks from your biomedical documents.
    - Install and configure the [NVIDIA RAG Pipeline](../multimodal_rag/nvidia_rag_pipeline/README.md) so it can retrieve information from those chunks.
-2. Install this pipeline from the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace).
+2. Install this pipeline from the [DDOE Marketplace](https://docs.dataloop.ai/docs/marketplace).
 3. Add your **NVIDIA NGC API Key** and **Tavily API Key** in [Data Governance](https://docs.dataloop.ai/docs/overview-1).
 4. Set pipeline variables (see [Variables](#variables) below): **report_writer_model** and optionally **rag_pipeline_id**.
 5. Create a prompt item with your biomedical research topic and run the pipeline.
@@ -32,7 +32,7 @@ For architecture, components, and troubleshooting, see the sections below.
 
 ## Overview
 
-The Biomedical AI-Q Research Agent is a Dataloop implementation of the [NVIDIA Biomedical AI-Q Research Agent Blueprint](https://build.nvidia.com/nvidia/biomedical-aiq-research-agent/blueprintcard). It extends the [AI Agent for Enterprise Research](../enterprise_research_agent/README.md) with virtual screening capabilities for biomedical drug discovery.
+The Biomedical AI-Q Research Agent is a DDOE implementation of the [NVIDIA Biomedical AI-Q Research Agent Blueprint](https://build.nvidia.com/nvidia/biomedical-aiq-research-agent/blueprintcard). It extends the [AI Agent for Enterprise Research](../enterprise_research_agent/README.md) with virtual screening capabilities for biomedical drug discovery.
 
 The agent performs deep research on biomedical topics using a Plan-Execute-Reflect agentic loop. When the research topic involves a disease or condition and the user requests novel therapeutic proposals, the agent automatically triggers a virtual screening branch that:
 
@@ -49,7 +49,7 @@ For non-biomedical topics, the pipeline behaves identically to the enterprise re
 - **Deep Research**: Plan-Execute-Reflect loop with RAG-first search, LLM-as-judge relevancy checking, and web search fallback.
 - **Virtual Screening**: Automatic detection of drug-discovery intent with MolMIM molecule generation and DiffDock molecular docking.
 - **Protein & Molecule Resolution**: Automated lookup of protein structures (RCSB PDB) and molecular SMILES strings (PubChem) from names extracted by the LLM.
-- **Artifact Persistence**: DiffDock output files (`.mol` ligand positions, confidence scores CSV) are uploaded to the Dataloop dataset for downstream analysis.
+- **Artifact Persistence**: DiffDock output files (`.mol` ligand positions, confidence scores CSV) are uploaded to the DDOE dataset for downstream analysis.
 - **Report Generation**: Final report formatted by NIM Llama 3.3 70B Instruct with virtual screening results seamlessly integrated.
 
 ## Components
@@ -61,7 +61,7 @@ For non-biomedical topics, the pipeline behaves identically to the enterprise re
 | **Init** | Validates configuration and optional RAG pipeline connection |
 | **Biomedical AIQ Agent** | Orchestrator: generates queries, summarizes, reflects, checks VS intent, and routes between nodes |
 | **Biomedical Research** | RAG-first search with LLM-as-judge + Tavily web search fallback (parallel query processing) |
-| **Virtual Screening** | Resolves protein/molecule, calls MolMIM + DiffDock, uploads artifacts to Dataloop |
+| **Virtual Screening** | Resolves protein/molecule, calls MolMIM + DiffDock, uploads artifacts to DDOE |
 | **NIM Llama 3.3 70B - Report Writer** | Formats the final research report from the accumulated draft |
 
 ### Pipeline Flow
@@ -86,7 +86,7 @@ Input → [Init] → [Biomedical Agent]
 
 ### 1. Install the Pipeline
 
-Install from the Dataloop Marketplace. If you want RAG-enhanced retrieval over your own biomedical documents, also install the preprocessing and RAG pipelines first.
+Install from the DDOE Marketplace. If you want RAG-enhanced retrieval over your own biomedical documents, also install the preprocessing and RAG pipelines first.
 
 ### 2. Configure Variables
 

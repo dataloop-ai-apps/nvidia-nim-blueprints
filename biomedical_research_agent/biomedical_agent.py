@@ -1,5 +1,5 @@
 """
-NVIDIA Biomedical AI-Q Research Agent - Dataloop Service Runner
+NVIDIA Biomedical AI-Q Research Agent - DDOE Service Runner
 
 Extends the Enterprise Research Agent with virtual screening capabilities
 for biomedical drug discovery. Adapted from NVIDIA Biomedical AI-Q Research
@@ -260,7 +260,7 @@ class BiomedicalResearchAgent(AIQEnterpriseAgent):
     def _upload_vs_artifacts(
         self, docking_result: dict, dataset, remote_path: str
     ) -> str:
-        """Upload DiffDock output artifacts (CSV + .mol files) to Dataloop.
+        """Upload DiffDock output artifacts (CSV + .mol files) to DDOE.
 
         Returns a summary string for the report.
         """
@@ -493,7 +493,7 @@ class BiomedicalResearchAgent(AIQEnterpriseAgent):
         Receives a temp item routed from the agent node.
         Looks up the protein structure (RCSB PDB) and molecule SMILES (PubChem),
         then calls MolMIM for molecule generation and DiffDock for docking.
-        All output artifacts are uploaded to Dataloop — no local files persist.
+        All output artifacts are uploaded to DDOE — no local files persist.
         """
         logger.info("=== Biomedical VS node ===")
 
@@ -556,7 +556,7 @@ class BiomedicalResearchAgent(AIQEnterpriseAgent):
             vs_steps_info += "\nDiffDock docking call failed.\n"
             return self._finish_vs(item, main_item, vs_steps_info, state)
 
-        # Upload docking artifacts (.mol files, confidence CSV) to Dataloop
+        # Upload docking artifacts (.mol files, confidence CSV) to DDOE
         artifact_path = self._item_folder(main_item.id) + "vs_artifacts/"
         artifact_info = self._upload_vs_artifacts(
             docking_result, main_item.dataset, artifact_path
@@ -568,7 +568,7 @@ class BiomedicalResearchAgent(AIQEnterpriseAgent):
     def _finish_vs(
         self, item: dl.Item, main_item: dl.Item, vs_steps_info: str, state: dict
     ) -> dl.Item:
-        """Store VS results as a JSON file in Dataloop and route back to the agent."""
+        """Store VS results as a JSON file in DDOE and route back to the agent."""
         vs_data = json.dumps({
             "vs_steps_info": vs_steps_info,
             "vs_queries": state.get("target_protein", ""),

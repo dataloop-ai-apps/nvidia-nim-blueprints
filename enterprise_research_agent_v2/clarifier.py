@@ -5,7 +5,7 @@ Two-phase clarification and plan generation:
   Phase 1: Determine if the query needs clarification (research_clarification.j2)
   Phase 2: Generate a lightweight research plan (plan_generation.j2)
 
-Designed to work with Dataloop AI Playground pipeline cycles:
+Designed to work with DDOE AI Playground pipeline cycles:
   - Writes plan as annotation visible in chat
   - Stores metadata for plan-approval detection in next cycle
 """

@@ -1,5 +1,5 @@
 """
-NVIDIA AIQ Enterprise Research Agent - Dataloop Service Runner
+NVIDIA AIQ Enterprise Research Agent - DDOE Service Runner
 
 Replicated from NVIDIA AIQ Research Assistant Blueprint:
 https://github.com/NVIDIA-AI-Blueprints/aiq-research-assistant
