@@ -2,7 +2,7 @@
 
 ## Quick setup
 
-1. Install the pipeline from the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace).
+1. Install the pipeline from the [DDOE Marketplace](https://docs.dataloop.ai/docs/marketplace).
 2. Add your **NVIDIA NGC API Key** and **ElevenLabs API Key** in [Data Governance](https://docs.dataloop.ai/docs/overview-1).
 3. Set pipeline variables: **reasoning LLM**, **iterative LLM**, **json podcast LLM**, **json convo LLM** (see [Variables and model IDs](#variables-and-model-ids) below).
 4. Configure format (monologue or dialogue), duration, and voice in the pipeline settings.
@@ -51,7 +51,7 @@ The PDF to Podcast blueprint is designed to transform PDF documents into audio c
 
 ## Usage
 
-1. **Install the Blueprint**: Install the pipeline from Dataloop Marketplace.
+1. **Install the Blueprint**: Install the pipeline from DDOE Marketplace.
 
 2. **Configure Settings**: Set up your preferred:
    - Conversation format (1 or 2 podcast hosts)

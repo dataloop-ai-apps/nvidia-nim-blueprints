@@ -4,7 +4,7 @@ LangChain tool wrappers for AIQ v2 research agents.
 Provides tools for:
   - Tavily web search
   - Serper academic paper search (Google Scholar)
-  - Dataloop RAG pipeline (wrapped as a LangChain tool)
+  - DDOE RAG pipeline (wrapped as a LangChain tool)
 """
 
 import json
@@ -170,7 +170,7 @@ class SerperPaperSearchTool(BaseTool):
 
 
 class DataloopRAGTool(BaseTool):
-    """Wraps a Dataloop RAG pipeline as a LangChain tool for knowledge retrieval."""
+    """Wraps a DDOE RAG pipeline as a LangChain tool for knowledge retrieval."""
 
     name: str = "knowledge_search"
     description: str = (

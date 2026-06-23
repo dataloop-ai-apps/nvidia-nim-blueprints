@@ -3,7 +3,7 @@
 ## Quick setup
 
 1. Run the [Preprocessing Multimodal PDF RAG](../preprocessing_multimodal_rag/README.md) pipeline first so you have a dataset of embedded chunks.
-2. Install this pipeline from the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace).
+2. Install this pipeline from the [DDOE Marketplace](https://docs.dataloop.ai/docs/marketplace).
 3. Add your **NVIDIA NGC API Key** in [Data Governance](https://docs.dataloop.ai/docs/overview-1).
 4. Set pipeline variables (see [Variables and model IDs](#variables-and-model-ids) below): **retrieval_dataset**, **embed_model** (must match preprocessing), **gen_ai_model**, and optionally **k_nearest_items**.
 5. Create prompt items with your questions and run the pipeline to get RAG answers.
@@ -29,7 +29,7 @@ For configuration, components, and troubleshooting, see the sections below.
 
 The NVIDIA RAG Pipeline is the second stage of the two-stage RAG system. It accepts user queries, retrieves relevant document chunks using vector similarity search, and generates responses using an LLM with retrieved context.
 
-This pipeline integrates with Dataloop's AI Playground and uses NIM models for embedding queries and generating responses. It includes human-in-the-loop validation by storing responses in a prompts dataset for review.
+This pipeline integrates with DDOE's AI Playground and uses NIM models for embedding queries and generating responses. It includes human-in-the-loop validation by storing responses in a prompts dataset for review.
 
 This pipeline can also be used as a **dependency** by the [AI Agent for Enterprise Research](../../enterprise_research_agent/README.md). When configured as a RAG source for the research agent, it provides document-grounded answers that the agent evaluates for relevancy before falling back to web search.
 
@@ -105,7 +105,7 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 
 ### 1. Install the Blueprint
 
-Install the pipeline from the Dataloop Marketplace.
+Install the pipeline from the DDOE Marketplace.
 
 ### 2. Configure the Retrieval Dataset
 

@@ -1,6 +1,6 @@
 # NVIDIA AIQ Enterprise Research Agent v2
 
-Dataloop implementation of the [NVIDIA AI-Q Blueprint v2.0.0](https://github.com/NVIDIA-AI-Blueprints/aiq).
+DDOE implementation of the [NVIDIA AI-Q Blueprint v2.0.0](https://github.com/NVIDIA-AI-Blueprints/aiq).
 
 ## Features
 
@@ -10,7 +10,7 @@ Dataloop implementation of the [NVIDIA AI-Q Blueprint v2.0.0](https://github.com
 - **Deep Research**: Multi-agent system using `deepagents` (orchestrator/planner/researcher sub-agents) for comprehensive, long-form research reports.
 - **Human-in-the-Loop (HITL)**: For deep research, the agent proposes a plan and waits for user approval in the AI Playground chat before proceeding.
 - **Citation Verification**: 5-level URL matching against a source registry, with report sanitization to remove hallucinated URLs.
-- **RAG Integration**: Optional Dataloop RAG pipeline wrapped as a LangChain tool for knowledge base queries.
+- **RAG Integration**: Optional DDOE RAG pipeline wrapped as a LangChain tool for knowledge base queries.
 - **Report Writer**: Dedicated NIM `gpt-oss-120b` predict node for deep research report formatting with streaming output (shallow answers are returned directly).
 
 ## Pipeline Architecture
@@ -69,7 +69,7 @@ Input -> [Init] -> [Intent Classifier]
 
 ## Usage
 
-This pipeline is designed to be used from the **Dataloop AI Playground**. Select the pipeline in the AI Playground dropdown and start a conversation — the agent will automatically classify your query and route it through the appropriate research path.
+This pipeline is designed to be used from the **DDOE AI Playground**. Select the pipeline in the AI Playground dropdown and start a conversation — the agent will automatically classify your query and route it through the appropriate research path.
 
 ## AI Playground Timeout
 
@@ -102,7 +102,7 @@ If left empty, the agent uses web search only.
 
 ## Deployment
 
-1. Go to the **Dataloop Marketplace** and find **AI Agent for Enterprise Research v2** under the Pipelines tab
+1. Go to the **DDOE Marketplace** and find **AI Agent for Enterprise Research v2** under the Pipelines tab
 2. Install the pipeline into your project
 3. Configure the pipeline variables:
    - **`report_writer_model`**: NIM GPT-OSS 120B model (already selected)

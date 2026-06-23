@@ -5,11 +5,11 @@
   "version": "0.0.81",
   "scope": "public",
   "attributes": {
-    "Hub": ["Nvidia", "Dataloop"],
+    "Hub": ["Nvidia", "DDOE"],
     "Category": ["Application"],
     "Pipeline Type": "GenAI",
     "Provider": "NVIDIA",
-    "Developed By": "Dataloop"
+    "Developed By": "DDOE"
   },
   "components": {
     "integrations": [

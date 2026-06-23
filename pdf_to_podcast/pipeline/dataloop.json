@@ -6,7 +6,7 @@
   "scope": "public",
   "attributes": {
     "Hub": [
-      "Dataloop",
+      "DDOE",
       "Nvidia"
     ],
     "Category": [
@@ -15,7 +15,7 @@
     ],
     "Pipeline Type": "GenAI",
     "Provider": "NVIDIA",
-    "Developed By": "Dataloop",
+    "Developed By": "DDOE",
     "Media Type": [
       "Text",
       "Audio"

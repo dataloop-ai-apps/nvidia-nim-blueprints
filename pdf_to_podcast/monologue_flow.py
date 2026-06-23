@@ -20,9 +20,9 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         Generate an outline from the pdf text summary
 
         Args:
-            item (dl.Item): Dataloop item containing the podcast summary
-            progress (dl.Progress): Dataloop progress object
-            context (dl.Context): Dataloop context object
+            item (dl.Item): DDOE item containing the podcast summary
+            progress (dl.Progress): DDOE progress object
+            context (dl.Context): DDOE context object
 
         Returns:
             item (dl.Item): the prompt item
@@ -82,9 +82,9 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         Generate a monologue from the outline
 
         Args:
-            item (dl.Item): Dataloop item containing the outline
-            progress (dl.Progress): Dataloop progress object
-            context (dl.Context): Dataloop context object
+            item (dl.Item): DDOE item containing the outline
+            progress (dl.Progress): DDOE progress object
+            context (dl.Context): DDOE context object
 
         Returns:
             item (dl.Item): the prompt item
@@ -136,10 +136,10 @@ class MonologueServiceRunner(dl.BaseServiceRunner):
         Create a final conversation from the monologue in JSON format
 
         Args:
-            item (dl.Item): Dataloop item containing the monologue
-            model (dl.Model): Dataloop model entity for setting max_tokens
-            progress (dl.Progress): Dataloop progress object
-            context (dl.Context): Dataloop context object
+            item (dl.Item): DDOE item containing the monologue
+            model (dl.Model): DDOE model entity for setting max_tokens
+            progress (dl.Progress): DDOE progress object
+            context (dl.Context): DDOE context object
 
         Returns:
             item (dl.Item): the prompt item

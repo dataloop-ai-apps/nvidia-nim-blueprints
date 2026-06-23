@@ -2,7 +2,7 @@
 
 ## Quick setup
 
-1. Install the pipeline from the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace).
+1. Install the pipeline from the [DDOE Marketplace](https://docs.dataloop.ai/docs/marketplace).
 2. Add your **NVIDIA NGC API Key** and **Tavily API Key** in [Data Governance](https://docs.dataloop.ai/docs/overview-1).
 3. Create a prompt with your topic and optional structure (see [Usage](#usage) below for format).
 4. Run the pipeline; it will research and generate the report.
@@ -38,7 +38,7 @@ The "Report Generation" is an NVIDIA blueprint designed to automate the creation
 
 ## Usage
 
-1. **Install the Blueprint**: Install the pipeline from Dataloop Marketplace.
+1. **Install the Blueprint**: Install the pipeline from DDOE Marketplace.
 
 2. **Configure the Report**: Create a prompt with the following format:
    ```

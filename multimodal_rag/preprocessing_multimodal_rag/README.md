@@ -2,7 +2,7 @@
 
 ## Quick setup
 
-1. Install the pipeline from the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace).
+1. Install the pipeline from the [DDOE Marketplace](https://docs.dataloop.ai/docs/marketplace).
 2. Add your **NVIDIA NGC API Key** in [Data Governance](https://docs.dataloop.ai/docs/overview-1).
 3. Set **source** and **target** datasets, and the four model variables (see [Variables and model IDs](#variables-and-model-ids) below).
 4. Run the pipeline. When it finishes, use the target dataset and embedding model as inputs for the [NVIDIA RAG Pipeline](../nvidia_rag_pipeline/README.md) (retrieval stage).
@@ -33,8 +33,8 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 ## Prerequisites
 
 - **NVIDIA NGC API Key**: Required for all NIM model services
-- **Source Dataset**: A Dataloop dataset containing PDF documents to process
-- **Target Dataset**: A Dataloop dataset where embedded chunks will be stored
+- **Source Dataset**: A DDOE dataset containing PDF documents to process
+- **Target Dataset**: A DDOE dataset where embedded chunks will be stored
 
 > **Important**: This pipeline produces outputs required by the [NVIDIA RAG Pipeline](../nvidia_rag_pipeline/README.md). Run this extraction pipeline first, then use the output dataset and embedding model as inputs for the retrieval pipeline.
 
@@ -114,7 +114,7 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 
 ### 1. Install the Blueprint
 
-Install the pipeline from the Dataloop Marketplace.
+Install the pipeline from the DDOE Marketplace.
 
 ### 2. Configure Datasets
 

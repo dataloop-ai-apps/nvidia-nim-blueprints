@@ -31,11 +31,11 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         Args:
             item (dl.Item): the original PDF item
-            progress (dl.Progress): Dataloop progress object from pipelines
-            context (dl.Context): Dataloop context object from pipelines
+            progress (dl.Progress): DDOE progress object from pipelines
+            context (dl.Context): DDOE context object from pipelines
 
         Returns:
-            dl.Item: Dataloop prompt item containing the initial raw outline in the hidden directory
+            dl.Item: DDOE prompt item containing the initial raw outline in the hidden directory
         """
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
         podcast_metadata.validate_stage("summary")
@@ -109,10 +109,10 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         and only references valid PDF filenames.
 
         Args:
-            item (dl.Item): Dataloop item containing the raw outline in the hidden directory
-            model (dl.Model): Dataloop model entity for setting max_tokens
-            progress (dl.Progress): Dataloop progress object
-            context (dl.Context): Dataloop context object
+            item (dl.Item): DDOE item containing the raw outline in the hidden directory
+            model (dl.Model): DDOE model entity for setting max_tokens
+            progress (dl.Progress): DDOE progress object
+            context (dl.Context): DDOE context object
 
         Returns:
             item (dl.Item): Item for prompting to generate structured outline following the PodcastOutline schema
@@ -175,14 +175,14 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         The parent item is the structured outline item.
 
         Args:
-            item (dl.Item): Dataloop item containing the outline segment
+            item (dl.Item): DDOE item containing the outline segment
             segment (PodcastOutline.Segment): Segment from the outline to process
             idx (int): Index of the segment
             total_segments (int): Total number of segments
             summary (str): Summary of the podcast
 
         Returns:
-            dl.Item: Dataloop item containing the generated content
+            dl.Item: DDOE item containing the generated content
         """
         logger.info(
             f"Preparing to generate initial content for segment {idx + 1}/{total_segments}"
@@ -230,9 +230,9 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         Process all outline segments in parallel to generate initial content.
 
         Args:
-            item (dl.Item): Dataloop item containing the outline
-            progress (dl.Progress): Dataloop progress object
-            context (dl.Context): Dataloop context object
+            item (dl.Item): DDOE item containing the outline
+            progress (dl.Progress): DDOE progress object
+            context (dl.Context): DDOE context object
 
         Returns:
             List[dl.Item]: List of segment items for compatibility with the workflow
@@ -280,12 +280,12 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         Generate dialogue for each segment.
 
         Args:
-            item (dl.Item): Dataloop item containing the outline segment to be converted to dialogue
-            progress (dl.Progress): Dataloop progress object
-            context (dl.Context): Dataloop context object
+            item (dl.Item): DDOE item containing the outline segment to be converted to dialogue
+            progress (dl.Progress): DDOE progress object
+            context (dl.Context): DDOE context object
 
         Returns:
-            dl.Item: Dataloop item containing the generated dialogue
+            dl.Item: DDOE item containing the generated dialogue
         """
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
         podcast_metadata.validate_stage("segment")
@@ -358,12 +358,12 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
 
         Args:
             item (dl.Item): last segment to be processed by LLM
-            model (dl.Model): Dataloop model entity
-            progress (dl.Progress): Dataloop progress object
-            context (dl.Context): Dataloop context object
+            model (dl.Model): DDOE model entity
+            progress (dl.Progress): DDOE progress object
+            context (dl.Context): DDOE context object
 
         Returns:
-            new_item (dl.Item): Dataloop item containing the combined dialogue
+            new_item (dl.Item): DDOE item containing the combined dialogue
         """
         podcast_metadata = SharedServiceRunner._get_podcast_metadata(item)
 
@@ -477,13 +477,13 @@ class DialogueServiceRunner(dl.BaseServiceRunner):
         Convert the dialogue into structured Conversation format.
 
         Args:
-            item (dl.Item): Dataloop item containing the dialogue
-            model (dl.Model): Dataloop model entity for setting max_tokens
-            progress (dl.Progress): Dataloop progress object
-            context (dl.Context): Dataloop context object
+            item (dl.Item): DDOE item containing the dialogue
+            model (dl.Model): DDOE model entity for setting max_tokens
+            progress (dl.Progress): DDOE progress object
+            context (dl.Context): DDOE context object
 
         Returns:
-            dl.Item: Dataloop item containing the structured conversation
+            dl.Item: DDOE item containing the structured conversation
 
         Formats the dialogue into a structured conversation format with proper speaker
         attribution and timing information.

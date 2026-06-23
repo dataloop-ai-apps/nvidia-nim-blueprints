@@ -11,7 +11,7 @@ This blueprint consists of two pipelines that work together:
 
 ### Quick setup
 
-1. Install the pipeline from the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace).
+1. Install the pipeline from the [DDOE Marketplace](https://docs.dataloop.ai/docs/marketplace).
 2. Add your **NVIDIA NGC API Key** in [Data Governance](https://docs.dataloop.ai/docs/overview-1).
 3. Create a pipeline from the **Video Search and Summarization NVIDIA Blueprint** template.
 4. Set the **source dataset** (Dataset node) and **target dataset** (Clone to Dataset node).
@@ -28,7 +28,7 @@ This blueprint consists of two pipelines that work together:
 
 ### Overview
 
-The preprocessing pipeline processes video content for semantic search, Q&A, and knowledge-graph-based retrieval. It is 100% composed from external Dataloop DPKs — no custom node code lives in this repository.
+The preprocessing pipeline processes video content for semantic search, Q&A, and knowledge-graph-based retrieval. It is 100% composed from external DDOE DPKs — no custom node code lives in this repository.
 
 It splits videos into time-based chunks and runs two parallel branches to extract information:
 
@@ -81,7 +81,7 @@ Dataset → Video to Videos ────┤                                     
 
 ### Quick setup
 
-1. Install the retrieval pipeline from the [Dataloop Marketplace](https://docs.dataloop.ai/docs/marketplace).
+1. Install the retrieval pipeline from the [DDOE Marketplace](https://docs.dataloop.ai/docs/marketplace).
 2. Create a pipeline from the **VSS Retrieval NVIDIA Blueprint** template.
 3. Set **retrieval_dataset** to the target dataset from the preprocessing pipeline.
 4. Optionally adjust model variables and **k_nearest_items**.

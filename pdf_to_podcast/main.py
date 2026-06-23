@@ -32,7 +32,7 @@ class ServiceRunner(dl.BaseServiceRunner):
         Prepare the PDF text for the summary
 
         Args:
-            item (dl.Item): Dataloop item containing the original PDF file
+            item (dl.Item): DDOE item containing the original PDF file
             monologue (bool): Whether to generate a monologue or a podcast
             progress (dl.Progress): Progress object to update the user
             context (dl.Context): Context object to access the item
