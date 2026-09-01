@@ -76,7 +76,7 @@ Transforms PDF documents into audio content using text-to-speech technology. Sup
 
 Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pdf-data-extraction-for-enterprise-rag) blueprint. On the Dataloop platform, this blueprint is implemented as two separate pipelines that work together:
 
-1. **Preprocessing Pipeline**: Extracts text and images from PDFs, generates chunks, and creates embeddings using NVIDIA NIM models (YOLOX, PaddleOCR, Llama 3.2 NeMoRetriever 1B VLM Embed v1).
+1. **Preprocessing Pipeline**: Extracts text and images from PDFs, generates chunks, and creates embeddings using NVIDIA NIM models (YOLOX, PaddleOCR, Llama Nemotron Embed VL 1B V2).
 
 2. **Retrieval Pipeline**: Retrieves relevant documents based on queries and generates responses using Mistral 7B Instruct, with human-in-the-loop validation.
 
@@ -99,7 +99,7 @@ Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pd
 ## NVIDIA Models Used
 
 - **VILA 1.5 3B** - Video description via vision-language understanding (VSS)
-- **Llama 3.2 NeMoRetriever 1B VLM Embed v1** - Text embeddings for vector search (VSS, Multimodal RAG)
+- **Llama Nemotron Embed VL 1B V2** - Text embeddings for vector search (VSS, Multimodal RAG)
 - **Nemotron 3 Super 120B** - Report planning and content generation, PDF to Podcast iterative processing
 - **Nemotron 3 Ultra 550B** - PDF to Podcast main reasoning and content creation
 - **Mistral 7B Instruct** - RAG response generation, VSS graph entity extraction, PDF to Podcast JSON processing

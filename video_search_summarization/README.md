@@ -23,7 +23,7 @@ This blueprint consists of two pipelines that work together:
 | Variable | Type | Default model | Purpose |
 |----------|------|---------------|---------|
 | **vlm_model** | Model | VILA 1.5 3B (vila-model-adapter) | Vision Language Model for describing video segments |
-| **embedding_model** | Model | Llama 3.2 NeMoRetriever 1B VLM Embed v1 | Text embeddings for vector search |
+| **embedding_model** | Model | Llama Nemotron Embed VL 1B V2 | Text embeddings for vector search |
 | **graph_llm_model** | Model | Mistral 7B Instruct (guided JSON) | Entity and relationship extraction for the knowledge graph |
 
 ### Overview
@@ -37,7 +37,7 @@ It splits videos into time-based chunks and runs two parallel branches to extrac
 
 Both branches merge at a Clone to Dataset node, which then fans out to:
 
-- **Embedding**: Embeds the text with Llama 3.2 NeMoRetriever 1B VLM Embed v1 for downstream vector search.
+- **Embedding**: Embeds the text with Llama Nemotron Embed VL 1B V2 for downstream vector search.
 - **Graph RAG**: Converts text to a prompt, extracts entities and relationships using Mistral 7B Instruct with guided JSON, and stores them in a knowledge graph.
 
 ### Pipeline flow
@@ -61,7 +61,7 @@ Dataset → Video to Videos ────┤                                     
 | 6 | Audio Extract | custom | audio-utils | FFmpeg audio extraction to WAV (16 kHz) |
 | 7 | Parakeet ASR | custom | parakeet-ctc-0-6b-asr | NVIDIA Parakeet CTC 0.6B speech-to-text |
 | 8 | Clone to Dataset | storage | pipeline-utils | Clones visual and audio text items into target dataset |
-| 9 | Embedding | ml | nim-llama-3-2-nemoretriever-1b-vlm-embed-v1 | Text embeddings for vector search |
+| 9 | Embedding | ml | nim-llama-nemotron-embed-vl-1b-v2 | Text embeddings for vector search |
 | 10 | Text to Prompt | custom | txt_to_prompt | Wraps text items in a PromptItem for LLM inference |
 | 11 | Graph Entity Extraction | ml | nim-mistral-7b-instruct-v0-3 | Extracts entities and relationships using guided JSON |
 | 12 | Add Chunk to Graph | custom | graph-rag | Stores extracted entities/relationships in the knowledge graph |
@@ -91,7 +91,7 @@ Dataset → Video to Videos ────┤                                     
 
 | Variable | Type | Default | Purpose |
 |----------|------|---------|---------|
-| **embed_model** | Model | Llama 3.2 NeMoRetriever 1B VLM Embed v1 | Query embedding (must match the preprocessing embedding model) |
+| **embed_model** | Model | Llama Nemotron Embed VL 1B V2 | Query embedding (must match the preprocessing embedding model) |
 | **gen_ai_model** | Model | Mistral 7B Instruct | Generates the final answer from retrieved context |
 | **retrieval_dataset** | Dataset | — (user must set) | The chunked dataset with embeddings and knowledge graph |
 | **k_nearest_items** | Integer | 30 | Number of nearest items to retrieve via vector search |
@@ -115,7 +115,7 @@ Prompt → Embedding → Retriever → Graph Query → Response LLM
 
 | # | Node | Type | DPK | Purpose |
 |---|------|------|-----|---------|
-| 1 | Embedding Model | ml | nim-llama-3-2-nemoretriever-1b-vlm-embed-v1 | Embeds the user query |
+| 1 | Embedding Model | ml | nim-llama-nemotron-embed-vl-1b-v2 | Embeds the user query |
 | 2 | Retriever Prompt | custom | llm-tools-retriever | Finds k nearest embedded chunks via vector search |
 | 3 | Graph Query | custom | graph-rag | Searches the knowledge graph and adds graph context to the prompt |
 | 4 | Response LLM | ml | nim-mistral-7b-instruct-v0-3 | Generates the final answer from all retrieved context |

@@ -25,13 +25,13 @@
       "name": "graph-rag"
     },
     {
-      "name": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
+      "name": "nim-llama-nemotron-embed-vl-1b-v2",
       "components": {
         "models": [
           {
-            "name": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
+            "name": "nim-llama-nemotron-embed-vl-1b-v2",
             "configuration": {
-              "nim_model_name": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
+              "nim_model_name": "nvidia/llama-nemotron-embed-vl-1b-v2",
               "embeddings_size": 2048
             }
           }
@@ -101,7 +101,7 @@
           {
             "name": "embed_model",
             "type": "Model",
-            "description": "Embedding model for query embedding and retrieval (must match the model used during preprocessing). Preset: Llama 3.2 NeMoRetriever 1B VLM Embed v1.",
+            "description": "Embedding model for query embedding and retrieval (must match the model used during preprocessing). Preset: Llama Nemotron Embed VL 1B V2.",
             "value": "$var(embed_model__model)"
           },
           {
@@ -253,10 +253,10 @@
               "functionName": "embed",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1"
+              "packageName": "nim-llama-nemotron-embed-vl-1b-v2"
             },
-            "appName": "Llama 3.2 Nemoretriever 1B Vlm Embed V1",
-            "dpkName": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
+            "appName": "Llama Nemotron Embed VL 1B V2",
+            "dpkName": "nim-llama-nemotron-embed-vl-1b-v2",
             "metadata": {
               "position": {
                 "x": 9840,
@@ -266,7 +266,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "embed_model",
-              "pipelineNodeName": "llama-3-2-nemoretriever-1b-vlm-embed-v1",
+              "pipelineNodeName": "llama-nemotron-embed-vl-1b-v2",
               "mlType": "embeddings"
             }
           },
@@ -421,7 +421,7 @@
     ]
   },
   "variables": {
-    "embed_model__model": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1.models.nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
+    "embed_model__model": "nim-llama-nemotron-embed-vl-1b-v2.models.nim-llama-nemotron-embed-vl-1b-v2",
     "gen_ai_model__model": "nim-mistral-7b-instruct-v0-3.models.nim-mistral-7b-instruct-v0-3"
   }
 }

@@ -56,13 +56,13 @@
       }
     },
     {
-      "name": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
+      "name": "nim-llama-nemotron-embed-vl-1b-v2",
       "components": {
         "models": [
           {
-            "name": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
+            "name": "nim-llama-nemotron-embed-vl-1b-v2",
             "configuration": {
-              "nim_model_name": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
+              "nim_model_name": "nvidia/llama-nemotron-embed-vl-1b-v2",
               "embeddings_size": 2048
             }
           }
@@ -216,7 +216,7 @@
           {
             "name": "embedding_model",
             "type": "Model",
-            "description": "Embedding model used to embed text descriptions for vector search. Preset: Llama 3.2 NeMoRetriever 1B VLM Embed v1 (nim-llama-3-2-nemoretriever-1b-vlm-embed-v1).",
+            "description": "Embedding model used to embed text descriptions for vector search. Preset: Llama Nemotron Embed VL 1B V2 (nim-llama-nemotron-embed-vl-1b-v2).",
             "value": "$var(embedding_model__model)"
           },
           {
@@ -585,10 +585,10 @@
               "functionName": "embed",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1"
+              "packageName": "nim-llama-nemotron-embed-vl-1b-v2"
             },
-            "appName": "Llama 3.2 Nemoretriever 1B Vlm Embed V1",
-            "dpkName": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
+            "appName": "Llama Nemotron Embed VL 1B V2",
+            "dpkName": "nim-llama-nemotron-embed-vl-1b-v2",
             "metadata": {
               "position": {
                 "x": 11800,
@@ -596,7 +596,7 @@
                 "z": 0
               },
               "modelConfig": {
-                "nim_model_name": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
+                "nim_model_name": "nvidia/llama-nemotron-embed-vl-1b-v2",
                 "embeddings_size": 2048,
                 "hyde_model_name": "",
                 "base_url": "https://integrate.api.nvidia.com/v1"
@@ -884,7 +884,7 @@
   },
   "variables": {
     "vlm_model__model": "vila-model-adapter.models.vila-1p5-3b",
-    "embedding_model__model": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1.models.nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
+    "embedding_model__model": "nim-llama-nemotron-embed-vl-1b-v2.models.nim-llama-nemotron-embed-vl-1b-v2",
     "graph_llm_model__model": "nim-mistral-7b-instruct-v0-3.models.nim-mistral-7b-instruct-v0-3"
   }
 }
