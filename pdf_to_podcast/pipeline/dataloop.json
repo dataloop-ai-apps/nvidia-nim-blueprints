@@ -1,7 +1,7 @@
 {
   "name": "pdf-to-podcast-bp",
   "displayName": "PDF to Podcast NVIDIA Blueprint",
-  "description": "Generate original podcast-style audio from PDFs using the ElevenLabs API and NVIDIA NIM LLMs. The pipeline extracts and summarizes text, generates monologue or dialogue scripts, and synthesizes speech audio. Setup: (1) Install this app — requires an NVIDIA NGC API key and an ElevenLabs API key, which can be set up in advance as secret integrations or created during installation when prompted. (2) Create a pipeline from the 'PDF to Podcast NVIDIA Blueprint' template. (3) Model variables are preset to Llama 3.1 405B Instruct (reasoning LLM), Llama 3.1 70B Instruct (iterative LLM), and Llama 3.1 8B Instruct (json podcast LLM and json convo LLM). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Upload PDFs to your dataset and execute the pipeline.",
+  "description": "Generate original podcast-style audio from PDFs using the ElevenLabs API and NVIDIA NIM LLMs. The pipeline extracts and summarizes text, generates monologue or dialogue scripts, and synthesizes speech audio. Setup: (1) Install this app — requires an NVIDIA NGC API key and an ElevenLabs API key, which can be set up in advance as secret integrations or created during installation when prompted. (2) Create a pipeline from the 'PDF to Podcast NVIDIA Blueprint' template. (3) Model variables are preset to Nemotron 3 Ultra 550B (reasoning LLM), Nemotron 3 Super 120B (iterative LLM), and Mistral 7B Instruct (json podcast LLM and json convo LLM). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Upload PDFs to your dataset and execute the pipeline.",
   "version": "0.0.81",
   "scope": "public",
   "attributes": {
@@ -32,13 +32,13 @@
       "name": "wait-node"
     },
     {
-      "name": "nim-llama-3-1-405b-instruct",
+      "name": "nim-nemotron-3-ultra-550b-a55b",
       "components": {
         "models": [
           {
-            "name": "nim-llama-3-1-405b-instruct",
+            "name": "nim-nemotron-3-ultra-550b-a55b",
             "configuration": {
-              "nim_model_name": "meta/llama-3.1-405b-instruct",
+              "nim_model_name": "nvidia/nemotron-3-ultra-550b-a55b",
               "system_prompt": "",
               "max_tokens": 1024,
               "temperature": 0.2,
@@ -50,13 +50,13 @@
       }
     },
     {
-      "name": "nim-llama-3-1-70b-instruct",
+      "name": "nim-nemotron-3-super-120b-a12b",
       "components": {
         "models": [
           {
-            "name": "nim-llama-3-1-70b-instruct",
+            "name": "nim-nemotron-3-super-120b-a12b",
             "configuration": {
-              "nim_model_name": "meta/llama-3.1-70b-instruct",
+              "nim_model_name": "nvidia/nemotron-3-super-120b-a12b",
               "system_prompt": "",
               "max_tokens": 1024,
               "temperature": 0.2,
@@ -68,13 +68,13 @@
       }
     },
     {
-      "name": "nim-llama-3-1-8b-instruct",
+      "name": "nim-mistral-7b-instruct-v0-3",
       "components": {
         "models": [
           {
-            "name": "nim-llama-3-1-8b-instruct",
+            "name": "nim-mistral-7b-instruct-v0-3",
             "configuration": {
-              "nim_model_name": "meta/llama-3.1-8b-instruct",
+              "nim_model_name": "mistralai/mistral-7b-instruct-v0.3",
               "system_prompt": "",
               "max_tokens": 2048,
               "temperature": 0.2,
@@ -381,25 +381,25 @@
           {
             "name": "reasoning LLM",
             "type": "Model",
-            "description": "Main LLM for summarization, outline generation, and content creation. Preset: Llama 3.1 405B Instruct (nim-llama-3-1-405b-instruct)",
+            "description": "Main LLM for summarization, outline generation, and content creation. Preset: Nemotron 3 Ultra 550B (nim-nemotron-3-ultra-550b-a55b)",
             "value": "$var(reasoning LLM__model)"
           },
           {
             "name": "iterative LLM",
             "type": "Model",
-            "description": "LLM for iteratively combining dialogue segments into a cohesive conversation. Preset: Llama 3.1 70B Instruct (nim-llama-3-1-70b-instruct)",
+            "description": "LLM for iteratively combining dialogue segments into a cohesive conversation. Preset: Nemotron 3 Super 120B (nim-nemotron-3-super-120b-a12b)",
             "value": "$var(iterative LLM__model)"
           },
           {
             "name": "json podcast LLM",
             "type": "Model",
-            "description": "LLM for converting the raw outline into a structured JSON podcast outline. Preset: Llama 3.1 8B Instruct (nim-llama-3-1-8b-instruct)",
+            "description": "LLM for converting the raw outline into a structured JSON podcast outline. Preset: Mistral 7B Instruct (nim-mistral-7b-instruct-v0-3)",
             "value": "$var(json podcast LLM__model)"
           },
           {
             "name": "json convo LLM",
             "type": "Model",
-            "description": "LLM for converting dialogue or monologue text into structured JSON conversation format. Preset: Llama 3.1 8B Instruct (nim-llama-3-1-8b-instruct)",
+            "description": "LLM for converting dialogue or monologue text into structured JSON conversation format. Preset: Mistral 7B Instruct (nim-mistral-7b-instruct-v0-3)",
             "value": "$var(json convo LLM__model)"
           },
           {
@@ -833,10 +833,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-nemotron-3-ultra-550b-a55b"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "NIM Nemotron 3 Ultra 550B",
+            "dpkName": "nim-nemotron-3-ultra-550b-a55b",
             "metadata": {
               "position": {
                 "x": 11488.341355488705,
@@ -886,10 +886,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-nemotron-3-ultra-550b-a55b"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "NIM Nemotron 3 Ultra 550B",
+            "dpkName": "nim-nemotron-3-ultra-550b-a55b",
             "metadata": {
               "position": {
                 "x": 12116.814283228272,
@@ -939,10 +939,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-nemotron-3-ultra-550b-a55b"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "NIM Nemotron 3 Ultra 550B",
+            "dpkName": "nim-nemotron-3-ultra-550b-a55b",
             "metadata": {
               "position": {
                 "x": 12773.723943824945,
@@ -992,10 +992,10 @@
               "functionName": "predict",
               "serviceName": "predict-67f7b2a9f41fe30fb2d2c4-59tg",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-8b-instruct"
+              "packageName": "nim-mistral-7b-instruct-v0-3"
             },
-            "appName": "NIM Llama 3.1 8B Instruct",
-            "dpkName": "nim-llama-3-1-8b-instruct",
+            "appName": "NIM Mistral 7B Instruct",
+            "dpkName": "nim-mistral-7b-instruct-v0-3",
             "metadata": {
               "position": {
                 "x": 13487.755712895085,
@@ -1045,10 +1045,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-nemotron-3-ultra-550b-a55b"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "NIM Nemotron 3 Ultra 550B",
+            "dpkName": "nim-nemotron-3-ultra-550b-a55b",
             "metadata": {
               "position": {
                 "x": 11484.156977396948,
@@ -1236,10 +1236,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed36731b494016ca41d7-b055",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-8b-instruct"
+              "packageName": "nim-mistral-7b-instruct-v0-3"
             },
-            "appName": "NIM Llama 3.1 8B Instruct",
-            "dpkName": "nim-llama-3-1-8b-instruct",
+            "appName": "NIM Mistral 7B Instruct",
+            "dpkName": "nim-mistral-7b-instruct-v0-3",
             "metadata": {
               "position": {
                 "x": 12769.352219378163,
@@ -1289,10 +1289,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe30fd8d2c3-8zlh",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-70b-instruct"
+              "packageName": "nim-nemotron-3-super-120b-a12b"
             },
-            "appName": "NIM Llama 3.1 70B Instruct",
-            "dpkName": "nim-llama-3-1-70b-instruct",
+            "appName": "NIM Nemotron 3 Super 120B",
+            "dpkName": "nim-nemotron-3-super-120b-a12b",
             "metadata": {
               "position": {
                 "x": 13391.820885492049,
@@ -1342,10 +1342,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-nemotron-3-ultra-550b-a55b"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "NIM Nemotron 3 Ultra 550B",
+            "dpkName": "nim-nemotron-3-ultra-550b-a55b",
             "metadata": {
               "position": {
                 "x": 14076.225628811282,
@@ -1554,10 +1554,10 @@
               "functionName": "predict",
               "serviceName": "predict-67f7b2a9f41fe30fb2d2c4-59tg",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-8b-instruct"
+              "packageName": "nim-mistral-7b-instruct-v0-3"
             },
-            "appName": "NIM Llama 3.1 8B Instruct",
-            "dpkName": "nim-llama-3-1-8b-instruct",
+            "appName": "NIM Mistral 7B Instruct",
+            "dpkName": "nim-mistral-7b-instruct-v0-3",
             "metadata": {
               "position": {
                 "x": 15792.938954041872,
@@ -1607,10 +1607,10 @@
               "functionName": "predict",
               "serviceName": "predict-67ed3672f41fe3426dd2c3-o75s",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-405b-instruct"
+              "packageName": "nim-nemotron-3-ultra-550b-a55b"
             },
-            "appName": "NIM Llama 3.1 405B Instruct",
-            "dpkName": "nim-llama-3-1-405b-instruct",
+            "appName": "NIM Nemotron 3 Ultra 550B",
+            "dpkName": "nim-nemotron-3-ultra-550b-a55b",
             "metadata": {
               "position": {
                 "x": 12119.012291317891,
@@ -1741,9 +1741,9 @@
     ]
   },
   "variables": {
-    "reasoning LLM__model": "nim-llama-3-1-405b-instruct.models.nim-llama-3-1-405b-instruct",
-    "iterative LLM__model": "nim-llama-3-1-70b-instruct.models.nim-llama-3-1-70b-instruct",
-    "json podcast LLM__model": "nim-llama-3-1-8b-instruct.models.nim-llama-3-1-8b-instruct",
-    "json convo LLM__model": "nim-llama-3-1-8b-instruct.models.nim-llama-3-1-8b-instruct"
+    "reasoning LLM__model": "nim-nemotron-3-ultra-550b-a55b.models.nim-nemotron-3-ultra-550b-a55b",
+    "iterative LLM__model": "nim-nemotron-3-super-120b-a12b.models.nim-nemotron-3-super-120b-a12b",
+    "json podcast LLM__model": "nim-mistral-7b-instruct-v0-3.models.nim-mistral-7b-instruct-v0-3",
+    "json convo LLM__model": "nim-mistral-7b-instruct-v0-3.models.nim-mistral-7b-instruct-v0-3"
   }
 }

@@ -54,7 +54,7 @@ Prompt → Embedding → Retriever → Graph Query → Response LLM
 
 ### Report Generation
 
-Automates comprehensive report creation on any topic. The pipeline uses NVIDIA NIM's Llama 3.3 70B model combined with Tavily web search to research, plan, and generate well-structured reports with minimal user input.
+Automates comprehensive report creation on any topic. The pipeline uses NVIDIA NIM's Nemotron 3 Super 120B model combined with Tavily web search to research, plan, and generate well-structured reports with minimal user input.
 
 **Key Features:**
 - Automated report planning and section generation
@@ -78,7 +78,7 @@ Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pd
 
 1. **Preprocessing Pipeline**: Extracts text and images from PDFs, generates chunks, and creates embeddings using NVIDIA NIM models (YOLOX, PaddleOCR, Llama 3.2 NeMoRetriever 1B VLM Embed v1).
 
-2. **Retrieval Pipeline**: Retrieves relevant documents based on queries and generates responses using Llama 3.1 405B, with human-in-the-loop validation.
+2. **Retrieval Pipeline**: Retrieves relevant documents based on queries and generates responses using Mistral 7B Instruct, with human-in-the-loop validation.
 
 ## Installation
 
@@ -100,10 +100,9 @@ Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pd
 
 - **VILA 1.5 3B** - Video description via vision-language understanding (VSS)
 - **Llama 3.2 NeMoRetriever 1B VLM Embed v1** - Text embeddings for vector search (VSS, Multimodal RAG)
-- **Llama 3.3 70B Instruct** - Report planning and content generation
-- **Llama 3.1 405B Instruct** - RAG response generation, PDF to Podcast script generation
-- **Llama 3.1 70B Instruct** - PDF to Podcast content processing
-- **Llama 3.1 8B Instruct** - Knowledge graph entity extraction (VSS preprocessing), RAG response generation (VSS retrieval), PDF to Podcast content processing
+- **Nemotron 3 Super 120B** - Report planning and content generation, PDF to Podcast iterative processing
+- **Nemotron 3 Ultra 550B** - PDF to Podcast main reasoning and content creation
+- **Mistral 7B Instruct** - RAG response generation, VSS graph entity extraction, PDF to Podcast JSON processing
 - **YOLOX Page Elements** - PDF layout analysis
 - **PaddleOCR** - Optical character recognition
 

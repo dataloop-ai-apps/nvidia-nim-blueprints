@@ -73,13 +73,13 @@
       "name": "txt_to_prompt"
     },
     {
-      "name": "nim-llama-3-1-8b-instruct",
+      "name": "nim-mistral-7b-instruct-v0-3",
       "components": {
         "models": [
           {
-            "name": "nim-llama-3-1-8b-instruct",
+            "name": "nim-mistral-7b-instruct-v0-3",
             "configuration": {
-              "nim_model_name": "meta/llama-3.1-8b-instruct",
+              "nim_model_name": "mistralai/mistral-7b-instruct-v0.3",
               "max_tokens": 4096,
               "temperature": 0.2,
               "top_p": 0.7,
@@ -222,7 +222,7 @@
           {
             "name": "graph_llm_model",
             "type": "Model",
-            "description": "LLM used for knowledge graph entity and relationship extraction. Preset: Llama 3.1 8B Instruct with guided JSON.",
+            "description": "LLM used for knowledge graph entity and relationship extraction. Preset: Mistral 7B Instruct with guided JSON.",
             "value": "$var(graph_llm_model__model)"
           },
           {
@@ -799,10 +799,10 @@
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-llama-3-1-8b-instruct"
+              "packageName": "nim-mistral-7b-instruct-v0-3"
             },
-            "appName": "Llama 3.1 8B Instruct",
-            "dpkName": "nim-llama-3-1-8b-instruct",
+            "appName": "Mistral 7B Instruct",
+            "dpkName": "nim-mistral-7b-instruct-v0-3",
             "metadata": {
               "position": {
                 "x": 12100,
@@ -810,7 +810,7 @@
                 "z": 0
               },
               "modelConfig": {
-                "nim_model_name": "meta/llama-3.1-8b-instruct",
+                "nim_model_name": "mistralai/mistral-7b-instruct-v0.3",
                 "max_tokens": 4096,
                 "temperature": 0.2,
                 "top_p": 0.7,
@@ -885,6 +885,6 @@
   "variables": {
     "vlm_model__model": "vila-model-adapter.models.vila-1p5-3b",
     "embedding_model__model": "nim-llama-3-2-nemoretriever-1b-vlm-embed-v1.models.nim-llama-3-2-nemoretriever-1b-vlm-embed-v1",
-    "graph_llm_model__model": "nim-llama-3-1-8b-instruct.models.nim-llama-3-1-8b-instruct"
+    "graph_llm_model__model": "nim-mistral-7b-instruct-v0-3.models.nim-mistral-7b-instruct-v0-3"
   }
 }

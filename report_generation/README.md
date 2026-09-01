@@ -33,7 +33,7 @@ The "Report Generation" is an NVIDIA blueprint designed to automate the creation
 - **Report Writing Node**: Compiles the final report from all researched sections.
 
 ### 2. Models and APIs
-- **NVIDIA NIM API**: Uses Llama 3.3 70B Instruct model for high-quality text generation.
+- **NVIDIA NIM API**: Uses Nemotron 3 Super 120B model for high-quality text generation.
 - **Tavily API**: Provides web search capabilities for research.
 
 ## Usage

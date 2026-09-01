@@ -5,7 +5,7 @@ Dataloop implementation of the [NVIDIA AI-Q Blueprint v2.0.0](https://github.com
 ## Features
 
 - **Two-Tier Research**: Automatic routing between fast shallow research and comprehensive deep research based on query complexity.
-- **Intent Classification**: Uses `nemotron-3-nano-30b-a3b` to classify queries as meta (casual chat), shallow research, or deep research.
+- **Intent Classification**: Uses `nemotron-3-5-lightning-30b-a3b` to classify queries as meta (casual chat), shallow research, or deep research.
 - **Shallow Research**: Bounded tool-calling with LangGraph for quick factual answers with citation verification.
 - **Deep Research**: Multi-agent system using `deepagents` (orchestrator/planner/researcher sub-agents) for comprehensive, long-form research reports.
 - **Human-in-the-Loop (HITL)**: For deep research, the agent proposes a plan and waits for user approval in the AI Playground chat before proceeding.
@@ -41,12 +41,12 @@ Input -> [Init] -> [Intent Classifier]
 
 | Role | Model | Usage |
 |------|-------|-------|
-| Intent Classifier | `nemotron-3-nano-30b-a3b` | Fast classification via inline ChatNVIDIA |
-| Shallow Researcher | `nemotron-3-nano-30b-a3b` | Bounded research with tool-calling |
-| Clarifier | `nemotron-3-nano-30b-a3b` | Clarification and plan generation |
+| Intent Classifier | `nemotron-3-5-lightning-30b-a3b` | Fast classification via inline ChatNVIDIA |
+| Shallow Researcher | `nemotron-3-5-lightning-30b-a3b` | Bounded research with tool-calling |
+| Clarifier | `nemotron-3-5-lightning-30b-a3b` | Clarification and plan generation |
 | Orchestrator | `gpt-oss-120b` | Deep research coordination and synthesis |
 | Planner | `gpt-oss-120b` | Research plan generation |
-| Researcher (deep) | `nemotron-3-nano-30b-a3b` | Information gathering for deep research |
+| Researcher (deep) | `nemotron-3-5-lightning-30b-a3b` | Information gathering for deep research |
 | Report Writer | `gpt-oss-120b` | Final deep research report formatting (dedicated NIM node) |
 
 ## Pipeline Variables

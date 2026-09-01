@@ -16,7 +16,7 @@ For architecture, components, and troubleshooting, see the sections below.
 
 | Variable | Type | Required | Description |
 |----------|------|----------|-------------|
-| **report_writer_model** | Model | Yes | LLM for generating the final report. Recommended: NIM Llama 3.3 70B Instruct. |
+| **report_writer_model** | Model | Yes | LLM for generating the final report. Recommended: NIM Nemotron 3 Super 120B. |
 | **rag_pipeline_id** | String | No | Pipeline ID of a configured [NVIDIA RAG Pipeline](../multimodal_rag/nvidia_rag_pipeline/README.md) instance. Enables RAG-first search with LLM-as-judge relevancy checking. Leave empty for web-search-only mode. |
 
 ### Environment Variables
@@ -50,7 +50,7 @@ For non-biomedical topics, the pipeline behaves identically to the enterprise re
 - **Virtual Screening**: Automatic detection of drug-discovery intent with MolMIM molecule generation and DiffDock molecular docking.
 - **Protein & Molecule Resolution**: Automated lookup of protein structures (RCSB PDB) and molecular SMILES strings (PubChem) from names extracted by the LLM.
 - **Artifact Persistence**: DiffDock output files (`.mol` ligand positions, confidence scores CSV) are uploaded to the Dataloop dataset for downstream analysis.
-- **Report Generation**: Final report formatted by NIM Llama 3.3 70B Instruct with virtual screening results seamlessly integrated.
+- **Report Generation**: Final report formatted by NIM Nemotron 3 Super 120B with virtual screening results seamlessly integrated.
 
 ## Components
 
@@ -62,7 +62,7 @@ For non-biomedical topics, the pipeline behaves identically to the enterprise re
 | **Biomedical AIQ Agent** | Orchestrator: generates queries, summarizes, reflects, checks VS intent, and routes between nodes |
 | **Biomedical Research** | RAG-first search with LLM-as-judge + Tavily web search fallback (parallel query processing) |
 | **Virtual Screening** | Resolves protein/molecule, calls MolMIM + DiffDock, uploads artifacts to Dataloop |
-| **NIM Llama 3.3 70B - Report Writer** | Formats the final research report from the accumulated draft |
+| **NIM Nemotron 3 Super 120B - Report Writer** | Formats the final research report from the accumulated draft |
 
 ### Pipeline Flow
 
@@ -70,7 +70,7 @@ For non-biomedical topics, the pipeline behaves identically to the enterprise re
 Input → [Init] → [Biomedical Agent]
                     |-- "research"          → [Research] → [Agent] (cycle)
                     |-- "virtual_screening" → [VS Node]  → [Agent]
-                    '-- "generate_report"   → [NIM Llama 3.3 70B] (end)
+                    '-- "generate_report"   → [NIM Nemotron 3 Super 120B] (end)
 ```
 
 ### NIM Models
@@ -78,7 +78,7 @@ Input → [Init] → [Biomedical Agent]
 | Model | Purpose |
 |-------|---------|
 | **nvidia/llama-3.3-nemotron-super-49b-v1.5** | Reasoning: query generation, summarization, reflection, relevancy checking, VS intent detection, protein/molecule identification |
-| **meta/llama-3.3-70b-instruct** | Report writing: final report formatting |
+| **nvidia/nemotron-3-super-120b-a12b** | Report writing: final report formatting |
 | **nvidia/molmim** | BioNeMo NIM: controlled generation of novel small molecules from a seed SMILES |
 | **mit/diffdock** | BioNeMo NIM: prediction of 3D molecular docking poses and confidence scores |
 
@@ -90,7 +90,7 @@ Install from the Dataloop Marketplace. If you want RAG-enhanced retrieval over y
 
 ### 2. Configure Variables
 
-Set `report_writer_model` to your Llama model. Optionally set `rag_pipeline_id` to enable RAG retrieval.
+Set `report_writer_model` to your Nemotron model. Optionally set `rag_pipeline_id` to enable RAG retrieval.
 
 ### 3. Create a Prompt Item
 
@@ -132,7 +132,7 @@ Execute the pipeline with your prompt item. The agent will:
 
 ### Required
 
-- **NVIDIA NGC API Key**: For the Nemotron reasoning model, Llama report writer, MolMIM, and DiffDock
+- **NVIDIA NGC API Key**: For the Nemotron reasoning model, Nemotron report writer, MolMIM, and DiffDock
 - **Tavily API Key**: For web search fallback
 
 ### Optional

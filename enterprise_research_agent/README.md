@@ -16,12 +16,12 @@ For architecture, components, and troubleshooting, see the sections below.
 
 | Variable | Type | Required | Description |
 |----------|------|----------|-------------|
-| **report_writer_model** | Model | Yes | LLM for generating the final report. Recommended: NIM Llama 3.3 70B Instruct. |
+| **report_writer_model** | Model | Yes | LLM for generating the final report. Recommended: NIM Nemotron 3 Super 120B. |
 | **rag_pipeline_id** | String | No | Pipeline ID of a configured [NVIDIA RAG Pipeline](../multimodal_rag/nvidia_rag_pipeline/README.md) instance. Enables RAG-first search with LLM-as-judge relevancy checking. Leave empty for web-search-only mode. |
 
 **Getting the RAG pipeline ID:** Open your installed NVIDIA RAG Pipeline in the Dataloop platform, copy the pipeline ID from the URL or pipeline settings, and paste it into the `rag_pipeline_id` variable when configuring the research agent pipeline.
 
-**Getting the model ID:** When you run or edit the pipeline, the Model variable shows a model selector. Choose the recommended model; the selected value is the model ID (e.g. `nim-llama-3-3-70b-instruct.models.nim-llama-3-3-70b-instruct`). You can also find model IDs in your project Models page.
+**Getting the model ID:** When you run or edit the pipeline, the Model variable shows a model selector. Choose the recommended model; the selected value is the model ID (e.g. `nim-nemotron-3-super-120b-a12b.models.nim-nemotron-3-super-120b-a12b`). You can also find model IDs in your project Models page.
 
 ---
 
@@ -29,13 +29,13 @@ For architecture, components, and troubleshooting, see the sections below.
 
 The AI Agent for Enterprise Research is a Dataloop implementation of the [NVIDIA AIQ Research Assistant Blueprint](https://build.nvidia.com/nvidia/aiq). It automates deep research on any topic using a Plan-Execute-Reflect agentic loop, producing comprehensive, publication-ready long-form reports.
 
-The agent generates search queries, retrieves information from both a RAG knowledge base (if configured) and web search, summarizes findings, reflects on gaps, and iterates until the research is complete. A final NIM Llama model formats the accumulated research into a polished report.
+The agent generates search queries, retrieves information from both a RAG knowledge base (if configured) and web search, summarizes findings, reflects on gaps, and iterates until the research is complete. A final NIM Nemotron model formats the accumulated research into a polished report.
 
 ## Prerequisites
 
 ### Required
 
-- **NVIDIA NGC API Key**: For the Nemotron reasoning model and Llama report writer
+- **NVIDIA NGC API Key**: For the Nemotron reasoning model and Nemotron report writer
 - **Tavily API Key**: For web search fallback
 
 ### Optional (for RAG-enhanced research)
@@ -58,7 +58,7 @@ Setting up RAG enables the agent to search your own document corpus before falli
 | Model | Purpose |
 |-------|---------|
 | **nvidia/llama-3.3-nemotron-super-49b-v1.5** | Reasoning: query generation, summarization, reflection, relevancy checking (temperature 0.5, max 5000 tokens) |
-| **meta/llama-3.3-70b-instruct** | Report writing: final report formatting (temperature 0.0, max 20000 tokens) |
+| **nvidia/nemotron-3-super-120b-a12b** | Report writing: final report formatting (temperature 0.0, max 20000 tokens) |
 
 ## Usage
 
@@ -68,7 +68,7 @@ Install from the Dataloop Marketplace. If you want RAG, also install the preproc
 
 ### 2. Configure Variables
 
-Set `report_writer_model` to your Llama model. Optionally set `rag_pipeline_id` to enable RAG retrieval.
+Set `report_writer_model` to your Nemotron model. Optionally set `rag_pipeline_id` to enable RAG retrieval.
 
 ### 3. Create a Prompt Item
 
