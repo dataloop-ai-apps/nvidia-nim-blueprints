@@ -41,12 +41,12 @@ from enterprise_research_agent_v2.tools import build_tools
 logger = logging.getLogger("[AIQ-v2-Enterprise-Research]")
 
 DEFAULT_NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
-DEFAULT_INTENT_MODEL = "nvidia/nemotron-3-nano-30b-a3b"
-DEFAULT_SHALLOW_MODEL = "nvidia/nemotron-3-nano-30b-a3b"
-DEFAULT_CLARIFIER_MODEL = "nvidia/nemotron-3-nano-30b-a3b"
+DEFAULT_INTENT_MODEL = "nvidia/nemotron-3.5-lightning-30b-a3b"
+DEFAULT_SHALLOW_MODEL = "nvidia/nemotron-3.5-lightning-30b-a3b"
+DEFAULT_CLARIFIER_MODEL = "nvidia/nemotron-3.5-lightning-30b-a3b"
 DEFAULT_ORCHESTRATOR_MODEL = "openai/gpt-oss-120b"
 DEFAULT_PLANNER_MODEL = "openai/gpt-oss-120b"
-DEFAULT_RESEARCHER_MODEL = "nvidia/nemotron-3-nano-30b-a3b"
+DEFAULT_RESEARCHER_MODEL = "nvidia/nemotron-3.5-lightning-30b-a3b"
 
 
 class AIQEnterpriseAgentV2(dl.BaseServiceRunner):

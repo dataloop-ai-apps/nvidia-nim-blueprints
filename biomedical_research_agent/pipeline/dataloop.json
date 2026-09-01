@@ -1,7 +1,7 @@
 {
   "name": "nvidia-biomedical-research-bp",
   "displayName": "Biomedical AI-Q Research Agent",
-  "description": "Biomedical research agent pipeline adapted from NVIDIA Biomedical AI-Q Research Agent Blueprint. Agent orchestrates RAG-first search with LLM-as-judge, web search fallback, and virtual screening (MolMIM + DiffDock) in a Plan-Execute-Reflect loop, then NIM Llama 3.3 70B generates the final report.",
+  "description": "Biomedical research agent pipeline adapted from NVIDIA Biomedical AI-Q Research Agent Blueprint. Agent orchestrates RAG-first search with LLM-as-judge, web search fallback, and virtual screening (MolMIM + DiffDock) in a Plan-Execute-Reflect loop, then NIM Nemotron 3 Super 120B generates the final report.",
   "version": "0.0.81",
   "scope": "public",
   "codebase": {
@@ -18,13 +18,13 @@
   "dependencies": [
     { "name": "nvidia-biomedical-research" },
     {
-      "name": "nim-llama-3-3-70b-instruct",
+      "name": "nim-nemotron-3-super-120b-a12b",
       "components": {
         "models": [
           {
-            "name": "nim-llama-3-3-70b-instruct",
+            "name": "nim-nemotron-3-super-120b-a12b",
             "configuration": {
-              "nim_model_name": "meta/llama-3.3-70b-instruct",
+              "nim_model_name": "nvidia/nemotron-3-super-120b-a12b",
               "system_prompt": "You are a report formatter. You receive a research draft in the context and your ONLY job is to reformat it into a polished, publication-ready report. You must NOT rewrite, summarize, or shorten the draft.\n\nCRITICAL RULES:\n- The research draft in the context is your SOLE source of information. Do NOT add any facts, citations, or claims from your own knowledge.\n- Reproduce ALL content from the research draft. Every section, every paragraph, every data point must appear in your output.\n- The output MUST be at least as long as the research draft. If the draft is 10,000 words, your report must be at least 10,000 words.\n- If a Virtual Screening section exists in the draft, you MUST include it in full with ALL technical details: target protein, seed molecule, PDB IDs, SMILES strings, generated ligands, DiffDock confidence scores, and uploaded artifact file names. Copy these verbatim.\n\nFormatting guidelines:\n- Use ## for sections, ### for subsections.\n- Write in coherent paragraphs with smooth transitions between sections.\n- Begin with an engaging introduction that frames the scope.\n- Arrange sections logically following the report organization provided.\n- Avoid bullet lists unless the draft uses them.\n- Do NOT refer to yourself as the writer. Do not add meta-commentary.\n- Do not add a sources section (added in post-processing).\n- Do NOT wrap the report in markdown code blocks.\n- Write the report in the same language as the user's message.\n- Return only the final report.",
               "max_tokens": 20000,
               "temperature": 0.0,
@@ -38,13 +38,13 @@
     { "name": "nim-rag-bp" }
   ],
   "variables": {
-    "report_writer_model__model": "nim-llama-3-3-70b-instruct.models.nim-llama-3-3-70b-instruct"
+    "report_writer_model__model": "nim-nemotron-3-super-120b-a12b.models.nim-nemotron-3-super-120b-a12b"
   },
   "components": {
     "pipelineTemplates": [
       {
         "name": "Biomedical AI-Q Research Agent",
-        "description": "Agent -> Research (RAG-first + Web fallback, cycle) -> Virtual Screening (MolMIM + DiffDock, conditional) -> NIM Llama 3.3 Report Generation",
+        "description": "Agent -> Research (RAG-first + Web fallback, cycle) -> Virtual Screening (MolMIM + DiffDock, conditional) -> NIM Nemotron 3 Super 120B Report Generation",
         "connections": [
           {
             "src": { "nodeId": "node-init", "portId": "port-init-out" },
@@ -284,22 +284,22 @@
                 "io": "output"
               }
             ],
-            "name": "NIM Llama 3.3 70B - Report Writer",
+            "name": "NIM Nemotron 3 Super 120B - Report Writer",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-llama-3-3-70b-instruct"
+              "packageName": "nim-nemotron-3-super-120b-a12b"
             },
-            "appName": "NIM Llama 3.3 70B Instruct",
-            "dpkName": "nim-llama-3-3-70b-instruct",
+            "appName": "NIM Nemotron 3 Super 120B",
+            "dpkName": "nim-nemotron-3-super-120b-a12b",
             "metadata": {
               "position": { "x": 10400, "y": 10574, "z": 0 },
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "report_writer_model",
-              "pipelineNodeName": "nim-llama-70b-report-writer",
+              "pipelineNodeName": "nim-nemotron-3-super-120b-a12b-report-writer",
               "mlType": "genAi"
             }
           }
@@ -308,7 +308,7 @@
           {
             "name": "report_writer_model",
             "type": "Model",
-            "description": "LLM model for generating the final research report. Preset: NIM Llama 3.3 70B Instruct.",
+            "description": "LLM model for generating the final research report. Preset: NIM Nemotron 3 Super 120B.",
             "value": "$var(report_writer_model__model)"
           },
           {

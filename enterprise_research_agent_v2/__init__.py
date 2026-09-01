@@ -16,7 +16,7 @@ from langchain_nvidia_ai_endpoints._statics import MODEL_TABLE, Model
 # 1. Register models that aren't in langchain's static table so that
 #    determine_model() resolves them immediately and supports_tools is set.
 for _model_id in (
-    "nvidia/nemotron-3-nano-30b-a3b",
+    "nvidia/nemotron-3.5-lightning-30b-a3b",
     "openai/gpt-oss-120b",
 ):
     if _model_id not in MODEL_TABLE:

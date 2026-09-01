@@ -7,7 +7,7 @@ https://github.com/NVIDIA-AI-Blueprints/aiq-research-assistant
 Pipeline flow:
   Input -> [Init] -> [AIQ Agent]
                        |-- "research" -> [Research Node] -> [AIQ Agent] (cycle)
-                       '-- "generate_report" -> [NIM Llama 3.3 70B Instruct] (end)
+                       '-- "generate_report" -> [NIM Nemotron 3 Super 120B] (end)
 
 The Agent node is the brain: it plans, summarizes, reflects, and decides next action.
 The Research node handles combined RAG-first + web search fallback with LLM-as-judge.

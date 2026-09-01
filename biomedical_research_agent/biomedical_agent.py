@@ -10,7 +10,7 @@ Pipeline flow:
   Input -> [Init] -> [Biomedical Agent]
                        |-- "research"           -> [Research Node] -> [Biomedical Agent] (cycle)
                        |-- "virtual_screening"  -> [VS Node]       -> [Biomedical Agent]
-                       '-- "generate_report"    -> [NIM Llama 3.3 70B Instruct] (end)
+                       '-- "generate_report"    -> [NIM Nemotron 3 Super 120B] (end)
 
 After the reflection loop completes, the agent checks if virtual screening is
 appropriate for the topic. If yes, it identifies a target protein and seed
