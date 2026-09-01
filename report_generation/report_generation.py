@@ -712,9 +712,9 @@ class ReportGenerator(dl.BaseServiceRunner):
                 }]
             },
             model_info={
-                'name': 'llama_3.3_70b_instruct',
+                'name': 'nemotron_3_super_120b_a12b',
                 'confidence': 1.0,
-                'model_id': 'llama_3.3_70b_instruct-1'
+                'model_id': 'nemotron_3_super_120b_a12b-1'
             }
         )
 

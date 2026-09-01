@@ -827,7 +827,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3.1-405b-instruct",
+            "name": "nim-nemotron-3-ultra-550b-a55b",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -846,7 +846,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "reasoning LLM",
-              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "pipelineNodeName": "nim-api-nemotron-3-ultra-550b-a55b-meta",
               "mlType": "genAi"
             }
           },
@@ -880,7 +880,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3.1-405b-instruct",
+            "name": "nim-nemotron-3-ultra-550b-a55b",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -899,7 +899,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "reasoning LLM",
-              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "pipelineNodeName": "nim-api-nemotron-3-ultra-550b-a55b-meta",
               "mlType": "genAi"
             }
           },
@@ -933,7 +933,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3.1-405b-instruct",
+            "name": "nim-nemotron-3-ultra-550b-a55b",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -952,7 +952,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "reasoning LLM",
-              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "pipelineNodeName": "nim-api-nemotron-3-ultra-550b-a55b-meta",
               "mlType": "genAi"
             }
           },
@@ -986,7 +986,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3.1-8b-instruct",
+            "name": "nim-mistral-7b-instruct-v0-3",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -1005,7 +1005,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "json convo LLM",
-              "pipelineNodeName": "nim-api-llama3-1-8b-instruct-meta",
+              "pipelineNodeName": "nim-api-mistral-7b-instruct-v0-3-meta",
               "mlType": "genAi"
             }
           },
@@ -1039,7 +1039,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3.1-405b-instruct",
+            "name": "nim-nemotron-3-ultra-550b-a55b",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -1058,7 +1058,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "reasoning LLM",
-              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "pipelineNodeName": "nim-api-nemotron-3-ultra-550b-a55b-meta",
               "mlType": "genAi"
             }
           },
@@ -1230,7 +1230,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3.1-8b-instruct",
+            "name": "nim-mistral-7b-instruct-v0-3",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -1249,7 +1249,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "json podcast LLM",
-              "pipelineNodeName": "nim-api-llama3-1-8b-instruct-meta",
+              "pipelineNodeName": "nim-api-mistral-7b-instruct-v0-3-meta",
               "mlType": "genAi"
             }
           },
@@ -1283,7 +1283,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3.1-70b-instruct",
+            "name": "nim-nemotron-3-super-120b-a12b",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -1302,7 +1302,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "iterative LLM",
-              "pipelineNodeName": "nim-api-llama3-1-70b-instruct-meta",
+              "pipelineNodeName": "nim-api-nemotron-3-super-120b-a12b-meta",
               "mlType": "genAi"
             }
           },
@@ -1336,7 +1336,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3.1-405b-instruct",
+            "name": "nim-nemotron-3-ultra-550b-a55b",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -1355,7 +1355,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "reasoning LLM",
-              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "pipelineNodeName": "nim-api-nemotron-3-ultra-550b-a55b-meta",
               "mlType": "genAi"
             }
           },
@@ -1548,7 +1548,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3.1-8b-instruct",
+            "name": "nim-mistral-7b-instruct-v0-3",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -1567,7 +1567,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "json convo LLM",
-              "pipelineNodeName": "nim-api-llama3-1-8b-instruct-meta",
+              "pipelineNodeName": "nim-api-mistral-7b-instruct-v0-3-meta",
               "mlType": "genAi"
             }
           },
@@ -1601,7 +1601,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3.1-405b-instruct",
+            "name": "nim-nemotron-3-ultra-550b-a55b",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -1620,7 +1620,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "reasoning LLM",
-              "pipelineNodeName": "nim-api-llama3-1-405b-instruct-meta",
+              "pipelineNodeName": "nim-api-nemotron-3-ultra-550b-a55b-meta",
               "mlType": "genAi"
             }
           },

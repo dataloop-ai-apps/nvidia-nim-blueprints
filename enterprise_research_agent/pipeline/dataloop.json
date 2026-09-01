@@ -248,7 +248,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "report_writer_model",
-              "pipelineNodeName": "nim-llama-70b-report-writer",
+              "pipelineNodeName": "nim-nemotron-3-super-120b-a12b-report-writer",
               "mlType": "genAi"
             }
           }

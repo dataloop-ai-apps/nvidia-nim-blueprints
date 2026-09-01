@@ -112,7 +112,7 @@ if __name__ == "__main__":
     progress = dl.Progress()
     context = dl.Context()
 
-    model_dialogue = dl.models.get(model_id="67ed3672f41fe3426dd2c3e0") # 405b reasoning
+    model_dialogue = dl.models.get(model_id="67ed3672f41fe3426dd2c3e0") # Nemotron 3 Ultra 550B reasoning
     speech_model = "eleven_multilingual_v2"
 
     # item should be a pdf file

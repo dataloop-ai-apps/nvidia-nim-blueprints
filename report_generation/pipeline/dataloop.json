@@ -299,7 +299,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3-3-70b-instruct",
+            "name": "nim-nemotron-3-super-120b-a12b",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -327,7 +327,7 @@
               "componentGroupName": "models",
               "variableModel": "report_llm",
               "repeatable": true,
-              "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
+              "pipelineNodeName": "nim-api-nemotron-3-super-120b-a12b-meta",
               "mlType": "genAi"
             }
           },
@@ -361,7 +361,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3-3-70b-instruct",
+            "name": "nim-nemotron-3-super-120b-a12b",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -389,7 +389,7 @@
               "componentGroupName": "models",
               "variableModel": "report_llm",
               "repeatable": true,
-              "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
+              "pipelineNodeName": "nim-api-nemotron-3-super-120b-a12b-meta",
               "mlType": "genAi"
             }
           },
@@ -423,7 +423,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3-3-70b-instruct",
+            "name": "nim-nemotron-3-super-120b-a12b",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -451,7 +451,7 @@
               "componentGroupName": "models",
               "variableModel": "report_llm",
               "repeatable": true,
-              "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
+              "pipelineNodeName": "nim-api-nemotron-3-super-120b-a12b-meta",
               "mlType": "genAi"
             }
           },
@@ -485,7 +485,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3-3-70b-instruct",
+            "name": "nim-nemotron-3-super-120b-a12b",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -513,7 +513,7 @@
               "componentGroupName": "models",
               "variableModel": "report_llm",
               "repeatable": true,
-              "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
+              "pipelineNodeName": "nim-api-nemotron-3-super-120b-a12b-meta",
               "mlType": "genAi"
             }
           },
@@ -602,7 +602,7 @@
                 "io": "output"
               }
             ],
-            "name": "llama-3-3-70b-instruct",
+            "name": "nim-nemotron-3-super-120b-a12b",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
@@ -630,7 +630,7 @@
               "componentGroupName": "models",
               "variableModel": "report_llm",
               "repeatable": true,
-              "pipelineNodeName": "nim-api-llama3-3-70b-instruct-meta",
+              "pipelineNodeName": "nim-api-nemotron-3-super-120b-a12b-meta",
               "mlType": "genAi"
             }
           },
