@@ -77,7 +77,7 @@ Input → [Init] → [Biomedical Agent]
 
 | Model | Purpose |
 |-------|---------|
-| **nvidia/llama-3.3-nemotron-super-49b-v1.5** | Reasoning: query generation, summarization, reflection, relevancy checking, VS intent detection, protein/molecule identification |
+| **nvidia/nemotron-3-super-120b-a12b** | Reasoning: query generation, summarization, reflection, relevancy checking, VS intent detection, protein/molecule identification |
 | **nvidia/nemotron-3-super-120b-a12b** | Report writing: final report formatting |
 | **nvidia/molmim** | BioNeMo NIM: controlled generation of novel small molecules from a seed SMILES |
 | **mit/diffdock** | BioNeMo NIM: prediction of 3D molecular docking poses and confidence scores |

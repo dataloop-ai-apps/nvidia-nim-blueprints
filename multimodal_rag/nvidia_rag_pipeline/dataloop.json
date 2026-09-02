@@ -18,7 +18,7 @@
     ]
   },
   "displayName": "RAG Pipeline NVIDIA Blueprint",
-  "description": "RAG retrieval pipeline powered by NVIDIA NIM. Retrieves prepared embeddings from multimodal PDFs, uses NIM models for generating query embeddings and responses, and incorporates a retriever service to fetch relevant documents. Responses are stored in a prompts dataset and sent to a labeling task for human-in-the-loop validation. This is the second stage — first run the 'RAG Preprocessing Multimodal PDFs' pipeline to embed your documents. Setup: (1) Install this app — requires an NVIDIA NGC API key, which can be set up in advance as a secret integration or created during installation when prompted. (2) Create a pipeline from the 'RAG Pipeline NVIDIA Blueprint' template. (3) Model variables are preset to Llama Nemotron Embed VL 1B V2 (query embedding and retrieval) and Mistral 7B Instruct (response generation). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Set 'retrieval_dataset' to the dataset containing your preprocessed embeddings. (5) Adjust 'k_nearest_items' if needed (default: 30). (6) Execute the pipeline.",
+  "description": "RAG retrieval pipeline powered by NVIDIA NIM. Retrieves prepared embeddings from multimodal PDFs, uses NIM models for generating query embeddings and responses, and incorporates a retriever service to fetch relevant documents. Responses are stored in a prompts dataset and sent to a labeling task for human-in-the-loop validation. This is the second stage — first run the 'RAG Preprocessing Multimodal PDFs' pipeline to embed your documents. Setup: (1) Install this app — requires an NVIDIA NGC API key, which can be set up in advance as a secret integration or created during installation when prompted. (2) Create a pipeline from the 'RAG Pipeline NVIDIA Blueprint' template. (3) Model variables are preset to Llama Nemotron Embed VL 1B V2 (query embedding and retrieval) and Nemotron 3.5 Lightning 30B A3B (response generation). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Set 'retrieval_dataset' to the dataset containing your preprocessed embeddings. (5) Adjust 'k_nearest_items' if needed (default: 30). (6) Execute the pipeline.",
   "scope": "public",
   "components": {
     "pipelineTemplates": [
@@ -245,16 +245,16 @@
                 "io": "output"
               }
             ],
-            "name": "Response LLM (Mistral 7B Instruct)",
+            "name": "Response LLM (Nemotron 3.5 Lightning 30B A3B)",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-mistral-7b-instruct-v0-3"
+              "packageName": "nim-nemotron-3-5-lightning-30b-a3b"
             },
-            "appName": "Mistral 7B Instruct",
-            "dpkName": "nim-mistral-7b-instruct-v0-3",
+            "appName": "Nemotron 3.5 Lightning 30B A3B",
+            "dpkName": "nim-nemotron-3-5-lightning-30b-a3b",
             "metadata": {
               "position": {
                 "x": 10878.4971501579,
@@ -264,7 +264,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "gen_ai_model",
-              "pipelineNodeName": "nim-mistral-7b-instruct-v0-3",
+              "pipelineNodeName": "nim-nemotron-3-5-lightning-30b-a3b",
               "mlType": "genAi"
             }
           }
@@ -279,7 +279,7 @@
           {
             "name": "gen_ai_model",
             "type": "Model",
-            "description": "Generative LLM for producing the final response from retrieved context. Preset: Mistral 7B Instruct (nim-mistral-7b-instruct-v0-3)",
+            "description": "Generative LLM for producing the final response from retrieved context. Preset: Nemotron 3.5 Lightning 30B A3B (nim-nemotron-3-5-lightning-30b-a3b)",
             "value": "$var(gen_ai_model__model)"
           },
           {
@@ -314,13 +314,13 @@
       }
     },
     {
-      "name": "nim-mistral-7b-instruct-v0-3",
+      "name": "nim-nemotron-3-5-lightning-30b-a3b",
       "components": {
         "models": [
           {
-            "name": "nim-mistral-7b-instruct-v0-3",
+            "name": "nim-nemotron-3-5-lightning-30b-a3b",
             "configuration": {
-              "nim_model_name": "mistralai/mistral-7b-instruct-v0.3",
+              "nim_model_name": "nvidia/nemotron-3.5-lightning-30b-a3b",
               "system_prompt": "",
               "max_tokens": 4096,
               "temperature": 0.2,
@@ -337,6 +337,6 @@
   ],
   "variables": {
     "embed_model__model": "nim-llama-nemotron-embed-vl-1b-v2.models.nim-llama-nemotron-embed-vl-1b-v2",
-    "gen_ai_model__model": "nim-mistral-7b-instruct-v0-3.models.nim-mistral-7b-instruct-v0-3"
+    "gen_ai_model__model": "nim-nemotron-3-5-lightning-30b-a3b.models.nim-nemotron-3-5-lightning-30b-a3b"
   }
 }

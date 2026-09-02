@@ -42,7 +42,7 @@ logger = logging.getLogger('[AIQ-Enterprise-Research]')
 # Default configuration (matching NVIDIA blueprint)
 DEFAULT_NUM_REFLECTIONS = 2
 DEFAULT_NUM_QUERIES = 3
-DEFAULT_REASONING_MODEL = "nvidia/llama-3.3-nemotron-super-49b-v1.5"
+DEFAULT_REASONING_MODEL = "nvidia/nemotron-3-super-120b-a12b"
 DEFAULT_NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
 
 

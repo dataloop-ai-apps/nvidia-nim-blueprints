@@ -76,9 +76,9 @@ Transforms PDF documents into audio content using text-to-speech technology. Sup
 
 Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pdf-data-extraction-for-enterprise-rag) blueprint. On the Dataloop platform, this blueprint is implemented as two separate pipelines that work together:
 
-1. **Preprocessing Pipeline**: Extracts text and images from PDFs, generates chunks, and creates embeddings using NVIDIA NIM models (YOLOX, PaddleOCR, Llama Nemotron Embed VL 1B V2).
+1. **Preprocessing Pipeline**: Extracts text and images from PDFs, generates chunks, and creates embeddings using NVIDIA NIM models (Nemotron Page Elements v3, PaddleOCR, Llama Nemotron Embed VL 1B V2).
 
-2. **Retrieval Pipeline**: Retrieves relevant documents based on queries and generates responses using Mistral 7B Instruct, with human-in-the-loop validation.
+2. **Retrieval Pipeline**: Retrieves relevant documents based on queries and generates responses using Nemotron 3.5 Lightning 30B A3B, with human-in-the-loop validation.
 
 ## Installation
 
@@ -102,8 +102,8 @@ Based on NVIDIA's [Multimodal RAG](https://build.nvidia.com/nvidia/multimodal-pd
 - **Llama Nemotron Embed VL 1B V2** - Text embeddings for vector search (VSS, Multimodal RAG)
 - **Nemotron 3 Super 120B** - Report planning and content generation, PDF to Podcast iterative processing
 - **Nemotron 3 Ultra 550B** - PDF to Podcast main reasoning and content creation
-- **Mistral 7B Instruct** - RAG response generation, VSS graph entity extraction, PDF to Podcast JSON processing
-- **YOLOX Page Elements** - PDF layout analysis
+- **Nemotron 3.5 Lightning 30B A3B** - RAG response generation, VSS graph entity extraction, PDF to Podcast JSON processing
+- **Nemotron Page Elements v3** - PDF layout analysis
 - **PaddleOCR** - Optical character recognition
 
 For more information on NVIDIA NIMs, visit [NVIDIA Build](https://build.nvidia.com/explore/discover).

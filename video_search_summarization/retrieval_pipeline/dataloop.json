@@ -42,13 +42,13 @@
       "name": "llm-tools-retriever"
     },
     {
-      "name": "nim-mistral-7b-instruct-v0-3",
+      "name": "nim-nemotron-3-5-lightning-30b-a3b",
       "components": {
         "models": [
           {
-            "name": "nim-mistral-7b-instruct-v0-3",
+            "name": "nim-nemotron-3-5-lightning-30b-a3b",
             "configuration": {
-              "nim_model_name": "mistralai/mistral-7b-instruct-v0.3",
+              "nim_model_name": "nvidia/nemotron-3.5-lightning-30b-a3b",
               "system_prompt": "",
               "max_tokens": 4096,
               "temperature": 0.2,
@@ -107,7 +107,7 @@
           {
             "name": "gen_ai_model",
             "type": "Model",
-            "description": "Generative LLM for producing the final response from retrieved context. Preset: Mistral 7B Instruct.",
+            "description": "Generative LLM for producing the final response from retrieved context. Preset: Nemotron 3.5 Lightning 30B A3B.",
             "value": "$var(gen_ai_model__model)"
           },
           {
@@ -399,10 +399,10 @@
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-mistral-7b-instruct-v0-3"
+              "packageName": "nim-nemotron-3-5-lightning-30b-a3b"
             },
-            "appName": "Mistral 7B Instruct",
-            "dpkName": "nim-mistral-7b-instruct-v0-3",
+            "appName": "Nemotron 3.5 Lightning 30B A3B",
+            "dpkName": "nim-nemotron-3-5-lightning-30b-a3b",
             "metadata": {
               "position": {
                 "x": 10900,
@@ -412,7 +412,7 @@
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "gen_ai_model",
-              "pipelineNodeName": "nim-mistral-7b-instruct-v0-3",
+              "pipelineNodeName": "nim-nemotron-3-5-lightning-30b-a3b",
               "mlType": "genAi"
             }
           }
@@ -422,6 +422,6 @@
   },
   "variables": {
     "embed_model__model": "nim-llama-nemotron-embed-vl-1b-v2.models.nim-llama-nemotron-embed-vl-1b-v2",
-    "gen_ai_model__model": "nim-mistral-7b-instruct-v0-3.models.nim-mistral-7b-instruct-v0-3"
+    "gen_ai_model__model": "nim-nemotron-3-5-lightning-30b-a3b.models.nim-nemotron-3-5-lightning-30b-a3b"
   }
 }

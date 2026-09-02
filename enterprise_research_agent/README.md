@@ -57,7 +57,7 @@ Setting up RAG enables the agent to search your own document corpus before falli
 
 | Model | Purpose |
 |-------|---------|
-| **nvidia/llama-3.3-nemotron-super-49b-v1.5** | Reasoning: query generation, summarization, reflection, relevancy checking (temperature 0.5, max 5000 tokens) |
+| **nvidia/nemotron-3-super-120b-a12b** | Reasoning: query generation, summarization, reflection, relevancy checking (temperature 0.5, max 5000 tokens) |
 | **nvidia/nemotron-3-super-120b-a12b** | Report writing: final report formatting (temperature 0.0, max 20000 tokens) |
 
 ## Usage

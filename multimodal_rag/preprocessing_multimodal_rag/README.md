@@ -13,12 +13,12 @@ For prerequisites, components, and troubleshooting, see the sections below.
 
 | Variable | Type | Recommended model | Purpose |
 |----------|------|-------------------|---------|
-| **nv-yolox-page-elements-v1** | Model | NVIDIA YOLOX Page Elements v1 | Page element detection (tables, figures, text blocks) |
-| **university-at-buffalo-cached** | Model | University at Buffalo CachedTransformer | Table detection and extraction |
+| **nemotron-page-elements-v3** | Model | Nemotron Page Elements v3 | Page element detection (tables, figures, text blocks) |
+| **nemotron-graphic-elements-v1** | Model | Nemotron Graphic Elements v1 | Table detection and extraction |
 | **baidu-paddleocr** | Model | Baidu PaddleOCR | OCR on chart/images |
-| **nv-embedqa-e5v5** | Model | NVIDIA NV-EmbedQA E5 v5 | Vector embeddings for chunks (must match RAG retrieval) |
+| **llama-nemotron-embed-vl-1b-v2** | Model | Llama Nemotron Embed VL 1B V2 | Vector embeddings for chunks (must match RAG retrieval) |
 
-**Getting the model ID:** When you run or edit the pipeline, each Model variable shows a model selector. Choose the recommended model (or another from your project); the selected value is the model ID (e.g. `nv-embedqa-e5v5.models.nv-embedqa-e5v5`). You can also find model IDs in your project under **Develop** → **AI Library** (or **Models**). Dataset variables: pick the source dataset (PDFs) and target dataset (for embedded chunks) from the dataset selector.
+**Getting the model ID:** When you run or edit the pipeline, each Model variable shows a model selector. Choose the recommended model (or another from your project); the selected value is the model ID (e.g. `nim-llama-nemotron-embed-vl-1b-v2.models.nim-llama-nemotron-embed-vl-1b-v2`). You can also find model IDs in your project under **Develop** → **AI Library** (or **Models**). Dataset variables: pick the source dataset (PDFs) and target dataset (for embedded chunks) from the dataset selector.
 
 ---
 
@@ -42,11 +42,11 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 
 - **PDF to Text Conversion**: Extracts text content from PDF documents
 - **PDF to Image Conversion**: Converts PDF pages to images for visual element processing
-- **Page Element Detection**: Uses YOLOX to identify tables, charts, and text blocks
-- **Table Extraction**: Processes tables using the CACHED model
+- **Page Element Detection**: Uses Nemotron Page Elements v3 to identify tables, charts, and text blocks
+- **Table Extraction**: Processes tables using Nemotron Graphic Elements v1
 - **Chart OCR**: Extracts text from charts using PaddleOCR
 - **Text Chunking**: Splits extracted text into configurable chunks with overlap
-- **Embedding Generation**: Creates vector embeddings using nv-embedqa-e5v5
+- **Embedding Generation**: Creates vector embeddings using Llama Nemotron Embed VL 1B V2
 
 ## Components
 
@@ -54,10 +54,10 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 
 | Model | Purpose |
 |-------|---------|
-| **nv-yolox-page-elements-v1** | Detects page elements (tables, charts, text blocks) |
-| **university-at-buffalo-cached** | Extracts structured data from tables |
+| **nemotron-page-elements-v3** | Detects page elements (tables, charts, text blocks) |
+| **nemotron-graphic-elements-v1** | Extracts structured data from tables |
 | **baidu-paddleocr** | Performs OCR on chart images |
-| **nv-embedqa-e5v5** | Generates vector embeddings for text chunks |
+| **Llama Nemotron Embed VL 1B V2** | Generates vector embeddings for text chunks |
 
 ### Pipeline Nodes
 
@@ -80,7 +80,7 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 - **Function**: `pdf_item_to_images`
 - **Purpose**: Converts PDF pages into images for visual processing
 
-#### 4. nv-yolox-page-elements-v1
+#### 4. nemotron-page-elements-v3
 - **Type**: ML
 - **Function**: `predict`
 - **Purpose**: Detects page elements and routes items based on element type
@@ -90,7 +90,7 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 - **Function**: `predict`
 - **Purpose**: Performs OCR on chart images (filtered by `metadata.user.originalAnnotationLabel = "chart"`)
 
-#### 6. university-at-buffalo-cached
+#### 6. nemotron-graphic-elements-v1
 - **Type**: ML
 - **Function**: `predict`
 - **Purpose**: Extracts structured data from detected tables
@@ -105,7 +105,7 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 - **Function**: `create_chunks`
 - **Purpose**: Splits text into chunks with configurable size and overlap
 
-#### 9. nv-embedqa-e5v5
+#### 9. Llama Nemotron Embed VL 1B V2
 - **Type**: ML
 - **Function**: `embed`
 - **Purpose**: Generates vector embeddings for each text chunk
@@ -124,10 +124,10 @@ Install the pipeline from the Dataloop Marketplace.
 ### 3. Configure Model Services
 
 Ensure your NVIDIA NGC API key is configured in the model services:
-- nv-yolox-page-elements-v1
+- nemotron-page-elements-v3
 - baidu-paddleocr
-- university-at-buffalo-cached
-- nv-embedqa-e5v5
+- nemotron-graphic-elements-v1
+- Llama Nemotron Embed VL 1B V2
 
 ### 4. Run the Pipeline
 
@@ -135,7 +135,7 @@ Execute the pipeline. Items from the source dataset will be processed, and embed
 
 ### 5. Next Steps
 
-After completion, use the output dataset as the `retrieval_dataset` input for the [NVIDIA RAG Pipeline](../nvidia_rag_pipeline/README.md). The embedding model to use is `nv-embedqa-e5v5.models.nv-embedqa-e5v5`.
+After completion, use the output dataset as the `retrieval_dataset` input for the [NVIDIA RAG Pipeline](../nvidia_rag_pipeline/README.md). The embedding model to use is `nim-llama-nemotron-embed-vl-1b-v2.models.nim-llama-nemotron-embed-vl-1b-v2`.
 
 ## Troubleshooting
 
@@ -152,7 +152,7 @@ After completion, use the output dataset as the `retrieval_dataset` input for th
 
 ### Embedding Errors
 
-- Confirm the nv-embedqa-e5v5 model service is running
+- Confirm the Llama Nemotron Embed VL 1B V2 model service is running
 - Verify text chunks are being generated (check intermediate outputs)
 
 ## Contributing
