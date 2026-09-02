@@ -19,7 +19,7 @@
     ]
   },
   "displayName": "RAG Preprocessing Multimodal PDFs",
-  "description": "Preprocessing stage of a multimodal PDF RAG pipeline powered by NVIDIA NIM. Extracts text and images from PDFs, detects page layout elements, performs OCR, chunks content, and generates vector embeddings for retrieval. This is the first stage of a two-part RAG system — run this before the 'RAG Pipeline NVIDIA Blueprint'. Setup: (1) Install this app — requires an NVIDIA NGC API key, which can be set up in advance as a secret integration or created during installation when prompted. (2) Create a pipeline from the 'RAG Preprocessing Multimodal PDFs' template. (3) Model variables are preset to Llama Nemotron Embed VL 1B V2 (embeddings), NVIDIA YOLOX Page Elements v1 (layout detection), University at Buffalo CachedTransformer (table detection), and Baidu PaddleOCR (OCR). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Upload PDFs to your dataset and execute to generate embeddings.",
+  "description": "Preprocessing stage of a multimodal PDF RAG pipeline powered by NVIDIA NIM. Extracts text and images from PDFs, detects page layout elements, performs OCR, chunks content, and generates vector embeddings for retrieval. This is the first stage of a two-part RAG system — run this before the 'RAG Pipeline NVIDIA Blueprint'. Setup: (1) Install this app — requires an NVIDIA NGC API key, which can be set up in advance as a secret integration or created during installation when prompted. (2) Create a pipeline from the 'RAG Preprocessing Multimodal PDFs' template. (3) Model variables are preset to Llama Nemotron Embed VL 1B V2 (embeddings), Nemotron Page Elements v3 (layout detection), Nemotron Graphic Elements v1 (table detection), and Baidu PaddleOCR (OCR). To use different models, copy a model ID from Model Management into the pipeline's Variables panel. (4) Upload PDFs to your dataset and execute to generate embeddings.",
   "scope": "public",
   "components": {
     "pipelineTemplates": [
@@ -314,15 +314,15 @@
                 "io": "output"
               }
             ],
-            "name": "nv-yolox-page-elements-v1",
+            "name": "nemotron-page-elements-v3",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
               "moduleName": "nim-api-module",
-              "packageName": "nv-yolox-page-elements-v1"
+              "packageName": "nemotron-page-elements-v3"
             },
-            "appName": "nv-yolox-page-elements-v1",
-            "dpkName": "nv-yolox-page-elements-v1",
+            "appName": "nemotron-page-elements-v3",
+            "dpkName": "nemotron-page-elements-v3",
             "metadata": {
               "position": {
                 "x": 10634.8963886534,
@@ -330,12 +330,12 @@
                 "z": 0
               },
               "modelConfig": {
-                "nim_invoke_url": "cv/nvidia/nv-yolox-page-elements-v1"
+                "nim_invoke_url": "cv/nvidia/nemotron-page-elements-v3"
               },
               "componentGroupName": "models",
               "repeatable": true,
-              "variableModel": "nv-yolox-page-elements-v1",
-              "pipelineNodeName": "nv-yolox-page-elements-v1"
+              "variableModel": "nemotron-page-elements-v3",
+              "pipelineNodeName": "nemotron-page-elements-v3"
             }
           },
           {
@@ -422,15 +422,15 @@
                 "io": "output"
               }
             ],
-            "name": "university-at-buffalo-cached",
+            "name": "nemotron-graphic-elements-v1",
             "type": "ml",
             "namespace": {
               "functionName": "predict",
               "moduleName": "nim-api-module",
-              "packageName": "university-at-buffalo-cached"
+              "packageName": "nemotron-graphic-elements-v1"
             },
-            "appName": "university-at-buffalo-cached",
-            "dpkName": "university-at-buffalo-cached",
+            "appName": "nemotron-graphic-elements-v1",
+            "dpkName": "nemotron-graphic-elements-v1",
             "metadata": {
               "position": {
                 "x": 11766.6120102934,
@@ -438,12 +438,12 @@
                 "z": 0
               },
               "modelConfig": {
-                "nim_invoke_url": "cv/university-at-buffalo/cached"
+                "nim_invoke_url": "cv/nvidia/nemotron-graphic-elements-v1"
               },
               "componentGroupName": "models",
               "repeatable": true,
-              "variableModel": "university-at-buffalo-cached",
-              "pipelineNodeName": "university-at-buffalo-cached"
+              "variableModel": "nemotron-graphic-elements-v1",
+              "pipelineNodeName": "nemotron-graphic-elements-v1"
             }
           },
           {
@@ -816,16 +816,16 @@
             "value": "$var(chunksDataset__dataset)"
           },
           {
-            "name": "university-at-buffalo-cached",
+            "name": "nemotron-graphic-elements-v1",
             "type": "Model",
-            "description": "Table detection and extraction model for identifying tabular data in document pages. Preset: University at Buffalo CachedTransformer (university-at-buffalo-cached)",
-            "value": "$var(university-at-buffalo-cached__model)"
+            "description": "Table detection and extraction model for identifying tabular data in document pages. Preset: Nemotron Graphic Elements v1 (nemotron-graphic-elements-v1)",
+            "value": "$var(nemotron-graphic-elements-v1__model)"
           },
           {
-            "name": "nv-yolox-page-elements-v1",
+            "name": "nemotron-page-elements-v3",
             "type": "Model",
-            "description": "Page element detection model for identifying layout components (tables, figures, text blocks) in document pages. Preset: NVIDIA YOLOX Page Elements v1 (nv-yolox-page-elements-v1)",
-            "value": "$var(nv-yolox-page-elements_v1__model)"
+            "description": "Page element detection model for identifying layout components (tables, figures, text blocks) in document pages. Preset: Nemotron Page Elements v3 (nemotron-page-elements-v3)",
+            "value": "$var(nemotron-page-elements-v3__model)"
           },
           {
             "name": "baidu-paddleocr",
@@ -845,10 +845,10 @@
   },
   "dependencies": [
     {
-      "name": "university-at-buffalo-cached"
+      "name": "nemotron-graphic-elements-v1"
     },
     {
-      "name": "nv-yolox-page-elements-v1"
+      "name": "nemotron-page-elements-v3"
     },
     {
       "name": "baidu-paddleocr"
@@ -870,8 +870,8 @@
     }
   ],
   "variables": {
-    "university-at-buffalo-cached__model": "university-at-buffalo-cached.models.university-at-buffalo-cached",
-    "nv-yolox-page-elements_v1__model": "nv-yolox-page-elements-v1.models.nv-yolox-page-elements-v1",
+    "nemotron-graphic-elements-v1__model": "nemotron-graphic-elements-v1.models.nemotron-graphic-elements-v1",
+    "nemotron-page-elements-v3__model": "nemotron-page-elements-v3.models.nemotron-page-elements-v3",
     "baidu-paddleocr__model": "baidu-paddleocr.models.baidu-paddleocr",
     "llama-nemotron-embed-vl-1b-v2__model": "nim-llama-nemotron-embed-vl-1b-v2.models.nim-llama-nemotron-embed-vl-1b-v2"
   }

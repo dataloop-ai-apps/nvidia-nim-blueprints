@@ -73,13 +73,13 @@
       "name": "txt_to_prompt"
     },
     {
-      "name": "nim-mistral-7b-instruct-v0-3",
+      "name": "nim-nemotron-3-5-lightning-30b-a3b",
       "components": {
         "models": [
           {
-            "name": "nim-mistral-7b-instruct-v0-3",
+            "name": "nim-nemotron-3-5-lightning-30b-a3b",
             "configuration": {
-              "nim_model_name": "mistralai/mistral-7b-instruct-v0.3",
+              "nim_model_name": "nvidia/nemotron-3.5-lightning-30b-a3b",
               "max_tokens": 4096,
               "temperature": 0.2,
               "top_p": 0.7,
@@ -222,7 +222,7 @@
           {
             "name": "graph_llm_model",
             "type": "Model",
-            "description": "LLM used for knowledge graph entity and relationship extraction. Preset: Mistral 7B Instruct with guided JSON.",
+            "description": "LLM used for knowledge graph entity and relationship extraction. Preset: Nemotron 3.5 Lightning 30B A3B with guided JSON.",
             "value": "$var(graph_llm_model__model)"
           },
           {
@@ -799,10 +799,10 @@
               "functionName": "predict",
               "serviceName": "",
               "moduleName": "",
-              "packageName": "nim-mistral-7b-instruct-v0-3"
+              "packageName": "nim-nemotron-3-5-lightning-30b-a3b"
             },
-            "appName": "Mistral 7B Instruct",
-            "dpkName": "nim-mistral-7b-instruct-v0-3",
+            "appName": "Nemotron 3.5 Lightning 30B A3B",
+            "dpkName": "nim-nemotron-3-5-lightning-30b-a3b",
             "metadata": {
               "position": {
                 "x": 12100,
@@ -810,7 +810,7 @@
                 "z": 0
               },
               "modelConfig": {
-                "nim_model_name": "mistralai/mistral-7b-instruct-v0.3",
+                "nim_model_name": "nvidia/nemotron-3.5-lightning-30b-a3b",
                 "max_tokens": 4096,
                 "temperature": 0.2,
                 "top_p": 0.7,
@@ -885,6 +885,6 @@
   "variables": {
     "vlm_model__model": "vila-model-adapter.models.vila-1p5-3b",
     "embedding_model__model": "nim-llama-nemotron-embed-vl-1b-v2.models.nim-llama-nemotron-embed-vl-1b-v2",
-    "graph_llm_model__model": "nim-mistral-7b-instruct-v0-3.models.nim-mistral-7b-instruct-v0-3"
+    "graph_llm_model__model": "nim-nemotron-3-5-lightning-30b-a3b.models.nim-nemotron-3-5-lightning-30b-a3b"
   }
 }

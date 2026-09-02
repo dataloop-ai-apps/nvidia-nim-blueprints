@@ -18,7 +18,7 @@ For configuration, components, and troubleshooting, see the sections below.
 |----------|------|--------------------|---------|
 | **retrieval_dataset** | Dataset | Output dataset from [preprocessing](../preprocessing_multimodal_rag/README.md) | Dataset of embedded chunks to search |
 | **embed_model** | Model | Llama Nemotron Embed VL 1B V2 (must match preprocessing) | Embeds user questions and used for retrieval — must match the embedding model used in preprocessing |
-| **gen_ai_model** | Model | Mistral 7B Instruct | Generates the final RAG response |
+| **gen_ai_model** | Model | Nemotron 3.5 Lightning 30B A3B | Generates the final RAG response |
 | **k_nearest_items** | Integer | 30 (default) | Number of chunks to retrieve |
 
 **Getting the model ID:** When you run or edit the pipeline, each Model variable shows a model selector. Choose the recommended model (or another from your project); the selected value is the model ID (e.g. `nim-llama-nemotron-embed-vl-1b-v2`). You can also find model IDs in your project **Models** page. For **embed_model**, use the exact same model ID as in the preprocessing pipeline so vector spaces match.
@@ -58,7 +58,7 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
 | Model | Purpose |
 |-------|---------|
 | **Llama Nemotron Embed VL 1B V2** | Embeds user queries for similarity search |
-| **Mistral 7B Instruct** | Generates responses using retrieved context |
+| **Nemotron 3.5 Lightning 30B A3B** | Generates responses using retrieved context |
 
 ### Pipeline Nodes
 
@@ -86,7 +86,7 @@ For more details, visit the NVIDIA blueprint page: [Build an Enterprise RAG pipe
   - `dataset`: Retrieval dataset (from extraction pipeline)
   - `k`: Number of nearest items to retrieve
 
-#### 4. Mistral 7B Instruct (Response Generation)
+#### 4. Nemotron 3.5 Lightning 30B A3B (Response Generation)
 - **Type**: ML
 - **Function**: `predict`
 - **Purpose**: Generates a response using retrieved context
@@ -119,7 +119,7 @@ Set the `embed_model` to the same embedding model used in the preprocessing pipe
 
 Ensure your NVIDIA NGC API key is configured in the model services:
 - Llama Nemotron Embed VL 1B V2
-- Mistral 7B Instruct
+- Nemotron 3.5 Lightning 30B A3B
 
 ### 5. Create Prompt Items
 

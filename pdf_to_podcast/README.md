@@ -16,8 +16,8 @@ For components, usage details, and requirements, see the sections below.
 |----------|------|-------------------|---------|
 | **reasoning LLM** | Model | Nemotron 3 Ultra 550B | Summarization, outline, and main content |
 | **iterative LLM** | Model | Nemotron 3 Super 120B | Combining dialogue segments |
-| **json podcast LLM** | Model | Mistral 7B Instruct | Structured podcast outline (JSON) |
-| **json convo LLM** | Model | Mistral 7B Instruct | Dialogue/monologue to JSON |
+| **json podcast LLM** | Model | Nemotron 3.5 Lightning 30B A3B | Structured podcast outline (JSON) |
+| **json convo LLM** | Model | Nemotron 3.5 Lightning 30B A3B | Dialogue/monologue to JSON |
 
 **Getting the model ID:** When you run or edit the pipeline, each Model variable shows a model selector. Choose the recommended model (or another from your project); the selected value is the model ID (e.g. `nim-nemotron-3-ultra-550b-a55b.models.nim-nemotron-3-ultra-550b-a55b`). You can also find model IDs in your project under **Develop** → **AI Library** (or **Models**).
 
