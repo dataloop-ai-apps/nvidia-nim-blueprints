@@ -478,6 +478,22 @@ class SharedServiceRunner(dl.BaseServiceRunner):
         try:
             prompt_item = dl.PromptItem.from_item(item)
             messages = prompt_item.to_messages()
+        except AttributeError as e:
+            # dtlpy 1.125.6's PromptItem._load_annotations_prompts() reads
+            # annotation.annotation_definition.coordinates directly for 'text'
+            # annotations, but FreeText (the class it now dispatches 'text' to)
+            # only exposes .text, not .coordinates - an internal dtlpy bug.
+            # Annotation.coordinates (the public property) is unaffected since
+            # it correctly calls annotation_definition.to_coordinates(), which
+            # FreeText implements. Fall back to that safe, public property.
+            logger.warning(
+                f"dl.PromptItem.from_item() failed to parse annotations for item "
+                f"{item.id} ('{item.name}') due to {e}; falling back to annotation.coordinates."
+            )
+            annotations = item.annotations.list()
+            if not annotations:
+                return None
+            return annotations[-1].coordinates
         except Exception as e:
             raise ValueError(
                 f"Failed to parse item {item.id} ('{item.name}') as a prompt item: {e}"
