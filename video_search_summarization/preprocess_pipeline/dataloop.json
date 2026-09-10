@@ -443,7 +443,14 @@
               },
               "serviceConfig": {
                 "runtime": {
-                  "concurrency": 1
+                  "podType": "gpu-t4-m",
+                  "concurrency": 1,
+                  "runnerImage": "gcr.io/viewo-g/piper/agent/runner/gpu/vila-model-adapter:0.10.0",
+                  "autoscaler": {
+                    "minReplicas": 0,
+                    "maxReplicas": 2,
+                    "queueLength": 100
+                  }
                 }
               },
               "componentGroupName": "models",
@@ -696,6 +703,26 @@
                 "x": 10600,
                 "y": 10700,
                 "z": 0
+              },
+              "serviceConfig": {
+                "runtime": {
+                  "podType": "regular-xs",
+                  "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/audio_transcript:0.0.1",
+                  "numReplicas": 1,
+                  "concurrency": 10,
+                  "autoscaler": {
+                    "type": "rabbitmq",
+                    "minReplicas": 0,
+                    "maxReplicas": 2,
+                    "queueLength": 10
+                  }
+                },
+                "maxAttempts": 3,
+                "executionTimeout": 172800,
+                "drainTime": 600,
+                "onReset": "failed",
+                "runExecutionAsProcess": false,
+                "operation": "none"
               },
               "componentGroupName": "audio-utils",
               "customNodeConfig": {
