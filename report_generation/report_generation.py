@@ -155,7 +155,20 @@ class ReportGenerator(dl.BaseServiceRunner):
                 break
         
         return params
-    
+
+    def _refresh_params_from_main_item(self, main_item: dl.Item) -> dict:
+        """
+        Re-extract report parameters from the main item's original prompt text.
+
+        Pipeline nodes run as independent executions and cannot rely on
+        self.params being set by a previous node, so this is called at the
+        start of every node that needs report parameters.
+        """
+        prompt_main_item = dl.PromptItem.from_item(main_item)
+        prompt_text = prompt_main_item.to_json()['prompts'][list(prompt_main_item.to_json()['prompts'].keys())[0]][0]['value']
+        self.params = self._extract_parameters_from_prompt(prompt_text)
+        return self.params
+
     def _create_prompt_item(self, item, prompt_text, prompt_name, main_item=None, overwrite=True):
         """
         Utility function to create and upload a prompt item
@@ -211,10 +224,8 @@ class ReportGenerator(dl.BaseServiceRunner):
         Returns:
             item: Updated item with report planning prompt
         """            
-        # Extract parameters from the prompt
-        prompt_item = dl.PromptItem.from_item(item)
-        prompt_text = prompt_item.to_json()['prompts'][list(prompt_item.to_json()['prompts'].keys())[0]][0]['value']
-        self.params = self._extract_parameters_from_prompt(prompt_text)
+        # Extract parameters from the prompt (item is the main item at this, the first, node)
+        self._refresh_params_from_main_item(item)
 
         # Validate parameters
         if self.params['topic'] == '' or self.params['report_structure'] == '':
@@ -258,6 +269,9 @@ class ReportGenerator(dl.BaseServiceRunner):
         return item_search_queries
     
     def search_tavily(self, item: dl.Item):
+        main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
+        self._refresh_params_from_main_item(main_item)
+
         queries = item.annotations.list()[-1].coordinates
         query_list = [line.strip() for line in queries.split('\n') if line.strip()]
         search_docs = self.tavily_search(query_list, self.params['tavily_topic'], self.params['tavily_days'])
@@ -269,6 +283,9 @@ class ReportGenerator(dl.BaseServiceRunner):
         """
         Process the LLM's search queries and generate report sections
         """
+        main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
+        self._refresh_params_from_main_item(main_item)
+
         # Prompt generating the report outline
         report_planner_instructions = f"""You are an expert technical writer, helping to plan a report.
 
@@ -314,7 +331,6 @@ class ReportGenerator(dl.BaseServiceRunner):
         
         Ensure your response can be parsed as valid JSON with the proper structure."""
 
-        main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         item_report_planning = self._create_prompt_item(
             item=item,
             prompt_text=report_planner_instructions,
@@ -404,10 +420,8 @@ class ReportGenerator(dl.BaseServiceRunner):
         main_item.metadata.setdefault('user', {})
         main_item.metadata['user']['sections'] = sections
 
-        prompt_main_item = dl.PromptItem.from_item(main_item)
-        prompt_text = prompt_main_item.to_json()['prompts'][list(prompt_main_item.to_json()['prompts'].keys())[0]][0]['value']
-        self.params = self._extract_parameters_from_prompt(prompt_text)
-        
+        self._refresh_params_from_main_item(main_item)
+
         # Process sections that require research
         for i, section in enumerate(sections):
             if section.get('research', False):
