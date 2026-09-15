@@ -40,7 +40,7 @@
             "configuration": {
               "nim_model_name": "nvidia/nemotron-3-ultra-550b-a55b",
               "system_prompt": "",
-              "max_tokens": 1024,
+              "max_tokens": 4096,
               "temperature": 0.2,
               "top_p": 0.7,
               "stream": true
@@ -58,7 +58,7 @@
             "configuration": {
               "nim_model_name": "nvidia/nemotron-3-super-120b-a12b",
               "system_prompt": "",
-              "max_tokens": 1024,
+              "max_tokens": 4096,
               "temperature": 0.2,
               "top_p": 0.7,
               "stream": true
@@ -76,10 +76,10 @@
             "configuration": {
               "nim_model_name": "nvidia/nemotron-3.5-lightning-30b-a3b",
               "system_prompt": "",
-              "max_tokens": 2048,
+              "max_tokens": 4096,
               "temperature": 0.2,
               "top_p": 0.7,
-              "stream": true
+              "stream": false
             }
           }
         ]
@@ -1002,6 +1002,26 @@
                 "y": 9947.855823672064,
                 "z": 0
               },
+              "modelConfig": {
+                "guided_json": {
+                  "type": "object",
+                  "properties": {
+                    "scratchpad": {"type": "string"},
+                    "dialogue": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "text": {"type": "string"},
+                          "speaker": {"type": "string", "enum": ["speaker-1", "speaker-2"]}
+                        },
+                        "required": ["text", "speaker"]
+                      }
+                    }
+                  },
+                  "required": ["scratchpad", "dialogue"]
+                }
+              },
               "componentGroupName": "models",
               "repeatable": true,
               "variableModel": "json convo LLM",
@@ -1245,6 +1265,45 @@
                 "x": 12769.352219378163,
                 "y": 10193.514119051319,
                 "z": 0
+              },
+              "modelConfig": {
+                "guided_json": {
+                  "type": "object",
+                  "properties": {
+                    "title": {"type": "string"},
+                    "segments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "section": {"type": "string"},
+                          "topics": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "title": {"type": "string"},
+                                "points": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {"description": {"type": "string"}},
+                                    "required": ["description"]
+                                  }
+                                }
+                              },
+                              "required": ["title", "points"]
+                            }
+                          },
+                          "duration": {"type": "integer"},
+                          "references": {"type": "array", "items": {"type": "string"}}
+                        },
+                        "required": ["section", "topics", "duration", "references"]
+                      }
+                    }
+                  },
+                  "required": ["title", "segments"]
+                }
               },
               "componentGroupName": "models",
               "repeatable": true,
@@ -1563,6 +1622,26 @@
                 "x": 15792.938954041872,
                 "y": 10158.465143673699,
                 "z": 0
+              },
+              "modelConfig": {
+                "guided_json": {
+                  "type": "object",
+                  "properties": {
+                    "scratchpad": {"type": "string"},
+                    "dialogue": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "text": {"type": "string"},
+                          "speaker": {"type": "string", "enum": ["speaker-1", "speaker-2"]}
+                        },
+                        "required": ["text", "speaker"]
+                      }
+                    }
+                  },
+                  "required": ["scratchpad", "dialogue"]
+                }
               },
               "componentGroupName": "models",
               "repeatable": true,
