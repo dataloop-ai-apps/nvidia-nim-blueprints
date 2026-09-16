@@ -1,6 +1,6 @@
 {
   "name": "preprocess-multimodal-rag-bp",
-  "version": "0.0.84",
+  "version": "0.0.85",
   "attributes": {
     "Category": [
       "Pipeline",
