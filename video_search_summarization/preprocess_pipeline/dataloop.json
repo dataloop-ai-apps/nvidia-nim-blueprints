@@ -319,6 +319,26 @@
                 "y": 10450,
                 "z": 0
               },
+              "serviceConfig": {
+                "runtime": {
+                  "podType": "regular-m",
+                  "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/video-utils:0.0.4",
+                  "numReplicas": 1,
+                  "concurrency": 10,
+                  "autoscaler": {
+                    "type": "rabbitmq",
+                    "minReplicas": 0,
+                    "maxReplicas": 2,
+                    "queueLength": 10
+                  }
+                },
+                "maxAttempts": 3,
+                "executionTimeout": 172800,
+                "drainTime": 600,
+                "onReset": "failed",
+                "runExecutionAsProcess": false,
+                "operation": "none"
+              },
               "componentGroupName": "video-utils",
               "customNodeConfig": {
                 "output_dir": "/vss_pipeline/split_videos",
@@ -651,6 +671,26 @@
                 "x": 10300,
                 "y": 10700,
                 "z": 0
+              },
+              "serviceConfig": {
+                "runtime": {
+                  "podType": "regular-s",
+                  "runnerImage": "dataloopai/dtlpy-agent:cpu.py3.10.opencv",
+                  "numReplicas": 1,
+                  "concurrency": 10,
+                  "autoscaler": {
+                    "type": "rabbitmq",
+                    "minReplicas": 0,
+                    "maxReplicas": 2,
+                    "queueLength": 10
+                  }
+                },
+                "maxAttempts": 3,
+                "executionTimeout": 172800,
+                "drainTime": 600,
+                "onReset": "failed",
+                "runExecutionAsProcess": false,
+                "operation": "none"
               },
               "componentGroupName": "audio-utils",
               "customNodeConfig": {
