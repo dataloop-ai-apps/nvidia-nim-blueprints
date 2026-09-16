@@ -419,6 +419,7 @@ class ReportGenerator(dl.BaseServiceRunner):
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         main_item.metadata.setdefault('user', {})
         main_item.metadata['user']['sections'] = sections
+        main_item.update()
 
         self._refresh_params_from_main_item(main_item)
 
@@ -558,25 +559,35 @@ class ReportGenerator(dl.BaseServiceRunner):
         causing this function to run more than once per pipeline execution.
         Two layers prevent duplicate / destroyed items:
           1. Metadata flag (non_research_created) - fast-path guard for spaced-out calls.
+             Set only after the work below completes successfully, so a failed or
+             partial run doesn't permanently block retries. On a duplicate call,
+             returns the already-created items instead of an empty list, so the
+             downstream LLM node still receives its input.
           2. overwrite=False on upload - atomic server-side guard for tight races.
              If the item already exists the upload raises an error, which we catch
-             and return [] so only the first call's items reach the LLM node.
+             and, like layer 1, resolve to the already-created items.
         """
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
         sections = main_item.metadata['user']['sections']
+        non_research_indices = [i for i, section in enumerate(sections) if not section.get('research', False)]
 
         # Layer 1: metadata guard
         if main_item.metadata.get('user', {}).get('non_research_created', False):
-            logger.info("Non-research sections already created, skipping duplicate call.")
-            return []
-
-        main_item.metadata.setdefault('user', {})
-        main_item.metadata['user']['non_research_created'] = True
-        main_item.update()
+            logger.info("Non-research sections already created, returning existing items.")
+            return self._get_existing_section_items(main_item, non_research_indices)
 
         non_research_sections_prompt_items = []
-        
-        # Get all completed research sections to provide context
+
+        # Get all completed research sections to provide context, reloading any
+        # missing from main_item metadata (this replica may not have accumulated
+        # them in-memory if a different node execution wrote them).
+        missing_indices = self._get_missing_section_indices(sections)
+        for i in missing_indices:
+            if sections[i].get('research', False):
+                key = f'item_section_{i}'
+                section_item_id = main_item.metadata.get('user', {}).get(key)
+                if section_item_id is not None:
+                    self.gather_sections(item=dl.items.get(item_id=section_item_id))
         completed_sections_context = ""
         for section_name, section_text in self.all_completed_sections.items():
             completed_sections_context += f"\n\n{section_name}:\n{section_text}"
@@ -651,12 +662,30 @@ class ReportGenerator(dl.BaseServiceRunner):
                     non_research_sections_prompt_items.append(item_non_research)
                 except Exception as e:
                     logger.info(f"section_{i} already exists from a concurrent call, "
-                                f"returning empty list: {e}")
-                    return []
-        
+                                f"returning existing items: {e}")
+                    main_item = dl.items.get(item_id=main_item.id)
+                    main_item.metadata.setdefault('user', {})
+                    main_item.metadata['user']['non_research_created'] = True
+                    main_item.update()
+                    return self._get_existing_section_items(main_item, non_research_indices)
+
+        main_item = dl.items.get(item_id=main_item.id)
+        main_item.metadata.setdefault('user', {})
+        main_item.metadata['user']['non_research_created'] = True
+        main_item.update()
+
         return non_research_sections_prompt_items
 
-    
+    def _get_existing_section_items(self, main_item: dl.Item, indices: list) -> list:
+        """Look up already-created section prompt items by their metadata keys."""
+        items = []
+        for i in indices:
+            key = f'item_section_{i}'
+            section_item_id = main_item.metadata.get('user', {}).get(key)
+            if section_item_id is not None:
+                items.append(dl.items.get(item_id=section_item_id))
+        return items
+
     def gather_sections(self, item: dl.Item):
         # Get section name and description from the item metadata
         main_item = dl.items.get(item_id=item.metadata['user']['main_item'])
@@ -673,7 +702,7 @@ class ReportGenerator(dl.BaseServiceRunner):
                     section_number = match[0]
         
         if section_number is None:
-            logger.warning(f"Could not extract section number from item name: {item.name}")
+            raise ValueError(f"Could not extract section number from item name: {item.name}")
         section_name = sections[int(section_number)]['name']
         section_text = item.annotations.list()[-1].coordinates
         self.all_completed_sections[section_name] = section_text

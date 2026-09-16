@@ -892,6 +892,18 @@
                 "y": 10700,
                 "z": 0
               },
+              "serviceConfig": {
+                "runtime": {
+                  "podType": "regular-s",
+                  "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/graph-rag:0.0.12",
+                  "concurrency": 1,
+                  "autoscaler": {
+                    "type": "rabbitmq",
+                    "minReplicas": 0,
+                    "maxReplicas": 1
+                  }
+                }
+              },
               "componentGroupName": "graph-rag",
               "customNodeConfig": {
                 "name": "add-chunk-to-graph",
