@@ -120,6 +120,9 @@
                 },
                 "required": ["entities", "relationships"]
               },
+              "chat_template_kwargs": {
+                "enable_thinking": false
+              },
               "add_metadata": [
                 "system.document.source"
               ]
