@@ -325,7 +325,7 @@
               "serviceConfig": {
                 "runtime": {
                   "podType": "regular-m",
-                  "runnerImage": "gcr.io/viewo-g/piper/agent/runner/apps/video-utils:0.0.4",
+                  "runnerImage": "hub.dataloop.ai/customerhub/piper/agent/runner/cpu/main:1.126.4.latest",
                   "numReplicas": 1,
                   "concurrency": 10,
                   "autoscaler": {
